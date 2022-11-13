@@ -1,8 +1,4 @@
-/* Ocamlyacc parser*/
-
-%{
-open Ast
-%}
+%{ open Ast %}
 
 %token NEWLINE LPAREN RPAREN PLUS ASSIGN
 %token STRING
@@ -27,9 +23,8 @@ vdecl_list_rule:
 vdecl_rule:
   typ_rule ID NEWLINE { ($1, $2) }
 
-
 typ_rule:
-  STRING       { Str  }
+  STRING { String  }
 
 stmt_list_rule:
     /* nothing */               { []     }
@@ -39,8 +34,8 @@ stmt_rule:
   expr_rule NEWLINE               { Expr $1         }
 
 expr_rule:
-  | STRING                        { Str $1                }
+  | STRING                        { String $1                }
   | ID                            { Id $1                 }
-  | STRING PLUS STRING            { Concat ($1, Add, $3)   }
+  | STRING PLUS STRING            { Concat ($1, $3)   }
   | ID ASSIGN expr_rule           { Assign ($1, $3)       }
   | LPAREN expr_rule RPAREN       { $2                    }

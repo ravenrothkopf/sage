@@ -1,9 +1,10 @@
 type bop = Add 
-type typ = Str
+type typ = String
 
 type expr =
-  | Id of string
+    Id of string
   | Assign of string * expr
+  | Concat of string * string
 
 type stmt =
   | Expr of expr
@@ -15,7 +16,6 @@ type program = {
   body: stmt list;
 }
 
-
 (* Pretty-printing functions *)
 let string_of_op = function
     Add -> "+"
@@ -23,12 +23,13 @@ let string_of_op = function
 let rec string_of_expr = function
    Id(s) -> s
   | Assign(v, e) -> v ^ " = " ^ string_of_expr e
+  | Concat(s1, s2) -> s1 ^ s2
 
 let rec string_of_stmt = function
   | Expr(expr) -> string_of_expr expr ^ "\n"
 
 let string_of_typ = function
-    Str -> "string"
+    String -> "string"
 
 let string_of_vdecl (t, id) = string_of_typ t ^ " " ^ id ^ "\n"
 
