@@ -5,6 +5,7 @@ type expr =
     Id of string
   | Assign of string * expr
   | Concat of string * string
+  | StringLit of string
 
 type stmt =
   | Expr of expr
@@ -22,6 +23,7 @@ let string_of_op = function
 
 let rec string_of_expr = function
    Id(s) -> s
+  | StringLit(s) -> s
   | Assign(v, e) -> v ^ " = " ^ string_of_expr e
   | Concat(s1, s2) -> s1 ^ s2
 
@@ -29,7 +31,7 @@ let rec string_of_stmt = function
   | Expr(expr) -> string_of_expr expr ^ "\n"
 
 let string_of_typ = function
-    String -> "string"
+    String -> "str"
 
 let string_of_vdecl (t, id) = string_of_typ t ^ " " ^ id ^ "\n"
 

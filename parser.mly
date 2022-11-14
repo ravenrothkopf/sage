@@ -1,41 +1,83 @@
-%{ open Ast %}
+/* Ocamlyacc parser for MicroC */
+
+%{
+open Ast
+%}
 
 %token NEWLINE LPAREN RPAREN PLUS ASSIGN
 %token STRING
+
+%token <string> SLIT
 %token <string> ID
 %token EOF
 
-%start program_rule
-%type <Ast.program> program_rule
+%start program
+%type <Ast.program> program
 
 %right ASSIGN
-%left PLUS
+%left OR
+%left PLUS 
 
 %%
 
-program_rule:
-  vdecl_list_rule stmt_list_rule EOF { {locals=$1; body=$2} }
+/* add function declarations*/
+program:
+  decls EOF { $1}
 
-vdecl_list_rule:
-  /*nothing*/                   { []       }
-  | vdecl_rule vdecl_list_rule  { $1 :: $2 }
+decls:
+   /* nothing */ { ([], [])               }
+ | fdecl decls { (fst $2, ($1 :: snd $2)) }
 
-vdecl_rule:
-  typ_rule ID NEWLINE { ($1, $2) }
+/* int x */
+vdecl:
+  typ ID { ($1, $2) }
 
-typ_rule:
-  STRING { String  }
+typ:
+  STRING  { String  }
 
-stmt_list_rule:
-    /* nothing */               { []     }
-    | stmt_rule stmt_list_rule  { $1::$2 }
+/* fdecl */
+fdecl:
+  vdecl LPAREN formals_opt RPAREN COLON stmt_list (**Indentation?**)
+  {
+    {
+      rtyp=fst $1;
+      fname=snd $1;
+      formals=$3;
+      body=$6
+    }
+  }
 
-stmt_rule:
-  expr_rule NEWLINE               { Expr $1         }
+/* formals_opt */
+formals_opt:
+  /*nothing*/ { [] }
+  | formals_list { $1 }
 
-expr_rule:
-  | STRING                        { String $1                }
-  | ID                            { Id $1                 }
-  | STRING PLUS STRING            { Concat ($1, $3)   }
-  | ID ASSIGN expr_rule           { Assign ($1, $3)       }
-  | LPAREN expr_rule RPAREN       { $2                    }
+formals_list:
+  vdecl { [$1] }
+  | vdecl COMMA formals_list { $1::$3 }
+
+stmt_list:
+  /* nothing */ { [] }
+  | stmt stmt_list  { $1::$2 }
+
+stmt:
+    expr NEWLINE                               { Expr $1  }
+  | LBRACE stmt_list RBRACE                    { Block $2 } (**Indentation?**)
+
+expr:
+   SLIT              { StringLit($1)          }
+  | ID               { Id($1)                 }
+  | SLIT PLUS SLIT   { Concat($1, $3)         }
+  | ID ASSIGN expr   { Assign($1, $3)         }
+  | LPAREN expr RPAREN { $2 }
+  /* call */
+  | ID LPAREN args_opt RPAREN { Call ($1, $3)  }
+
+/* args_opt*/
+args_opt:
+  /*nothing*/ { [] }
+  | args { $1 }
+
+args:
+  expr  { [$1] }
+  | expr COMMA args { $1::$3 }
