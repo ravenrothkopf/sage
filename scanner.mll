@@ -1,6 +1,6 @@
 (* example Ocamllex scanner *)
 
-{ open Nanocparse }
+{ open Parser }
 
 let digit = ['0'-'9']
 let letter = ['a'-'z' 'A'-'Z']
@@ -17,6 +17,7 @@ rule token = parse
 | '+'      { PLUS }
 | '='      { ASSIGN }
 | "str"    { STRING }
+| "funct"  { FUNCT }
 | letter (digit | letter | '_')* as lem { ID(lem) }
 | "\"([^\"\\\\]|\\\\.)*\"" as lem { SLIT (lem) } (**String literal**)
 | eof { EOF }

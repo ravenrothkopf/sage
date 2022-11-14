@@ -6,6 +6,7 @@ open Ast
 
 %token NEWLINE LPAREN RPAREN PLUS ASSIGN
 %token STRING
+%token FUNCT COLON COMMA
 
 %token <string> SLIT
 %token <string> ID
@@ -24,7 +25,7 @@ program:
   decls EOF { $1}
 
 decls:
-   /* nothing */ { ([], [])               }
+   { ([], []) }
  | fdecl decls { (fst $2, ($1 :: snd $2)) }
 
 /* int x */
@@ -32,17 +33,17 @@ vdecl:
   typ ID { ($1, $2) }
 
 typ:
-  STRING  { String  }
+  STRING  { String }
 
 /* fdecl */
 fdecl:
-  vdecl LPAREN formals_opt RPAREN COLON stmt_list (**Indentation?**)
+  FUNCT vdecl LPAREN formals_opt RPAREN COLON stmt_list /*Indentation?*/
   {
     {
-      rtyp=fst $1;
-      fname=snd $1;
-      formals=$3;
-      body=$6
+      rtyp=fst $2;
+      fname=snd $2;
+      formals=$4;
+      body=$7;
     }
   }
 
@@ -61,7 +62,7 @@ stmt_list:
 
 stmt:
     expr NEWLINE                               { Expr $1  }
-  | LBRACE stmt_list RBRACE                    { Block $2 } (**Indentation?**)
+  /*| LBRACE stmt_list RBRACE                    { Block $2 } Indentation?*/
 
 expr:
    SLIT              { StringLit($1)          }

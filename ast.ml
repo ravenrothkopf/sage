@@ -6,16 +6,23 @@ type expr =
   | Assign of string * expr
   | Concat of string * string
   | StringLit of string
-
+  | Call of string * expr list
+  
 type stmt =
-  | Expr of expr
+  Expr of expr
 
+(* int x: name binding *)
 type bind = typ * string
 
-type program = {
-  locals: bind list;
+(* func_def: ret_typ fname formals locals body *)
+type func_def = {
+  rtyp: typ;
+  fname: string;
+  formals: bind list;
   body: stmt list;
 }
+
+type program = bind list * func_def list
 
 (* Pretty-printing functions *)
 let string_of_op = function
@@ -35,8 +42,14 @@ let string_of_typ = function
 
 let string_of_vdecl (t, id) = string_of_typ t ^ " " ^ id ^ "\n"
 
-let string_of_program fdecl =
-  "\n\nParsed program: \n\n" ^
-  String.concat "" (List.map string_of_vdecl fdecl.locals) ^
+let string_of_fdecl fdecl =
+  string_of_typ fdecl.rtyp ^ " " ^
+  "funct" ^ fdecl.fname ^ "(" ^ String.concat ", " (List.map snd fdecl.formals) ^
+  ") : \n\n" ^
   String.concat "" (List.map string_of_stmt fdecl.body) ^
   "\n"
+
+  let string_of_program (vars, funcs) =
+    "\n\nParsed program: \n\n" ^
+    String.concat "" (List.map string_of_vdecl vars) ^ "\n" ^
+    String.concat "\n" (List.map string_of_fdecl funcs)
