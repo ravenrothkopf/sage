@@ -15,7 +15,6 @@ open Ast
 %type <Ast.program> program
 
 %right ASSIGN
-%left OR
 %left PLUS 
 
 %%

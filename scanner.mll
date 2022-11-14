@@ -17,7 +17,7 @@ rule token = parse
 | '+'      { PLUS }
 | '='      { ASSIGN }
 | "str"    { STRING }
-| ^[a-z][a-z0-9]*(?:([-_])[a-z0-9]+(?:\1[a-z0-9]+)*)?$ as lem { ID(lem) }
+| letter (digit | letter | '_')* as lem { ID(lem) }
 | "\"([^\"\\\\]|\\\\.)*\"" as lem { SLIT (lem) } (**String literal**)
 | eof { EOF }
 | _ as char { raise (Failure("illegal character " ^ Char.escaped char)) }
