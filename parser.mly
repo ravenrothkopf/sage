@@ -11,6 +11,7 @@ open Ast
 %token <string> SLIT
 %token <string> ID
 %token EOF
+%token NoOp
 
 %start program
 %type <Ast.program> program
@@ -37,7 +38,7 @@ typ:
 
 /* fdecl */
 fdecl:
-  FUNCT vdecl LPAREN formals_opt RPAREN COLON stmt_list /*Indentation?*/
+  FUNCT vdecl LPAREN formals_opt RPAREN COLON stmt_list NoOp/*Indentation?*/
   {
     {
       rtyp=fst $2;
@@ -72,6 +73,7 @@ expr:
   | LPAREN expr RPAREN { $2 }
   /* call */
   | ID LPAREN args_opt RPAREN { Call ($1, $3)  }
+
 
 /* args_opt*/
 args_opt:
