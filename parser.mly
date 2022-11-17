@@ -62,8 +62,8 @@ stmt_list:
   | stmt stmt_list  { $1::$2 }
 
 stmt:
-  NEWLINE                                      {NoOp}
-    expr NEWLINE                               { Expr $1  }
+   NEWLINE                                     { NoOp }
+  |  expr NEWLINE                               { Expr $1  }
   /*| LBRACE stmt_list RBRACE                    { Block $2 } Indentation?*/
 
 expr:

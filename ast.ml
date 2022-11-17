@@ -10,6 +10,7 @@ type expr =
   
 type stmt =
   Expr of expr
+  | NoOp
 
 (* int x: name binding *)
 type bind = typ * string
@@ -36,6 +37,7 @@ let rec string_of_expr = function
 
 let rec string_of_stmt = function
   | Expr(expr) -> string_of_expr expr ^ "\n"
+  | NoOp -> "\n"
 
 let string_of_typ = function
     String -> "str"
