@@ -68,28 +68,8 @@ decls_inside:
   | NEWLINE decls_inside { (fst $2, snd $2) }
   | TAB NEWLINE decls_inside { (fst $3, snd $3) }
 
-// vdecl_list_inside:
-//   | /*nothing*/                 { []        }
-//   // | TAB vdecl NEWLINE vdecl_list_inside {  $2 :: $4 }
-//   // | TAB NEWLINE vdecl_list_inside { $3 }
-//   // | NEWLINE vdecl_list_inside { $2 }
-//   | vdecl NEWLINE vdecl_list_inside {  $1 :: $3 }
-//   // | TAB NEWLINE vdecl_list_inside { $3 }
-//   // | NEWLINE vdecl_list_inside { $2 }
-
-// stmt_list_inside:
-//   | /*nothing*/                 { []        }
-//   | stmt NEWLINE stmt_list_inside   {  $1 :: $3 }
-//   // | NEWLINE stmt_list_inside { $2 }
-
-  // | TAB stmt NEWLINE stmt_list_inside   {  $2 :: $4 }
-  // | TAB NEWLINE stmt_list_inside { $3 }
-  // | NEWLINE stmt_list_inside { $2 }
-
 stmt:
-  // | NEWLINE                                     { NoOp }
   |  expr                                { Expr($1)  }
-  /*| LBRACE stmt_list RBRACE                    { Block $2 } Indentation?*/
 
 expr:
   | ID                        { Id($1)                 }

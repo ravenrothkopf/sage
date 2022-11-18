@@ -5,3 +5,5 @@ str funct main (str h):
     h = " hello"
     str ran = " "
     print (h + " " + location)
+
+// make sure you don't copy the indents, and actually use the tab button!

@@ -4,7 +4,7 @@ let digit = ['0'-'9']
 let letter = ['a'-'z' 'A'-'Z']
 
 rule token = parse
-  [' ' '\r'] { token lexbuf } (* Whitespace *)
+  [' ' '\r'] { token lexbuf }          (* Whitespace *)
 | "#"     { comment lexbuf }           (* Comments *)
 | "\"\"\"" { comment2 lexbuf }
 | '\n'     { NEWLINE }
@@ -18,7 +18,6 @@ rule token = parse
 | "str"    { STRING }
 | "funct"  { FUNCT }
 | letter (digit | letter | '_')* as lem { ID(lem) }
-(*| "\"([^\"\\\\]|\\\\.)*\"" as lem { SLIT (lem) } (**String literal**)*)
 | "\""     {slit "" lexbuf}
 | eof { EOF }
 | _ as char { raise (Failure("illegal character " ^ Char.escaped char)) }
