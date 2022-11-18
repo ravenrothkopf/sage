@@ -1,10 +1,8 @@
-/* Ocamlyacc parser for MicroC */
-
 %{
 open Ast
 %}
 
-%token NEWLINE LPAREN RPAREN PLUS ASSIGN
+%token NEWLINE LPAREN RPAREN PLUS ASSIGN TAB
 %token STRING
 %token FUNCT COLON COMMA
 
