@@ -4,7 +4,7 @@ let digit = ['0'-'9']
 let letter = ['a'-'z' 'A'-'Z']
 
 rule token = parse
-  [' ' '\t' '\r'] { token lexbuf } (* Whitespace *)
+  [' ' '\r'] { token lexbuf } (* Whitespace *)
 | "#"     { comment lexbuf }           (* Comments *)
 | "\"\"\"" { comment2 lexbuf }
 | '\n'     { NEWLINE }

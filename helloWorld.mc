@@ -1,4 +1,7 @@
-funct str main ():
-    str hello_str = " hello "
+str hello_str = " hi "
+
+str funct main (str h):
     str location = " world "
-    print (hello_str + " " + location)
+    h = " hello"
+    str ran = " "
+    print (h + " " + location)
