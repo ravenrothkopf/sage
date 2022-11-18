@@ -1,5 +1,3 @@
-(* example Ocamllex scanner *)
-
 { open Parser }
 
 let digit = ['0'-'9']
