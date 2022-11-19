@@ -2,6 +2,10 @@
 
 let digit = ['0'-'9']
 let letter = ['a'-'z' 'A'-'Z']
+let frac = '.' digit*
+let exp = ['e' 'E'] ['-' '+']? digit+
+let float = digit* frac? exp?
+let int = '-'? digit digit*
 
 rule token = parse
   [' ' '\r'] { token lexbuf }          (* Whitespace *)
@@ -16,7 +20,14 @@ rule token = parse
 | '+'      { PLUS }
 | '='      { ASSIGN }
 | "str"    { STRING }
+| "int"    { INT }
+| "float"  { FLOAT }
+| "bool"   { BOOL }
+| "True"   { BLIT(true) }
+| "False"  { BLIT(false) }
 | "funct"  { FUNCT }
+| int as lem { ILIT(int_of_string lem) }
+| float as lem { FLIT(float_of_string lem) }
 | letter (digit | letter | '_')* as lem { ID(lem) }
 | "\""     {slit "" lexbuf}
 | eof { EOF }
