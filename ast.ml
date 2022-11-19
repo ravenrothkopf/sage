@@ -55,7 +55,7 @@ let string_of_fdecl fdecl =
   "funct " ^ fdecl.fname ^ "(" ^ String.concat ", " (List.map snd fdecl.formals) ^
   ") : \n" ^
   String.concat "    " (""::List.map string_of_vdecl fdecl.locals) ^
-  String.concat "    " ("":List.map string_of_stmt fdecl.body) ^
+  String.concat "    " (""::List.map string_of_stmt fdecl.body) ^
   "\n"
 
 let string_of_program (vars, funcs) =
