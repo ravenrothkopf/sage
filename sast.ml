@@ -5,7 +5,7 @@ and sx =
   SId of string
 | SAssign of string * sexpr
 | SBinop of sexpr * bop * sexpr
-| StringLit of string
+| SStringLit of string
 | SIntLit of int
 | SFloatLit of float
 | SBoolLit of bool
