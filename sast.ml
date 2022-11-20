@@ -25,7 +25,8 @@ type sfunc_def = {
 type sprogram = val_bind list * sfunc_def list
 
 (* Pretty-printing functions *)
-let rec string_of_sexpr = function
+let rec string_of_sexpr(t,e) =
+  "(" ^ string_of_typ t ^ " : " ^ (match e with
     SId(s) -> s
   | SAssign(v, e) -> v ^ " = " ^ string_of_sexpr e
   | SBinop(e1, op, e2) ->
@@ -37,6 +38,7 @@ let rec string_of_sexpr = function
   | SBoolLit(false) -> "False"
   | SCall(f, el) ->
     f ^ "(" ^ String.concat ", " (List.map string_of_sexpr el) ^ ")"
+  ) ^ ")"  
 
 let rec string_of_sstmt = function
   | SExpr(expr) -> string_of_sexpr expr ^ "\n"
