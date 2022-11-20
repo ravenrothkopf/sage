@@ -1,4 +1,4 @@
-(* Note: Each test case will go in its file.  *)
+(* Note: Each test case will go in its own file.  *)
 
 (* test-integer_assignment1 *)
 int a = 1
