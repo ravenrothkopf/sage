@@ -81,7 +81,7 @@ expr:
     ID                        { Id($1)                 }
   | ID ASSIGN expr            { Assign($1, $3)         }
   | SLIT                      { StringLit($1)          }
-  | SLIT PLUS SLIT            { Binop(StringLit($1), Concat, StringLit($1))         }
+  | SLIT PLUS SLIT            { Binop(StringLit($1), Concat, StringLit($3))         }
   | LPAREN expr RPAREN        { $2 }
   | ID LPAREN args_opt RPAREN { Call($1, $3) }
   | ILIT                      { IntLit($1) }
