@@ -46,7 +46,10 @@ Run Makefile ('/sage') to compile sage. Test using test cases ('/sage/test_cases
 * None related to hello world front end
 
 ## Guidance We Are Seeking
-* 
+* 'make' all gives us a dangling terminal error that we have attempted to fix but with no luck
+* Attempting to build ../test-cases/test-assign1 gives parsing errors likely related to binding. We have wanted to fix how we bind, but changes have not been pushed since they do not work.
+* How do we make sure everyone has the same codebase? We all git pull, but stashing some changes has made it to where pulling does not modify current code state
+* Should we be throwing specific errors when variable names are not valid?
 
 ## Team Member Contributions
 
