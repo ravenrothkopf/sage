@@ -64,11 +64,14 @@ Run Makefile ('/sage') to compile sage. Test using test cases ('/sage/test_cases
 * Jenny (11/18) - Debugged for hours, figured out the main issues preventing parsing, like newlines and tabs
 * Lauren (11/18) - Began implementing functionality to parse additional type declarations (int, float, bool)
 * All (11/19) - Meeting to plan out the rest of this part
-* Mely (11/19) - Worked on the sast and semant.ml
+* Mely (11/19) - Created and worked on the sast.ml, semant.ml and test2.ml files
 * Lauren (11/19) - Finished implementing parsing of int, float, and bool types and began updating the LRM
 * Lauren (11/20) - Added test cases
 * Raven (11/20) - Wrote Makefile
+* Mely (11/20) - Worked on debugging semant.ml and sast.ml
 * Gabriela (11/20) - Collaborate with Mely to address semant.ml bugs and attempting to adjust ast.ml file accordingly for test2.ml
 * Gabriela (11/20) - Rebase codebase after commit to address binding criticially compromised exsisting code
 * Gabriela (11/21) - Quality assurance testing and compile a list of bugs to address in Hao's office hours, specifically addressing test cases file
 * Gabriela (11/21) - Attend Hao's OH and push some debugging suggestions for binding
+* Mely (11/21) - Attended Hao's OH to ask about printing functionality and worked on implementing the print feature in semant.ml
+

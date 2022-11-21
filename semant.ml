@@ -28,7 +28,7 @@ let check (globals, functions) =
     StringMap.add "print" {
       rtyp = Int;
       fname = "print";
-      formals = [(Int, "x")];
+      formals = [(String, "x")];
       locals = []; body = [] } StringMap.empty
   in
 
@@ -81,9 +81,9 @@ let check (globals, functions) =
     let rec check_expr = function
         Id var -> (type_of_identifier var, SId var)
       | BoolLit l -> (Bool, SBoolLit l) 
-      | StringLit l -> (String, SStringLit)
-      | IntLit l -> (Int, SIntLit)
-      | FloatLit l -> (Float, SFloatLit)
+      | StringLit l -> (String, SStringLit l)
+      | IntLit l -> (Int, SIntLit l)
+      | FloatLit l -> (Float, SFloatLit l)
       | Assign(var, e) as ex ->
         let lt = type_of_identifier var
         and (rt, e') = check_expr e in
