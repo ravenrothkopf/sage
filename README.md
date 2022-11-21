@@ -40,7 +40,7 @@ Run Makefile ('/sage') to compile sage. Test using test cases ('/sage/test_cases
   
 ## Features Not Implemented at This Phase
 
-* None related to Hello World
+* None related to hello world front end
 
 ## Team Member Contributions
 
