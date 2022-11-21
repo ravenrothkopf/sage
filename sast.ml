@@ -17,7 +17,7 @@ type sstmt =
 type sfunc_def = {
   srtyp: typ;
   sfname: string;
-  sformals: name_bind list;
+  sformals: val_bind list;
   slocals: val_bind list;
   sbody: sstmt list;
   }
