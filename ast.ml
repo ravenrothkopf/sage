@@ -13,7 +13,7 @@ type expr =
   | DecAssn of typ * string * expr
 
 type stmt =
-  | Expr of expr
+   Expr of expr
   | Block of stmt list
 
 (* int x = 3: value binding *)
@@ -57,9 +57,11 @@ let rec string_of_expr = function
     f ^ "(" ^ String.concat ", " (List.map string_of_expr el) ^ ")"
 
 let rec string_of_stmt = function
-     Expr(expr) -> string_of_expr expr ^ "\n"
-    | Block(stmts) ->
+    Expr(expr) -> string_of_expr expr ^ "\n"
+  | Block(stmts) ->
       "    " ^ String.concat "" (List.map string_of_stmt stmts) ^ "\n"
+
+let string_of_vdecl (t, id, e) = string_of_typ t ^ " " ^ id ^ " = " ^  string_of_expr e ^ "\n"
 
 let string_of_fdecl fdecl =
   string_of_typ fdecl.rtyp ^ " " ^
