@@ -8,10 +8,10 @@ module StringMap = Map.Make(String)
 
    Check each global variable, then check each function *)
 
-let check (globals, functions) =
+let check (statements, functions) =
 
   (* Verify a list of bindings has no duplicate names *)
-  let check_binds (kind : string) (binds : typ * string * expr list) =
+  let check_binds (kind : string) (binds : bind list) =
     let rec dups = function
         [] -> ()
       |	((_,n1) :: (_,n2) :: _) when n1 = n2 ->
@@ -20,16 +20,13 @@ let check (globals, functions) =
     in dups (List.sort (fun (_,a) (_,b) -> compare a b) binds)
   in
 
-  (* Make sure no globals duplicate *)
-  check_binds "global" globals;
-
   (* Collect function declarations for built-in functions: no bodies *)
   let built_in_decls =
     StringMap.add "print" {
       rtyp = Int;
       fname = "print";
       formals = [(Int, "x")];
-      locals = []; body = [] } StringMap.empty
+      body = [] } StringMap.empty
   in
 
   (* Add function name to symbol table *)
@@ -59,7 +56,6 @@ let check (globals, functions) =
   let check_func func =
     (* Make sure no formals or locals are void or duplicates *)
     check_binds "formal" func.formals;
-    check_binds "local" func.locals;
 
     (* Raise an exception if the given rvalue type cannot be assigned to
        the given lvalue type *)
@@ -69,7 +65,7 @@ let check (globals, functions) =
 
     (* Build local symbol table of variables for this function *)
     let symbols = List.fold_left (fun m (ty, name) -> StringMap.add name ty m)
-        StringMap.empty (globals @ func.formals @ func.locals )
+        StringMap.empty (func.formals)
     in
 
     (* Return a variable from our local symbol table *)
@@ -81,9 +77,9 @@ let check (globals, functions) =
     let rec check_expr = function
         Id var -> (type_of_identifier var, SId var)
       | BoolLit l -> (Bool, SBoolLit l) 
-      | StringLit l -> (String, SStringLit)
-      | IntLit l -> (Int, SIntLit)
-      | FloatLit l -> (Float, SFloatLit)
+      | StringLit l -> (String, SStringLit l)
+      | IntLit l -> (Int, SIntLit l)
+      | FloatLit l -> (Float, SFloatLit l)
       | Assign(var, e) as ex ->
         let lt = type_of_identifier var
         and (rt, e') = check_expr e in
@@ -91,6 +87,13 @@ let check (globals, functions) =
                   string_of_typ rt ^ " in " ^ string_of_expr ex
         in
         (check_assign lt rt err, SAssign(var, (rt, e')))
+
+      | DecAssn (ty, var, e) as decassgn -> 
+        let (rt, e') = check_expr e in
+        let err = "illegal assignment " ^ string_of_typ ty ^ " = " ^
+          string_of_typ rt ^ " in " ^ string_of_expr decassgn in
+        (**let (ty, e') = check_assign e ty err in**)
+        (ty, SDecAssn(ty, var, (ty, e')))
 
       | Binop(e1, op, e2) as e ->
         let (t1, e1') = check_expr e1
@@ -135,12 +138,20 @@ let check (globals, functions) =
     (* Return a semantically-checked statement i.e. containing sexprs *)
     and check_stmt =function
         Expr e -> SExpr (check_expr e)
+      | Block sl ->
+        let rec check_stmt_list = function
+          Block sl :: ss  -> check_stmt_list (sl @ ss) (* Flatten blocks *)
+        | s :: ss         -> let c = check_stmt s in
+                              c :: check_stmt_list ss
+        | []              -> []
+        in SBlock(check_stmt_list sl)
     in (* body of check_func *)
     { srtyp = func.rtyp;
       sfname = func.fname;
       sformals = func.formals;
-      slocals  = func.locals;
-      sbody = check_stmt_list func.body
+      sbody = match check_stmt (Block func.body) with
+        SBlock(sl) -> sl
+      | _ -> raise (Failure ("internal error: block didn't become a block?"))
     }
   in
-  (globals, List.map check_func functions)
+  (List.map check_func functions)
