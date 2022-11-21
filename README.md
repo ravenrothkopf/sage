@@ -1,11 +1,13 @@
+<!-- omit in toc -->
 # sage Programming Language
 
-- [sage Programming Language](#sage-programming-language)
-  - [File Structure](#file-structure)
-  - [Method to Run and Test](#method-to-run-and-test)
-  - [Features Provided in Current Version](#features-provided-in-current-version)
-  - [Features Not Implemented at This Phase](#features-not-implemented-at-this-phase)
-  - [Team Member Contributions](#team-member-contributions)
+<!-- omit in toc -->
+## Table of Contents
+- [File Structure](#file-structure)
+- [Method to Run and Test](#method-to-run-and-test)
+- [Features Provided in Current Version](#features-provided-in-current-version)
+- [Features Not Implemented at This Phase](#features-not-implemented-at-this-phase)
+- [Team Member Contributions](#team-member-contributions)
 
 ## File Structure
 .
