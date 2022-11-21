@@ -54,3 +54,117 @@ Run Makefile ('/sage') to compile sage. Test using test cases ('/sage/test_cases
 * Lauren (11/19) - Finished implementing parsing of int, float, and bool types and began updating the LRM
 * Lauren (11/20) - Added test cases
 * Raven (11/20) - Wrote Makefile
+```
+sage
+├─ .DS_Store
+├─ Makefile
+├─ README.md
+├─ _build
+│  ├─ _digests
+│  ├─ _log
+│  ├─ ast.cmi
+│  ├─ ast.cmo
+│  ├─ ast.cmx
+│  ├─ ast.ml
+│  ├─ ast.ml.depends
+│  ├─ ast.o
+│  ├─ ocamlc.where
+│  ├─ parser.cmi
+│  ├─ parser.cmx
+│  ├─ parser.ml
+│  ├─ parser.ml.depends
+│  ├─ parser.mli
+│  ├─ parser.mli.depends
+│  ├─ parser.mly
+│  ├─ parser.o
+│  ├─ scanner.cmi
+│  ├─ scanner.cmo
+│  ├─ scanner.cmx
+│  ├─ scanner.ml
+│  ├─ scanner.ml.depends
+│  ├─ scanner.mll
+│  ├─ scanner.o
+│  ├─ test.cmi
+│  ├─ test.cmo
+│  ├─ test.cmx
+│  ├─ test.ml
+│  ├─ test.ml.depends
+│  ├─ test.native
+│  └─ test.o
+├─ ast.ml
+├─ helloWorld.ml
+├─ parser.mly
+├─ sage.out
+├─ sage.tb
+├─ sast.ml
+├─ scanner.mll
+├─ semant.ml
+├─ test.ml
+├─ test.native
+├─ test2.ml
+└─ test_cases
+   ├─ test-assign1.ml
+   ├─ test-function1.ml
+   ├─ test-function2.ml
+   ├─ test-function3.ml
+   ├─ test-function4.ml
+   └─ tests.ml
+
+```
+```
+sage
+├─ .DS_Store
+├─ Makefile
+├─ README.md
+├─ _build
+│  ├─ _digests
+│  ├─ _log
+│  ├─ ast.cmi
+│  ├─ ast.cmo
+│  ├─ ast.cmx
+│  ├─ ast.ml
+│  ├─ ast.ml.depends
+│  ├─ ast.o
+│  ├─ ocamlc.where
+│  ├─ parser.cmi
+│  ├─ parser.cmx
+│  ├─ parser.ml
+│  ├─ parser.ml.depends
+│  ├─ parser.mli
+│  ├─ parser.mli.depends
+│  ├─ parser.mly
+│  ├─ parser.o
+│  ├─ scanner.cmi
+│  ├─ scanner.cmo
+│  ├─ scanner.cmx
+│  ├─ scanner.ml
+│  ├─ scanner.ml.depends
+│  ├─ scanner.mll
+│  ├─ scanner.o
+│  ├─ test.cmi
+│  ├─ test.cmo
+│  ├─ test.cmx
+│  ├─ test.ml
+│  ├─ test.ml.depends
+│  ├─ test.native
+│  └─ test.o
+├─ ast.ml
+├─ helloWorld.ml
+├─ parser.mly
+├─ sage.out
+├─ sage.tb
+├─ sast.ml
+├─ scanner.mll
+├─ semant.ml
+├─ test.ml
+├─ test.native
+├─ test2.ml
+└─ test_cases
+   ├─ test-assign1.ml
+   ├─ test-function1.ml
+   ├─ test-function2.ml
+   ├─ test-function3.ml
+   ├─ test-function4.ml
+   └─ tests.ml
+
+```
