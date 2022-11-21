@@ -18,13 +18,13 @@ type stmt =
 type val_bind = typ * string * expr
 
 (* int x: name binding - used as parameters *)
-type name_bind = typ * string
+(*type name_bind = typ * string*)
 
 (* str funct main (int a): func_def *)
 type func_def = {
   rtyp: typ;
   fname: string;
-  formals: name_bind list;
+  formals: val_bind list;
   locals: val_bind list;
   body: stmt list;
 }
@@ -57,7 +57,8 @@ let string_of_typ = function
   | Float -> "float"
   | Bool -> "bool"
 
-let string_of_vdecl (t, id, e) = string_of_typ t ^ " " ^ id ^ " = " ^  string_of_expr e ^ "\n"
+
+  let string_of_vdecl (t, id, e) = string_of_typ t ^ " " ^ id ^ " = " ^  string_of_expr e ^ "\n"
 
 let string_of_fdecl fdecl =
   string_of_typ fdecl.rtyp ^ " " ^
