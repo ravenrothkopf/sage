@@ -52,8 +52,8 @@ Run Makefile ('/sage') to compile sage. Test using test cases ('/sage/test_cases
 
 * Raven (11/13) - Wrote the foundation for the scanner, parser, and ast for Hello World (comments, string literals, str data types, concatenation, function definitions)
 * Raven (11/14) - Debugged scanner and parser building
-* Gabriela (11/14) - Review codebase and compile list of bugs to address in office hours for test.ml
-* Gabriela (11/15) - Attempt to debug, attended Gregory's OH for guidance, comitted first steps of implementation to address ^D parsing issues 
+* Gabriela (11/15) - Review codebase and compile list of bugs to address in office hours for test.ml
+* Gabriela (11/16) - Attempt to debug, attended Gregory's OH for guidance, comitted first steps of implementation to address ^D parsing issues 
 * Jenny & Raven (11/16) - met and planned on what needs to be done, within what time frame, what the best steps to proceed are, and how to get full participation
 * Jenny (11/16) - Combed through the examples from class, debugged and tried to get Hello World to work, fixed the parsing of string literals, debugged .mly and ast files
 * Gabriela (11/16) - Combed through examples from class and quality assurance testing for test.ml, attempt to address locally bugs
