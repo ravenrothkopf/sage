@@ -71,3 +71,4 @@ Run Makefile ('/sage') to compile sage. Test using test cases ('/sage/test_cases
 * Gabriela (11/20) - Collaborate with Mely to address semant.ml bugs and attempting to adjust ast.ml file accordingly for test2.ml
 * Gabriela (11/20) - Rebase codebase after commit to address binding criticially compromised exsisting code
 * Gabriela (11/21) - Quality assurance testing and compile a list of bugs to address in Hao's office hours, specifically addressing test cases file
+* Gabriela (11/21) - Attend Hao's OH and push some debugging suggestions for binding
