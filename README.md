@@ -10,6 +10,7 @@
 - [Team Member Contributions](#team-member-contributions)
 
 ## File Structure
+project-tree
 .
 ├── Makefile
 ├── README.md
@@ -26,7 +27,6 @@
 ├── test_cases
     ├── test-assign1.ml
     └── test-function1.ml
-
     
 ## Method to Run and Test
 
