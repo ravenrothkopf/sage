@@ -29,7 +29,7 @@ type func_def = {
   body: stmt list;
 }
 
-type program = val_bind list * func_def list
+type program = val_bind list * func_def list 
 
 (* Pretty-printing functions *)
 let string_of_op = function
@@ -58,11 +58,11 @@ let string_of_typ = function
   | Bool -> "bool"
 
 
-  let string_of_vdecl (t, id, e) = string_of_typ t ^ " " ^ id ^ " = " ^  string_of_expr e ^ "\n"
+let string_of_vdecl (t, id, e) = string_of_typ t ^ " " ^ id ^ " = " ^  string_of_expr e ^ "\n"
 
 let string_of_fdecl fdecl =
   string_of_typ fdecl.rtyp ^ " " ^
-  "funct " ^ fdecl.fname ^ "(" ^ String.concat ", " (List.map snd fdecl.formals) ^
+  "funct " ^ fdecl.fname ^ "(" ^ String.concat ", " (List.map string_of_vdecl fdecl.formals) ^
   ") : \n" ^
   String.concat "    " (""::List.map string_of_vdecl fdecl.locals) ^
   String.concat "    " (""::List.map string_of_stmt fdecl.body) ^
