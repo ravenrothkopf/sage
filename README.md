@@ -31,7 +31,7 @@ sage
 
 ## Method to Run and Test
 
-Run Makefile ('/sage') to compile sage. Test using test cases ('/sage/test_cases'). 
+Run Makefile ('/sage') to compile sage. Test using test cases ('/sage/test_cases').  
 `make`
 
 ## Features Provided in Current Version
