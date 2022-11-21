@@ -1,20 +1,21 @@
 # sage Programming Language
 ## File Structure
 .
-├── src
-│    ├── ast.ml
-│    ├── helloWorld.mc
-│    ├── helloWorld.ml
-│    ├── parser.mly
-│    ├── sast.ml
-│    ├── scanner.mll
-│    ├── semant.ml
-│    ├── test.ml
-│    └── test2.ml
+├── Makefile
+├── README.md
+├── ast.ml
+├── helloWorld.ml
+├── parser.mly
+├── sage.out
+├── sage.tb
+├── sast.ml
+├── scanner.mll
+├── semant.ml
+├── test.ml
+├── test2.ml
 ├── test_cases
-|    └── tests.ml
-└── readme.md
-
+    └── tests.ml
+    
 ## Method to Run and Test
 
 Use Makefile to compile sage. Tests should pass with OK.
