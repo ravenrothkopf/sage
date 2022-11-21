@@ -1,4 +1,12 @@
 # sage Programming Language
+
+- [sage Programming Language](#sage-programming-language)
+  - [File Structure](#file-structure)
+  - [Method to Run and Test](#method-to-run-and-test)
+  - [Features Provided in Current Version](#features-provided-in-current-version)
+  - [Features Not Implemented at This Phase](#features-not-implemented-at-this-phase)
+  - [Team Member Contributions](#team-member-contributions)
+
 ## File Structure
 .
 ├── Makefile
@@ -14,16 +22,19 @@
 ├── test.ml
 ├── test2.ml
 ├── test_cases
-    └── tests.ml
+    ├── test-assign1.ml
+    └── test-function1.ml
+
     
 ## Method to Run and Test
 
-Use Makefile to compile sage. Tests should pass with OK.
+Run Makefile ('/sage') to compile sage. Test using test cases ('/sage/test_cases'). 
 `make`
 
 ## Features Provided in Current Version
 
 * Parsing of assignment statements and function declarations
+  
 ## Features Not Implemented at This Phase
 
 * None related to Hello World
