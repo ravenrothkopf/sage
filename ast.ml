@@ -10,12 +10,14 @@ type expr =
   | FloatLit of float
   | BoolLit of bool
   | Call of string * expr list
+  | DecAssn of typ * string * expr
 
 type stmt =
   | Expr of expr
+  | Block of stmt list
 
 (* int x = 3: value binding *)
-type val_bind = typ * string * expr
+type bind = typ * string
 
 (* int x: name binding - used as parameters *)
 (*type name_bind = typ * string*)
@@ -24,17 +26,22 @@ type val_bind = typ * string * expr
 type func_def = {
   rtyp: typ;
   fname: string;
-  formals: val_bind list;
-  locals: val_bind list;
+  formals: bind list;
   body: stmt list;
 }
 
-type program = val_bind list * func_def list
+type program = stmt list * func_def list
 
 (* Pretty-printing functions *)
 let string_of_op = function
     Concat -> "+"
 
+
+let string_of_typ = function
+    String -> "str"
+  | Int -> "int"
+  | Float -> "float"
+  | Bool -> "bool"
 let rec string_of_expr = function
     Id(s) -> s
   | Assign(v, e) -> v ^ " = " ^ string_of_expr e
@@ -45,30 +52,23 @@ let rec string_of_expr = function
   | FloatLit(s) -> string_of_float s
   | BoolLit(true) -> "True"
   | BoolLit(false) -> "False"
+  | DecAssn(t, s, e) -> string_of_typ t ^ " " ^ s ^ " = " ^ string_of_expr e
   | Call(f, el) ->
     f ^ "(" ^ String.concat ", " (List.map string_of_expr el) ^ ")"
 
 let rec string_of_stmt = function
-  | Expr(expr) -> string_of_expr expr ^ "\n"
-
-let string_of_typ = function
-    String -> "str"
-  | Int -> "int"
-  | Float -> "float"
-  | Bool -> "bool"
-
-
-  let string_of_vdecl (t, id, e) = string_of_typ t ^ " " ^ id ^ " = " ^  string_of_expr e ^ "\n"
+     Expr(expr) -> string_of_expr expr ^ "\n"
+    | Block(stmts) ->
+      "    " ^ String.concat "" (List.map string_of_stmt stmts) ^ "\n"
 
 let string_of_fdecl fdecl =
   string_of_typ fdecl.rtyp ^ " " ^
   "funct " ^ fdecl.fname ^ "(" ^ String.concat ", " (List.map snd fdecl.formals) ^
   ") : \n" ^
-  String.concat "    " (""::List.map string_of_vdecl fdecl.locals) ^
   String.concat "    " (""::List.map string_of_stmt fdecl.body) ^
   "\n"
 
-let string_of_program (vars, funcs) =
+let string_of_program (statements, funcs) =
   "\n\nParsed program: \n\n" ^
-  String.concat "" (List.map string_of_vdecl vars) ^ "\n" ^
-  String.concat "\n" (List.map string_of_fdecl funcs)
+  String.concat "\n" (List.map string_of_stmt statements) ^
+  String.concat "\n" (List.map string_of_fdecl funcs)  

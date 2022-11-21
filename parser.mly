@@ -2,7 +2,8 @@
 open Ast
 %}
 
-%token NEWLINE LPAREN RPAREN PLUS ASSIGN TAB
+%token LPAREN RPAREN PLUS ASSIGN
+%token NEWLINE TAB
 %token STRING INT FLOAT BOOL
 %token FUNCT COLON COMMA
 %token <int> ILIT
@@ -27,14 +28,12 @@ program:
   decls EOF { $1}
 
 decls:
-   /* nothing */ { ([], [])                 }
- | vdecl NEWLINE decls   { (($1 :: fst $3), snd $3) }
+   /* nothing */ { ([], []) }
+ | stmt NEWLINE decls   { (($1 :: fst $3), snd $3) }
  | fdecl decls   { (fst $2, ($1 :: snd $2)) }
  | NEWLINE decls { (fst $2, snd $2) }
 
 /* int x */
-vdecl:
-  typ ID ASSIGN expr { ($1, $2, $4) }
 
 typ:
   STRING  { String }
@@ -42,18 +41,10 @@ typ:
 | FLOAT { Float }
 | BOOL { Bool }
 
-/* fdecl */
-fdecl:
-  typ FUNCT ID LPAREN formals_opt RPAREN COLON NEWLINE decls_inside
-  {
-    {
-      rtyp=$1;
-      fname=$3;
-      formals=$5;
-      locals=fst $9;
-      body=snd $9
-    }
-  }
+decls_inside:
+   { [] }
+  | stmt NEWLINE decls_inside { $1::$3 }
+  | NEWLINE decls_inside { $2 }
 
 /* formals_opt */
 formals_opt:
@@ -67,15 +58,21 @@ formals_list:
 parameter_decl:
   typ ID { ($1, $2) }
 
-decls_inside:
-    /* nothing */                  { ([], [])                 }
-  | TAB vdecl NEWLINE decls_inside { ( ($2 :: fst $4), snd $4) }
-  | TAB stmt NEWLINE decls_inside  { ( fst $4, ($2 :: snd $4)) }
-  | NEWLINE decls_inside { (fst $2, snd $2) }
-  | TAB NEWLINE decls_inside { (fst $3, snd $3) }
+/* fdecl */
+fdecl:
+  typ FUNCT ID LPAREN formals_opt RPAREN COLON NEWLINE decls_inside
+  {
+    {
+      rtyp=$1;
+      fname=$3;
+      formals=$5;
+      body=$9;
+    }
+  }
 
 stmt:
-  |  expr                                { Expr($1)  }
+    expr                      { Expr($1)  }
+  | TAB decls_inside          { Block($2) }
 
 expr:
     ID                        { Id($1)                 }
@@ -87,6 +84,8 @@ expr:
   | ILIT                      { IntLit($1) }
   | FLIT                      { FloatLit($1) }
   | BLIT                      { BoolLit($1) }
+  | typ ID ASSIGN expr { DecAssn($1, $2, $4) }
+
 
 /* args_opt*/
 args_opt:
