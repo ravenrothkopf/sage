@@ -35,7 +35,7 @@ sage
 ## Method to Run and Test
 
 Run Makefile ('/sage') to compile sage. Test using test cases ('/sage/test_cases').  
-`make`
+`make all`
 
 ## Features Provided in Current Version
 
@@ -46,10 +46,10 @@ Run Makefile ('/sage') to compile sage. Test using test cases ('/sage/test_cases
 * None related to hello world front end
 
 ## Guidance We Are Seeking
-* 'make' all gives us a dangling terminal error that we have attempted to fix but with no luck
-* Attempting to build ../test-cases/test-assign1 gives parsing errors likely related to binding. We have wanted to fix how we bind, but changes have not been pushed since they do not work.
+* `make all` gives us a dangling terminal error that we have attempted to fix but with no luck
 * How do we make sure everyone has the same codebase? We all git pull, but stashing some changes has made it to where pulling does not modify current code state
 * Should we be throwing specific errors when variable names are not valid?
+* We're trying to figure out how to deal with the syntactically significant whitespace of Python and would appreciate any input on how to implement this in our compiler!
 
 ## Team Member Contributions
 
@@ -74,4 +74,5 @@ Run Makefile ('/sage') to compile sage. Test using test cases ('/sage/test_cases
 * Gabriela (11/21) - Quality assurance testing and compile a list of bugs to address in Hao's office hours, specifically addressing test cases file
 * Gabriela (11/21) - Attend Hao's OH and push some debugging suggestions for binding
 * Mely (11/21) - Attended Hao's OH to ask about printing functionality and worked on implementing the print feature in semant.ml
+* Raven (12/21) - Worked on debugging parser ast, and semantic checking to integrate binding  
 
