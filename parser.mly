@@ -32,6 +32,7 @@ decls:
  | stmt NEWLINE decls   { (($1 :: fst $3), snd $3) }
  | fdecl decls   { (fst $2, ($1 :: snd $2)) }
  | NEWLINE decls { (fst $2, snd $2) }
+ | stmt decls { (($1 :: fst $2), snd $2) }
 
 /* int x */
 
