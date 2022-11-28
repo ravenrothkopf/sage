@@ -139,7 +139,8 @@ Indicating that both s1 and s2 were successfully parsed by the compiler :)
 * Gabriela (11/21) - Attended Hao's OH and push some debugging suggestions for binding
 * Mely (11/21) - Attended Hao's OH to ask about printing functionality and worked on implementing the print feature in semant.ml
 * Lauren (11/21) - Attended Hao's OH and fixed string concatenation, updated the README and finished updating the LRM (e.g., added a complete list of indices of all current features, fixed + enhanced syntax highlighting specifically for sage, updated/edited each section of the LRM). Worked on the test shell script, although currently incomplete
-* Raven (12/21) - Worked on debugging parser ast, and semantic checking to integrate binding
+* Raven (11/21) - Worked on debugging parser ast, and semantic checking to integrate binding
+* Gabriela (11/28) - Created branches for feature management and proposed new merging protocol moving forward
 
 ## References
 
