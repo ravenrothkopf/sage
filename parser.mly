@@ -2,8 +2,8 @@
 open Ast
 %}
 
+%token LBRACE RBRACE NEWLINE
 %token LPAREN RPAREN PLUS ASSIGN
-%token NEWLINE TAB
 %token STRING INT FLOAT BOOL
 %token FUNCT COLON COMMA
 %token <int> ILIT
@@ -15,80 +15,71 @@ open Ast
 %token EOF
 %token NoOp
 
-%start program
-%type <Ast.program> program
-
 %right ASSIGN
 %left PLUS
 
+%start program
+%type <Ast.program> program
+
 %%
 
-/* add function declarations*/
 program:
   decls EOF { $1 }
 
 decls:
-   /* nothing */ { ([], []) }
- | fdecl decls   { (fst $2, ($1 :: snd $2)) }
- | stmt decls { (($1 :: fst $2), snd $2) } 
+   /* nothing */ { [], [] }  
+ | fdecl decls { fst $2, ($1 :: snd $2) }
+ | stmt decls { ($1 :: fst $2), snd $2 }
  | NEWLINE decls { (fst $2, snd $2) }
 
-typ:
-  STRING  { String }
-| INT { Int }
-| FLOAT { Float }
-| BOOL { Bool }
-
-/* formals_opt */
-formals_opt:
-    /*nothing*/   { [] }
-  | formals_list { $1 }
-
-formals_list:
-    parameter_decl                    { [$1] }
-  | parameter_decl COMMA formals_list { $1::$3 }
-
-parameter_decl:
-  typ ID { ($1, $2) }
-
-stmt_list:
-   { [] }
-  | stmt_list stmt { $2 :: $1 }
-
-/* fdecl */
 fdecl:
-  typ FUNCT ID LPAREN formals_opt RPAREN COLON NEWLINE stmt_list  
+  typ FUNCT ID LPAREN formals_opt RPAREN COLON NEWLINE stmt_list NEWLINE
   {
     {
-      rtyp=$1;
-      fname=$3;
-      formals=$5;
-      body=$9;
+      rtyp = $1;
+      fname = $3;
+      formals = $5;
+      body = $9;
     }
   }
 
+formals_opt:
+    /* nothing */ { [] }
+  | formal_list   { $1 }
+
+formal_list:
+    typ ID                   { [($1, $2)] }
+  | formal_list COMMA typ ID { ($3, $4) :: $1 }
+
+typ:
+    INT { Int }
+  | BOOL { Bool }
+  | FLOAT { Float }
+  | STRING { String }
+
+stmt_list:
+    /* nothing */  { [] }
+  | stmt_list stmt { $2 :: $1 }
+
 stmt:
-  expr                        { Expr($1) }
-  | expr NEWLINE              { Expr($1) }
-  | TAB expr                  { Expr($2) }
+  expr NEWLINE { Expr($1) }
 
 expr:
-    ID                        { Id($1)                 }
-  | ID ASSIGN expr            { Assign($1, $3)         }
-  | SLIT                      { StringLit($1)          }
-  | SLIT PLUS SLIT            { Binop(StringLit($1), Concat, StringLit($3))         }
-  | LPAREN expr RPAREN        { $2 }
+    ILIT             { IntLit($1) }
+  | FLIT             { FloatLit($1) }
+  | SLIT             { StringLit($1) }
+  | SLIT PLUS SLIT   { Binop(StringLit($1), Concat, StringLit($3)) }
+  | BLIT             { BoolLit($1) }
+  | ID               { Id($1) }
+  | ID ASSIGN expr   { Assign($1, $3) }
   | ID LPAREN args_opt RPAREN { Call($1, $3) }
-  | ILIT                      { IntLit($1) }
-  | FLIT                      { FloatLit($1) }
-  | BLIT                      { BoolLit($1) }
-  | typ ID ASSIGN expr        { DecAssn($1, $2, $4) }
+  | LPAREN expr RPAREN { $2 }
+  | typ ID ASSIGN expr { DecAssn($1, $2, $4) }
 
-/* args_opt*/
 args_opt:
-   /*nothing*/ { [] }
-  | args       { $1 }
+    /* nothing */ { [] }
+  | args { $1 }
 
 args:
-    expr            { [$1] }
-  | expr COMMA args { $1::$3 }
+    expr                    { [$1] }
+  | args COMMA expr { $3 :: $1 }
