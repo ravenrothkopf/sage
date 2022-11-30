@@ -25,27 +25,19 @@ open Ast
 
 /* add function declarations*/
 program:
-  decls EOF { $1}
+  decls EOF { $1 }
 
 decls:
    /* nothing */ { ([], []) }
- | stmt NEWLINE decls   { (($1 :: fst $3), snd $3) }
  | fdecl decls   { (fst $2, ($1 :: snd $2)) }
+ | stmt decls { (($1 :: fst $2), snd $2) } 
  | NEWLINE decls { (fst $2, snd $2) }
- | stmt decls { (($1 :: fst $2), snd $2) }
-
-/* int x */
 
 typ:
   STRING  { String }
 | INT { Int }
 | FLOAT { Float }
 | BOOL { Bool }
-
-decls_inside:
-   { [] }
-  | stmt NEWLINE decls_inside { $1::$3 }
-  | NEWLINE decls_inside { $2 }
 
 /* formals_opt */
 formals_opt:
@@ -59,9 +51,13 @@ formals_list:
 parameter_decl:
   typ ID { ($1, $2) }
 
+stmt_list:
+   { [] }
+  | stmt_list stmt { $2 :: $1 }
+
 /* fdecl */
 fdecl:
-  typ FUNCT ID LPAREN formals_opt RPAREN COLON NEWLINE decls_inside
+  typ FUNCT ID LPAREN formals_opt RPAREN COLON NEWLINE stmt_list  
   {
     {
       rtyp=$1;
@@ -72,8 +68,9 @@ fdecl:
   }
 
 stmt:
-    expr                      { Expr($1)  }
-  | TAB decls_inside          { Block($2) }
+  expr                        { Expr($1) }
+  | expr NEWLINE              { Expr($1) }
+  | TAB expr                  { Expr($2) }
 
 expr:
     ID                        { Id($1)                 }
@@ -85,8 +82,7 @@ expr:
   | ILIT                      { IntLit($1) }
   | FLIT                      { FloatLit($1) }
   | BLIT                      { BoolLit($1) }
-  | typ ID ASSIGN expr { DecAssn($1, $2, $4) }
-
+  | typ ID ASSIGN expr        { DecAssn($1, $2, $4) }
 
 /* args_opt*/
 args_opt:
