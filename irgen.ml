@@ -21,10 +21,14 @@ let translate (globals, functions) =
   and void_ptr_t = L.pointer_type (L.i8_type context)
   and str_t      = L.pointer_type (L.i8_type context) in
 
+
+  (*TODO BASED ON AST*)
   (* Return the LLVM type for a sage type *)
   let ltype_of_typ = function
       A.Int   -> i32_t
     | A.Bool  -> i1_t
+    | A.Float ->
+    | A.String ->
   in
 
   (* Create a map of global variables after creating each *)
