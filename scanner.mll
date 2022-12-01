@@ -8,11 +8,10 @@ let float = digit* frac? exp?
 let int = '-'? digit digit*
 
 rule token = parse
-  [' ' '\r']                            { token lexbuf }          (* Whitespace *)
+  [' ' '\r' '\t']                       { token lexbuf }          (* Whitespace *)
 | "#"                                   { comment lexbuf }           (* Comments *)
 | "\"\"\""                              { comment2 lexbuf }
 | '\n'                                  { NEWLINE }
-| '\t'                                  { TAB }
 | '('                                   { LPAREN }
 | ')'                                   { RPAREN }
 | ':'                                   { COLON }
