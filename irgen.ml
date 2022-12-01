@@ -17,18 +17,19 @@ let translate (globals, functions) =
   and i8_t       = L.i8_type     context
   and i1_t       = L.i1_type     context
   and float_t    = L.double_type context
-  and void_t     = L.void_type   context
-  and void_ptr_t = L.pointer_type (L.i8_type context)
+  (*and void_t     = L.void_type   context
+  and void_ptr_t = L.pointer_type (L.i8_type context) *)
   and str_t      = L.pointer_type (L.i8_type context) in
 
 
-  (*TODO BASED ON AST*)
   (* Return the LLVM type for a sage type *)
   let ltype_of_typ = function
-      A.Int   -> i32_t
-    | A.Bool  -> i1_t
-    | A.Float ->
-    | A.String ->
+      SInt   -> i32_t
+    | SBool  -> i1_t
+    | SFloat -> float_t
+    | SString -> str_t
+    | SFunc ftype -> ltype_of_clsr_func "" ftype
+    (* need to add more as more features get set-up*)
   in
 
   (* Create a map of global variables after creating each *)
