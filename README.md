@@ -143,7 +143,7 @@ Indicating that both s1 and s2 were successfully parsed by the compiler :)
 * Gabriela (11/28) - Created branches for feature management and proposed new merging protocol moving forward
 * Gabriela (11/28) - Begin initial code for code generation portion of project
 * Gabriela (11/29) - More code generation work
-* Gabriela (11/30) - Review LLVM documentation
+* Gabriela (11/30) - Review LLVM documentation & open issues for future features
 
 ## References
 
