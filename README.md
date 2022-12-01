@@ -141,6 +141,9 @@ Indicating that both s1 and s2 were successfully parsed by the compiler :)
 * Lauren (11/21) - Attended Hao's OH and fixed string concatenation, updated the README and finished updating the LRM (e.g., added a complete list of indices of all current features, fixed + enhanced syntax highlighting specifically for sage, updated/edited each section of the LRM). Worked on the test shell script, although currently incomplete
 * Raven (11/21) - Worked on debugging parser ast, and semantic checking to integrate binding
 * Gabriela (11/28) - Created branches for feature management and proposed new merging protocol moving forward
+* Gabriela (11/28) - Begin initial code for code generation portion of project
+* Gabriela (11/29) - More code generation work
+* Gabriela (11/30) - Review LLVM documentation & open issues for future features
 
 ## References
 
