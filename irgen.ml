@@ -20,7 +20,7 @@ let translate (globals, functions) =
   (*and void_t     = L.void_type   context
   and void_ptr_t = L.pointer_type (L.i8_type context) *)
   and str_t      = L.pointer_type (L.i8_type context) in
-  
+
 
   (* Return the LLVM type for a sage type *)
   let ltype_of_typ = function
@@ -150,8 +150,8 @@ let translate (globals, functions) =
 
         ignore(L.build_cond_br bool_val then_bb else_bb builder);
         L.builder_at_end context end_bb
-
-      | SWhile (predicate, body) ->
+      (* implement below after loop structure *)
+       (*| SWhile (predicate, body) ->
         let while_bb = L.append_block context "while" the_function in
         let build_br_while = L.build_br while_bb in (* partial function *)
         ignore (build_br_while builder);
@@ -165,7 +165,7 @@ let translate (globals, functions) =
 
         ignore(L.build_cond_br bool_val body_bb end_bb while_builder);
         L.builder_at_end context end_bb
-
+        *)
     in
     (* Build the code for each statement in the function *)
     let func_builder = build_stmt builder (SBlock fdecl.sbody) in
