@@ -20,7 +20,7 @@ let translate (globals, functions) =
   (*and void_t     = L.void_type   context
   and void_ptr_t = L.pointer_type (L.i8_type context) *)
   and str_t      = L.pointer_type (L.i8_type context) in
-
+  
 
   (* Return the LLVM type for a sage type *)
   let ltype_of_typ = function
