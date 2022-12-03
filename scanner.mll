@@ -12,11 +12,13 @@ rule token = parse
 | "#"                                   { comment lexbuf }           (* Comments *)
 | "\"\"\""                              { comment2 lexbuf }
 | '\n'                                  { NEWLINE }
-| '\t'                                  { TAB }
+(**| '\t'                                  { TAB } **)
 | '('                                   { LPAREN }
 | ')'                                   { RPAREN }
 | ':'                                   { COLON }
 | ','                                   { COMMA }
+| '{'                                   { LBRACE }
+| '}'                                   { RBRACE }
 | '+'                                   { PLUS }
 | '='                                   { ASSIGN }
 | "str"                                 { STRING }

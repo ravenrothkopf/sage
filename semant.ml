@@ -6,12 +6,11 @@ module StringMap = Map.Make(String)
 (* Semantic checking of the AST. Returns an SAST if successful,
    throws an exception if something is wrong.
 
-   Check each global variable, then check each function *)
+   Check each global statement, then check each function *)
 
-let check (statements, functions) =
-
+let check (globals, functions) =
   (* Verify a list of bindings has no duplicate names *)
-  let check_binds (kind : string) (binds : bind list) =
+  let check_binds (kind : string) (binds : bind_formal list) =
     let rec dups = function
         [] -> ()
       |	((_,n1) :: (_,n2) :: _) when n1 = n2 ->
@@ -19,6 +18,14 @@ let check (statements, functions) =
       | _ :: t -> dups t
     in dups (List.sort (fun (_,a) (_,b) -> compare a b) binds)
   in
+
+(*separates type and id from expr for check_binds, concats into list*)
+let rec global_symbols = function
+  [] -> []
+  | hd::tl -> fst hd::global_symbols tl
+in
+(**** Check global variables ****)
+ignore(check_binds "global" (global_symbols globals));
 
   (* Collect function declarations for built-in functions: no bodies *)
   let built_in_decls =
@@ -52,6 +59,13 @@ let check (statements, functions) =
   in
 
   let _ = find_func "main" in (* Ensure "main" is defined *)
+
+  let check_global (b, e) =
+    (* Build local symbol table of variables for this function *)
+    let symbols = List.fold_left (fun m (ty, name) -> StringMap.add name ty m)
+                StringMap.empty (global_symbols globals)
+    in
+    (b, expr e symbols) in
 
   let check_func func =
     (* Make sure no formals or locals are void or duplicates *)
@@ -87,11 +101,13 @@ let check (statements, functions) =
                   string_of_typ rt ^ " in " ^ string_of_expr ex
         in
         (check_assign lt rt err, SAssign(var, (rt, e')))
-
-      | DecAssn (ty, var, e) as decassgn -> 
+      
+      (**check the type binding of declaration + assignment statement*)
+      (**WIP!*)
+      | DecAssn (ty, var, e) as ex -> 
         let (rt, e') = check_expr e in
         let err = "illegal assignment " ^ string_of_typ ty ^ " = " ^
-          string_of_typ rt ^ " in " ^ string_of_expr decassgn in
+          string_of_typ rt ^ " in " ^ string_of_expr ex in
         (**let (ty, e') = check_assign e ty err in**)
         (ty, SDecAssn(ty, var, (ty, e')))
 
@@ -135,23 +151,21 @@ let check (statements, functions) =
     let rec check_stmt_list =function
         [] -> []
       | s :: sl -> check_stmt s :: check_stmt_list sl
+
     (* Return a semantically-checked statement i.e. containing sexprs *)
-    and check_stmt =function
+    and check_stmt = function
         Expr e -> SExpr (check_expr e)
-      | Block sl ->
-        let rec check_stmt_list = function
-          Block sl :: ss  -> check_stmt_list (sl @ ss) (* Flatten blocks *)
-        | s :: ss         -> let c = check_stmt s in
-                              c :: check_stmt_list ss
-        | []              -> []
-        in SBlock(check_stmt_list sl)
+      | Block stmt_list -> SBlock(check_stmt_list stmt_list)
+      | VarDecl(v) -> (SVarAssn((ty, n), expr e vars), StringMap.add n ty
+         vars)
+    
     in (* body of check_func *)
     { srtyp = func.rtyp;
       sfname = func.fname;
       sformals = func.formals;
       sbody = match check_stmt (Block func.body) with
-        SBlock(sl) -> sl
-      | _ -> raise (Failure ("internal error: block didn't become a block?"))
+        SBlock(stmt_list) -> stmt_list
+      | _ -> raise (Failure ("error"))
     }
   in
-  (List.map check_func functions)
+  (List.map check_global globals, List.map check_func functions)
