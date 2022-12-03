@@ -20,7 +20,7 @@ type bind_init = bind_formal * expr
 type stmt =
    Expr of expr
   | Block of stmt list
-  | VarAssn of bind_init
+  | DecAssn of bind_init
 
 (*type name_bind = typ * string*)
 
@@ -63,7 +63,7 @@ let rec string_of_stmt = function
     Expr(expr) -> string_of_expr expr ^ "\n"
   | Block(stmts) ->
       "    " ^ String.concat "" (List.map string_of_stmt stmts) ^ "\n"
-  | VarAssn(decl, expr) -> string_of_vdecl (decl, expr)
+  | DecAssn(decl, expr) -> string_of_vdecl (decl, expr)
 
 let string_of_fdecl fdecl =
   string_of_typ fdecl.rtyp ^ " " ^

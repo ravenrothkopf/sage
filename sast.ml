@@ -18,7 +18,7 @@ type sbind_init = sbind_formal * sexpr
 type sstmt = 
     SExpr of sexpr
   | SBlock of sstmt list
-  | SVarAssn of sbind_init
+  | SDecAssn of sbind_init
 
 
 type sfunc_def = {
@@ -52,7 +52,7 @@ let rec string_of_sstmt = function
    SExpr(expr) -> string_of_sexpr expr ^ "\n"
   | SBlock(stmts) ->
     "    " ^ String.concat "" (List.map string_of_sstmt stmts) ^ "\n"
-  | SVarAssn(decl, expr) -> string_of_svdecl (decl, expr)
+  | SDecAssn(decl, expr) -> string_of_svdecl (decl, expr)
 
 let string_of_sfdecl fdecl =
   string_of_typ fdecl.srtyp ^ " " ^

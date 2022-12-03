@@ -2,7 +2,7 @@ str hi = "test"
 
 int funct main (str h) {
     str location = "world"
-    h = "hello"
+    h = hi
     str ran = " "
 }
 

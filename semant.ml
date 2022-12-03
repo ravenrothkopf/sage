@@ -141,13 +141,8 @@ ignore(check_binds "global" (global_symbols globals));
       |  _ -> raise (Failure ("expected Boolean expression in " ^ string_of_expr e))
     in
 
-    let rec check_stmt_list stmt_list vars = match stmt_list with
-        [] -> []
-      | Block sl :: sl'  -> check_stmt_list (sl @ sl') vars
-      | s :: sl -> check_stmt s vars :: check_stmt_list sl vars
-
     (* Return a semantically-checked statement i.e. containing sexprs *)
-    and check_stmt stmt vars = match stmt with
+    let rec check_stmt stmt vars = match stmt with
         Expr e -> (SExpr (check_expr e vars), vars)
       | Block stmt_list -> 
         let bvars = StringMap.empty in
@@ -158,7 +153,7 @@ ignore(check_binds "global" (global_symbols globals));
             (fst checked :: fst checked_rest, snd checked_rest)
           in
           match stmt_list with
-          VarAssn ((ty, n), _) as s :: ss ->
+          DecAssn ((ty, n), _) as s :: ss ->
             let check_decl ty n = match StringMap.find_opt n bvars with
             Some _ -> raise (Failure ("duplicate local variable " ^ n))
             | None -> ()
@@ -166,7 +161,7 @@ ignore(check_binds "global" (global_symbols globals));
           | s :: ss -> check s ss bvars
           | [] -> ([], bvars)
         in (SBlock(fst (check_stmt_list stmt_list vars bvars)), vars)
-      | VarAssn((ty, n), e) -> (SVarAssn((ty, n), check_expr e vars), StringMap.add n ty
+      | DecAssn((ty, n), e) -> (SDecAssn((ty, n), check_expr e vars), StringMap.add n ty
          vars)
     in (* body of check_func *)
     { 

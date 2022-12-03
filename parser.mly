@@ -64,7 +64,7 @@ stmt_list:
 stmt:
   expr NEWLINE { Expr $1 }
   | LBRACE stmt_list RBRACE { Block $2 }
-  | global { VarAssn $1 }
+  | global { DecAssn $1 }
 
 // global_list:
 //     { [] }
