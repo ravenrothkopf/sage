@@ -1,5 +1,10 @@
-int funct main (str h):
-str location = "world"
-h = "hello"
-str ran = " "
+str hi = "test"
+
+int funct main (str h) {
+    str location = "world"
+    h = "hello"
+    str ran = " "
+}
+
+
 

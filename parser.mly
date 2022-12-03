@@ -30,6 +30,7 @@ decls:
    /* nothing */ { ([] , []) }  
  | global decls { (($1 :: fst $2), snd $2) }
  | fdecl decls { fst $2, ($1 :: snd $2) }
+ | NEWLINE decls { (fst $2, snd $2) }
 
 fdecl:
   typ FUNCT ID LPAREN formals_opt RPAREN LBRACE NEWLINE stmt_list RBRACE
