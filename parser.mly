@@ -64,13 +64,13 @@ stmt_list:
 stmt:
   expr NEWLINE { Expr $1 }
   | LBRACE stmt_list RBRACE { Block $2 }
-  | global NEWLINE { VarAssn $1 }
+  | global { VarAssn $1 }
 
 // global_list:
 //     { [] }
 //   | global global_list { $1 :: $2 }
 
-global: typ ID ASSIGN expr { (($1, $2), $4) }
+global: typ ID ASSIGN expr NEWLINE { (($1, $2), $4) }
 
 expr:
     ILIT             { IntLit($1) }

@@ -63,7 +63,7 @@ let rec string_of_stmt = function
     Expr(expr) -> string_of_expr expr ^ "\n"
   | Block(stmts) ->
       "    " ^ String.concat "" (List.map string_of_stmt stmts) ^ "\n"
-  | VarAssn(v) -> string_of_vdecl v
+  | VarAssn(decl, expr) -> string_of_vdecl (decl, expr)
 
 let string_of_fdecl fdecl =
   string_of_typ fdecl.rtyp ^ " " ^

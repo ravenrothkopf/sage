@@ -60,43 +60,27 @@ ignore(check_binds "global" (global_symbols globals));
 
   let _ = find_func "main" in (* Ensure "main" is defined *)
 
-  let check_global (b, e) =
-    (* Build local symbol table of variables for this function *)
-    let symbols = List.fold_left (fun m (ty, name) -> StringMap.add name ty m)
-                StringMap.empty (global_symbols globals)
-    in
-    (b, expr e symbols) in
+  (* Return a variable from our local symbol table *)
+  let type_of_identifier s map =
+    try StringMap.find s map
+    with Not_found -> raise (Failure ("undeclared identifier " ^ s))
+  in
 
-  let check_func func =
-    (* Make sure no formals or locals are void or duplicates *)
-    check_binds "formal" func.formals;
-
-    (* Raise an exception if the given rvalue type cannot be assigned to
+  (* Raise an exception if the given rvalue type cannot be assigned to
        the given lvalue type *)
-    let check_assign lvaluet rvaluet err =
-      if lvaluet = rvaluet then lvaluet else raise (Failure err)
-    in
+  let check_assign lvaluet rvaluet err =
+    if lvaluet = rvaluet then lvaluet else raise (Failure err)
+  in
 
-    (* Build local symbol table of variables for this function *)
-    let symbols = List.fold_left (fun m (ty, name) -> StringMap.add name ty m)
-        StringMap.empty (func.formals)
-    in
-
-    (* Return a variable from our local symbol table *)
-    let type_of_identifier s =
-      try StringMap.find s symbols
-      with Not_found -> raise (Failure ("undeclared identifier " ^ s))
-    in
-
-    let rec check_expr = function
-        Id var -> (type_of_identifier var, SId var)
+  let rec check_expr e map = match e with
+        Id var -> (type_of_identifier var map, SId var)
       | BoolLit l -> (Bool, SBoolLit l) 
       | StringLit l -> (String, SStringLit l)
       | IntLit l -> (Int, SIntLit l)
       | FloatLit l -> (Float, SFloatLit l)
       | Assign(var, e) as ex ->
-        let lt = type_of_identifier var
-        and (rt, e') = check_expr e in
+        let lt = type_of_identifier var map
+        and (rt, e') = check_expr e map in
         let err = "illegal assignment " ^ string_of_typ lt ^ " = " ^
                   string_of_typ rt ^ " in " ^ string_of_expr ex
         in
@@ -104,16 +88,16 @@ ignore(check_binds "global" (global_symbols globals));
       
       (**check the type binding of declaration + assignment statement*)
       (**WIP!*)
-      | DecAssn (ty, var, e) as ex -> 
+      (* | DecAssn (ty, var, e) as ex -> 
         let (rt, e') = check_expr e in
         let err = "illegal assignment " ^ string_of_typ ty ^ " = " ^
           string_of_typ rt ^ " in " ^ string_of_expr ex in
         (**let (ty, e') = check_assign e ty err in**)
-        (ty, SDecAssn(ty, var, (ty, e')))
+        (ty, SDecAssn(ty, var, (ty, e'))) *)
 
       | Binop(e1, op, e2) as e ->
-        let (t1, e1') = check_expr e1
-        and (t2, e2') = check_expr e2 in
+        let (t1, e1') = check_expr e1 map
+        and (t2, e2') = check_expr e2 map in
         let err = "illegal binary operator " ^
                   string_of_typ t1 ^ " " ^ string_of_op op ^ " " ^
                   string_of_typ t2 ^ " in " ^ string_of_expr e
@@ -132,7 +116,7 @@ ignore(check_binds "global" (global_symbols globals));
           raise (Failure ("expecting " ^ string_of_int param_length ^
                           " arguments in " ^ string_of_expr call))
         else let check_call (ft, _) e =
-               let (et, e') = check_expr e in
+               let (et, e') = check_expr e map in
                let err = "illegal argument found " ^ string_of_typ et ^
                          " expected " ^ string_of_typ ft ^ " in " ^ string_of_expr e
                in (check_assign ft et err, e')
@@ -141,31 +125,64 @@ ignore(check_binds "global" (global_symbols globals));
           in (fd.rtyp, SCall(fname, args'))
     in
 
-    let check_bool_expr e =
-      let (t, e') = check_expr e in
+  let check_func func =
+    (* Make sure no formals or locals are void or duplicates *)
+    check_binds "formal" func.formals;
+
+    (* Build local symbol table of variables for this function *)
+    let symbols = List.fold_left (fun m (ty, name) -> StringMap.add name ty m)
+        StringMap.empty (global_symbols globals @ func.formals)
+    in
+
+    let check_bool_expr e vars =
+      let (t, e') = check_expr e vars in
       match t with
       | Bool -> (t, e')
       |  _ -> raise (Failure ("expected Boolean expression in " ^ string_of_expr e))
     in
 
-    let rec check_stmt_list =function
+    let rec check_stmt_list stmt_list vars = match stmt_list with
         [] -> []
-      | s :: sl -> check_stmt s :: check_stmt_list sl
+      | Block sl :: sl'  -> check_stmt_list (sl @ sl') vars
+      | s :: sl -> check_stmt s vars :: check_stmt_list sl vars
 
     (* Return a semantically-checked statement i.e. containing sexprs *)
-    and check_stmt = function
-        Expr e -> SExpr (check_expr e)
-      | Block stmt_list -> SBlock(check_stmt_list stmt_list)
-      | VarDecl(v) -> (SVarAssn((ty, n), expr e vars), StringMap.add n ty
+    and check_stmt stmt vars = match stmt with
+        Expr e -> (SExpr (check_expr e vars), vars)
+      | Block stmt_list -> 
+        let bvars = StringMap.empty in
+        let rec check_stmt_list stmt_list vars bvars = 
+          let check s ss bvars = 
+            let checked = check_stmt s vars in
+            let checked_rest = check_stmt_list ss (snd checked) bvars in
+            (fst checked :: fst checked_rest, snd checked_rest)
+          in
+          match stmt_list with
+          VarAssn ((ty, n), _) as s :: ss ->
+            let check_decl ty n = match StringMap.find_opt n bvars with
+            Some _ -> raise (Failure ("duplicate local variable " ^ n))
+            | None -> ()
+          in (ignore(check_decl ty n); check s ss (StringMap.add n ty bvars))
+          | s :: ss -> check s ss bvars
+          | [] -> ([], bvars)
+        in (SBlock(fst (check_stmt_list stmt_list vars bvars)), vars)
+      | VarAssn((ty, n), e) -> (SVarAssn((ty, n), check_expr e vars), StringMap.add n ty
          vars)
-    
     in (* body of check_func *)
-    { srtyp = func.rtyp;
+    { 
+      srtyp = func.rtyp;
       sfname = func.fname;
       sformals = func.formals;
-      sbody = match check_stmt (Block func.body) with
+      sbody = match fst (check_stmt (Block func.body) symbols) with
         SBlock(stmt_list) -> stmt_list
-      | _ -> raise (Failure ("error"))
+      | _ -> raise (Failure ("internal error"))
     }
   in
-  (List.map check_global globals, List.map check_func functions)
+
+  let check_global (binds, expr) =
+    (* Build local symbol table of variables for this function *)
+    let symbols = List.fold_left (fun m (ty, name) -> StringMap.add name ty m)
+                StringMap.empty (global_symbols globals)
+    in
+    (binds, check_expr expr symbols)
+  in (List.map check_global globals, List.map check_func functions)
