@@ -24,11 +24,11 @@ let translate (globals, functions) =
 
   (* Return the LLVM type for a sage type *)
   let ltype_of_typ = function
-      SInt   -> i32_t
-    | SBool  -> i1_t
-    | SFloat -> float_t
-    | SString -> str_t
-    | SFunc ftype -> ltype_of_clsr_func "" ftype
+      A.Int   -> i32_t
+    | A.Bool  -> i1_t
+    | A.Float -> float_t
+    | A.String -> str_t
+    | A.Func ftype -> ltype_of_clsr_func "" ftype
     (* need to add more as more features get set-up*)
   in
 
@@ -103,6 +103,10 @@ let translate (globals, functions) =
         (match op with
            A.Add     -> L.build_add
          | A.Sub     -> L.build_sub
+         | A.Mult    -> L.build_mul
+         | A.Div     -> L.build_div
+         | A.Mod     -> L.build_mod
+         | A.Not     -> L.build_not
          | A.And     -> L.build_and
          | A.Or      -> L.build_or
          | A.Equal   -> L.build_icmp L.Icmp.Eq

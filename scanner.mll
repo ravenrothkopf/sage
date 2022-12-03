@@ -8,24 +8,56 @@ let float = digit* frac? exp?
 let int = '-'? digit digit*
 
 rule token = parse
-  [' ' '\r']                            { token lexbuf }          (* Whitespace *)
+  [' ' '\r' '\t']                       { token lexbuf }          (* Whitespace *)
 | "#"                                   { comment lexbuf }           (* Comments *)
 | "\"\"\""                              { comment2 lexbuf }
 | '\n'                                  { NEWLINE }
-| '\t'                                  { TAB }
 | '('                                   { LPAREN }
 | ')'                                   { RPAREN }
+| '{'                                   { LBRACE }
+| '}'                                   { RBRACE }
 | ':'                                   { COLON }
 | ','                                   { COMMA }
 | '+'                                   { PLUS }
+| '-'                                   { MINUS }
+| '*'                                   { TIMES }
+| '/'                                   { DIVIDE }
+| '%'                                   { MODULO }
 | '='                                   { ASSIGN }
+| "=="                                  { EQ }
+| "!="                                  { NEQ }
+| '<'                                   { LT }
+| "<="                                  { LEQ }
+| ">"                                   { GT }
+| ">="                                  { GEQ }
+| "and"                                 { AND }
+| "or"                                  { OR }
+| "not"                                 { NOT }
+| '.'                                   { DOT }
+| '['                                   { LBRACK }
+| ']'                                   { RBRACK }
+| "if"                                  { IF }
+| "elif"                                { ELIF }
+| "else"                                { ELSE }
+| "for"                                 { FOR }
+| "while"                               { WHILE }
+| "loop"                                { LOOP }
+| "continue"                            { CONTINUE }
+| "break"                               { BREAK }
+| "in"                                  { IN }
+| "&"                                   { BORROW }
+| "static"                              { STATIC }
+| "const"                               { CONST }
 | "str"                                 { STRING }
 | "int"                                 { INT }
 | "float"                               { FLOAT }
 | "bool"                                { BOOL }
-| "True"                                { BLIT(true) }
-| "False"                               { BLIT(false) }
+| "True"                                { TRUE }
+| "False"                               { FALSE }
+| "struct"                              { STRUCT }
+| "void"                                { VOID }
 | "funct"                               { FUNCT }
+| "return"                              { RETURN }
 | int as lem                            { ILIT(int_of_string lem) }
 | float as lem                          { FLIT(float_of_string lem) }
 | letter (digit | letter | '_')* as lem { ID(lem) }
