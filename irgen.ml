@@ -92,7 +92,7 @@ let translate (globals, functions) =
 
     (* Construct code for an expression; return its value *)
     let rec build_expr builder ((_, e) : sexpr) = match e with
-        SLiteral i  -> L.const_int i32_t i
+        SStringLit i  -> L.const_int i32_t i
       | SBoolLit b  -> L.const_int i1_t (if b then 1 else 0)
       | SId s       -> L.build_load (lookup s) s builder
       | SAssign (s, e) -> let e' = build_expr builder e in
@@ -104,14 +104,17 @@ let translate (globals, functions) =
            A.Add     -> L.build_add
          | A.Sub     -> L.build_sub
          | A.Mult    -> L.build_mul
-         | A.Div     -> L.build_div
-         | A.Mod     -> L.build_mod
-         | A.Not     -> L.build_not
-         | A.And     -> L.build_and
-         | A.Or      -> L.build_or
-         | A.Equal   -> L.build_icmp L.Icmp.Eq
+         | A.Div     -> L.build.sdiv
+         | A.Mod     -> L.build.urem
+         | A.Eq      -> L.build_icmp L.Icmp.Eq
          | A.Neq     -> L.build_icmp L.Icmp.Ne
          | A.Less    -> L.build_icmp L.Icmp.Slt
+         | A.Leq     -> L.build_icmp L.Icmp.Sle  
+         | A.Greater -> L.build_icmp L.Icmp.Sgt 
+         | A.Geq     -> L.build_icmp L.Icmp.Sge
+         | A.And     -> L.build_and
+         | A.Or      -> L.build_or
+         | A.Not     -> L.build_not
         ) e1' e2' "tmp" builder
       | SCall ("print", [e]) ->
         L.build_call printf_func [| int_format_str ; (build_expr builder e) |]
