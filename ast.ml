@@ -15,6 +15,7 @@ type expr =
 type bind_formal = typ * string
 
 (*int x = 3: value binding*)
+(*tuple, first element contains typ and ID, second is the expression*)
 type bind_init = bind_formal * expr
 
 type stmt =
@@ -28,10 +29,11 @@ type stmt =
 type func_def = {
   rtyp: typ;
   fname: string;
-  formals: bind_formal list;
+  formals: bind_formal list; (*type * string*)
   body: stmt list;
 }
 
+(*global decls + func decls*)
 type program = bind_init list * func_def list
 
 (* Pretty-printing functions *)
