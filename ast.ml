@@ -15,6 +15,7 @@ type expr =
 type stmt =
    Expr of expr
   | Block of stmt list
+  | DecAssn of typ * string * expr
 
 (* int x = 3: value binding *)
 type bind = typ * string
@@ -34,8 +35,24 @@ type program = stmt list * func_def list
 
 (* Pretty-printing functions *)
 let string_of_op = function
-    Concat -> "+"
+    Add -> '+'
+  | Sub -> '-'
+  | Mult -> '*'
+  | Div -> '/'
+  | Mod -> '%'
+  | Eq -> '='
+  | Neq -> "!="
+  | Less -> "<"
+  | Leq -> "<="
+  | Greater -> ">"
+  | Geq -> ">="
+  | And -> "and"
+  | Or -> "or"
+  | Not -> "not"
 
+let string_of_uop = function
+    Pos -> '+'
+  | Neg -> '-'
 
 let string_of_typ = function
     String -> "str"
@@ -58,6 +75,7 @@ let rec string_of_expr = function
 
 let rec string_of_stmt = function
     Expr(expr) -> string_of_expr expr ^ "\n"
+  | DecAssn(t, s, e) -> string_of_typ t ^ " " ^ s ^ " = " ^ string_of_expr e
   | Block(stmts) ->
       "    " ^ String.concat "" (List.map string_of_stmt stmts) ^ "\n"
 
