@@ -1,8 +1,8 @@
-str hello_str = "hi"
+str hi = "test"
 
-str funct main (str h):
+int funct main (str h) {
     str location = "world"
-    h = "hello"
+    h = hi
     str ran = " "
-
+}
 
