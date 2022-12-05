@@ -59,6 +59,7 @@ ignore(check_binds "global" (global_symbols globals));
   in
 
   let _ = find_func "main" in (* Ensure "main" is defined *)
+  
   (*Moved check_expr, type_of_identifier, and check_assign outside of check_func so that
       they can also be used to check global statements, but now we need to pass in a global symbol
       table when checking statements inside of funcs*)
