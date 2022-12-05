@@ -146,6 +146,7 @@ Indicating that both s1 and s2 were successfully parsed by the compiler :)
 * Gabriela (11/30) - Review LLVM documentation & open issues for future features
 * Gabriela (12/1) - Merge Lauren's fixes to 37 shift/reduce conflicts, initial commit for IR generation
 * Gabriela (12/1) - Fix merging issues, IR generation testing
+* Gabriela (12/5) - LLVM Installation issues
 
 ## References
 
