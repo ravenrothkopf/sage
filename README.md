@@ -144,6 +144,8 @@ Indicating that both s1 and s2 were successfully parsed by the compiler :)
 * Gabriela (11/28) - Begin initial code for code generation portion of project
 * Gabriela (11/29) - More code generation work
 * Gabriela (11/30) - Review LLVM documentation & open issues for future features
+* Gabriela (12/1) - Merge Lauren's fixes to 37 shift/reduce conflicts, initial commit for IR generation
+* Gabriela (12/1) - Fix merging issues, IR generation testing
 
 ## References
 

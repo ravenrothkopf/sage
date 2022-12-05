@@ -15,6 +15,7 @@ and sx =
 type sstmt = 
     SExpr of sexpr
   | SBlock of sstmt list
+  | SDecAssn of typ * string * sexpr
    
 type sfunc_def = {
   srtyp: typ;
@@ -44,6 +45,7 @@ let rec string_of_sexpr(t,e) =
 
 let rec string_of_sstmt = function
   | SExpr(expr) -> string_of_sexpr expr ^ "\n"
+  | SDecAssn(t, s, e) -> string_of_typ t ^ " " ^ s ^ " = " ^ string_of_sexpr e 
   | SBlock(stmts) ->
     "    " ^ String.concat "" (List.map string_of_sstmt stmts) ^ "\n"
 
