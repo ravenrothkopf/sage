@@ -12,7 +12,6 @@ rule token = parse
 | "#"                                   { comment lexbuf }           (* Comments *)
 | "\"\"\""                              { comment2 lexbuf }
 | '\n'                                  { NEWLINE }
-(**| '\t'                                  { TAB } **)
 | '('                                   { LPAREN }
 | ')'                                   { RPAREN }
 | ':'                                   { COLON }
@@ -28,6 +27,10 @@ rule token = parse
 | "True"                                { BLIT(true) }
 | "False"                               { BLIT(false) }
 | "funct"                               { FUNCT }
+| "void"                                { VOID }
+| "if"                                  { IF }
+| "elif"                                { ELIF }
+| "else"                                { ELSE }
 | int as lem                            { ILIT(int_of_string lem) }
 | float as lem                          { FLIT(float_of_string lem) }
 | letter (digit | letter | '_')* as lem { ID(lem) }

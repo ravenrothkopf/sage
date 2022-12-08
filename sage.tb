@@ -1,9 +1,9 @@
-str hi = "test"
+str hello = "hello"
 
-int funct main (str h) {
+int funct main (str greeting) {
     str location = "world"
-    h = hi
-    str ran = " "
+    greeting = hello
+    str test = greeting + location
 }
 
 
