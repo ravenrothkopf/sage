@@ -58,8 +58,8 @@ let string_of_svdecl (decl, exp) = string_of_typ (fst decl) ^ " " ^ (snd decl) ^
   exp ^ "\n"
 let rec string_of_sstmt = function
    SExpr(expr) -> string_of_sexpr expr ^ "\n"
-  | SBlock(stmts) ->
-    "    " ^ String.concat "" (List.map string_of_sstmt stmts) ^ "\n"
+  | SBlock(stmts) -> "{\n" ^
+    "    " ^ String.concat "" (List.map string_of_sstmt stmts) ^ "}\n"
   | SDecAssn(decl, expr) -> string_of_svdecl (decl, expr)
   | SIf(expr, s, SBlock([])) ->
     "if (" ^ string_of_sexpr expr ^ ")\n" ^ string_of_sstmt s
@@ -67,9 +67,9 @@ let rec string_of_sstmt = function
     string_of_sstmt s1 ^ "else\n" ^ string_of_sstmt s2
 
 let string_of_sfdecl fdecl =
-  string_of_typ fdecl.srtyp ^ " " ^
-  "funct " ^ fdecl.sfname ^ "(" ^ String.concat ", " (List.map snd fdecl.sformals) ^
-  ") : \n" ^
+  "def " ^ string_of_typ fdecl.srtyp ^ " " ^
+  fdecl.sfname ^ "(" ^ String.concat ", " (List.map snd fdecl.sformals) ^
+  ")\n" ^
   String.concat "    " (""::List.map string_of_sstmt fdecl.sbody) ^
   "\n"
 

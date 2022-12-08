@@ -1,12 +1,20 @@
-str hello = "hello"
+# test single-line comment
 
-int funct main (str greeting) {
-    str location = "world"
-    greeting = hello
-    str test = greeting + location
+"""
+test multi-line comment
+"""
+
+str hello = "hello"
+bool t = True
+
+def void voidTest() {
+    str hi = "test"
 }
 
-
-
-
+def int main (str greeting) {
+    str location = "world"
+    greeting = hello
+    if (t) str test = greeting + location
+    else str ran = " "
+}
 

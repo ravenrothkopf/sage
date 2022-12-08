@@ -26,7 +26,10 @@ rule token = parse
 | "bool"                                { BOOL }
 | "True"                                { BLIT(true) }
 | "False"                               { BLIT(false) }
-| "funct"                               { FUNCT }
+| "and"                                 { AND }
+| "or"                                  { OR }
+| "not"                                 { NOT }
+| "def"                                 { DEF }
 | "void"                                { VOID }
 | "if"                                  { IF }
 | "elif"                                { ELIF }

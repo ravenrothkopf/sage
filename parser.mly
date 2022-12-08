@@ -6,7 +6,8 @@ open Ast
 %token LPAREN RPAREN PLUS ASSIGN
 %token STRING INT FLOAT BOOL VOID
 %token IF ELIF ELSE
-%token FUNCT COLON COMMA 
+%token AND OR NOT
+%token DEF COLON COMMA 
 %token <int> ILIT
 %token <float> FLIT
 %token <bool> BLIT
@@ -38,10 +39,10 @@ decls:
  | NEWLINE decls { (fst $2, snd $2) }
 
 fdecl:
-  typ FUNCT ID LPAREN formals_opt RPAREN LBRACE NEWLINE stmt_list RBRACE
+  DEF typ ID LPAREN formals_opt RPAREN LBRACE NEWLINE stmt_list RBRACE
   {
     {
-      rtyp = $1;
+      rtyp = $2;
       fname = $3;
       formals = $5;
       body = $9;
@@ -73,6 +74,7 @@ stmt:
   | global { DecAssn $1 }  //variable initialization and assignment as it's own statement separate from exprs
   | if_stmt { $1 } 
 
+//TODO: fix blocks so that they work with more than just one line, for if statements
 if_stmt:
      IF LPAREN expr RPAREN stmt %prec NOELSE { If($3, $5, Block([])) }
    | IF LPAREN expr RPAREN stmt ELSE stmt { If($3, $5, $7) }

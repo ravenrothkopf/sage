@@ -149,7 +149,7 @@ ignore(check_binds "global" (global_symbols globals));
           in
           let args' = List.map2 check_call fd.formals args
           in (fd.rtyp, SCall(fname, args'))
-      | Noexpr     -> (Void, SNoexpr)
+      | Noexpr -> (Void, SNoexpr)
     in
 
   let check_func func =
