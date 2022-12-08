@@ -27,6 +27,10 @@ rule token = parse
 | "float"                               { FLOAT }
 | "bool"                                { BOOL }
 | "funct"                               { FUNCT }
+| "void"                                { VOID }
+| "if"                                  { IF }
+| "elif"                                { ELIF }
+| "else"                                { ELSE }
 (*All of these need to be implemented in the scanner + parser too, otherwise doesn't compile*)
 (* | '-'                                   { MINUS }
 | '*'                                   { TIMES }
@@ -44,9 +48,6 @@ rule token = parse
 | '.'                                   { DOT }
 | '['                                   { LBRACK }
 | ']'                                   { RBRACK }
-| "if"                                  { IF }
-| "elif"                                { ELIF }
-| "else"                                { ELSE }
 | "for"                                 { FOR }
 | "while"                               { WHILE } *)
 (* | "loop"                                { LOOP }
@@ -60,7 +61,7 @@ rule token = parse
 | "False"                               { FALSE }
 | "struct"                              { STRUCT }
 | "void"                                { VOID }
-| "return"                              { RETURN } *)
+| "return"                              { RETURN } *)    
 | int as lem                            { ILIT(int_of_string lem) }
 | float as lem                          { FLIT(float_of_string lem) }
 | letter (digit | letter | '_')* as lem { ID(lem) }

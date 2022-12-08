@@ -1,5 +1,5 @@
-type bop = Concat
-type typ = String | Int | Float | Bool
+type bop = Add
+type typ = String | Int | Float | Bool | Void
 
 type expr =
     Id of string
@@ -10,7 +10,8 @@ type expr =
   | FloatLit of float
   | BoolLit of bool
   | Call of string * expr list
-
+  | Noexpr
+  
 (* int x: name binding *)
 type bind_formal = typ * string
 
@@ -22,6 +23,7 @@ type stmt =
    Expr of expr
   | Block of stmt list
   | DecAssn of bind_init
+  | If of expr * stmt * stmt
 
 (*type name_bind = typ * string*)
 
@@ -40,9 +42,8 @@ type program = bind_init list * func_def list
 
 (* Need to implement these in the parser/scanner before they can be in the AST!*)
 let string_of_op = function
-    Concat -> "+"
-  (* | Add -> '+'
-  | Sub -> '-'
+   Add -> "+" 
+   (* | Sub -> '-'
   | Mult -> '*'
   | Div -> '/'
   | Mod -> '%'
@@ -65,6 +66,7 @@ let string_of_typ = function
   | Int -> "int"
   | Float -> "float"
   | Bool -> "bool"
+  | Void -> "void"
 
 let rec string_of_expr = function
     Id(s) -> s
@@ -78,6 +80,7 @@ let rec string_of_expr = function
   | BoolLit(false) -> "False"
   | Call(f, el) ->
     f ^ "(" ^ String.concat ", " (List.map string_of_expr el) ^ ")"
+  | Noexpr -> ""
 
 let string_of_vdecl (decl, exp) = string_of_typ (fst decl) ^ " " ^ (snd decl) ^ " = " ^ string_of_expr exp
 ^ "\n"
@@ -87,6 +90,8 @@ let rec string_of_stmt = function
   | Block(stmts) ->
       "    " ^ String.concat "" (List.map string_of_stmt stmts) ^ "\n"
   | DecAssn(decl, expr) -> string_of_vdecl (decl, expr)
+  | If(expr, s, Block([])) -> "if (" ^ string_of_expr expr ^ ")\n" ^ string_of_stmt s
+  | If(expr, s1, s2) ->  "if (" ^ string_of_expr expr ^ ")\n" ^ string_of_stmt s1 ^ "else\n" ^ string_of_stmt s2
 
 let string_of_fdecl fdecl =
   string_of_typ fdecl.rtyp ^ " " ^
