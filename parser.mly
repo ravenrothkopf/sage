@@ -4,9 +4,8 @@ open Ast
 
 %token LBRACE RBRACE NEWLINE
 %token LPAREN RPAREN PLUS ASSIGN
-%token STRING INT FLOAT BOOL VOID
-%token IF ELIF ELSE
-%token FUNCT COLON COMMA 
+%token STRING INT FLOAT BOOL
+%token FUNCT COLON COMMA
 %token <int> ILIT
 %token <float> FLIT
 %token <bool> BLIT
@@ -16,8 +15,6 @@ open Ast
 %token EOF
 %token NoOp
 
-%nonassoc NOELSE
-%nonassoc ELSE
 %right ASSIGN
 %left PLUS
 
@@ -61,7 +58,6 @@ typ:
   | BOOL { Bool }
   | FLOAT { Float }
   | STRING { String }
-  | VOID { Void }
 
 stmt_list:
     /* nothing */  { [] }
@@ -71,15 +67,6 @@ stmt:
     expr NEWLINE { Expr $1 }
   | LBRACE stmt_list RBRACE { Block $2 }
   | global { DecAssn $1 }  //variable initialization and assignment as it's own statement separate from exprs
-  | if_stmt { $1 }
-
-if_stmt:
-    IF LPAREN expr RPAREN stmt %prec NOELSE { If($3, $5, Block([])) }
-  | IF LPAREN expr RPAREN stmt ELSE stmt { If($3, $5, $7) }
-
-// elif_stmt:
-//     ELIF expr LBRACE NEWLINE stmt_list RBRACE { [($2, $5)] }
-//   | elif ELIF expr LBRACE NEWLINE stmt_list RBRACE { ($3, $6) :: $1 } 
 
 global: typ ID ASSIGN expr NEWLINE { (($1, $2), $4) } //int x = 3, only expression we want to use globally and locally
 
@@ -87,12 +74,13 @@ expr:
     ILIT             { IntLit($1) }
   | FLIT             { FloatLit($1) }
   | SLIT             { StringLit($1) }
+  | SLIT PLUS SLIT   { Binop(StringLit($1), Concat, StringLit($3)) } //need to change this, doesn't work
   | BLIT             { BoolLit($1) }
   | ID               { Id($1) }
   | ID ASSIGN expr   { Assign($1, $3) }
   | ID LPAREN args_opt RPAREN { Call($1, $3) }
   | LPAREN expr RPAREN { $2 }
-  | expr PLUS expr { Binop ($1, Add, $3) }
+  // | typ ID ASSIGN expr { DecAssn($1, $2, $4) }
 
 args_opt:
     /* nothing */ { [] }
