@@ -40,14 +40,6 @@ ignore(check_binds "global" (global_symbols globals));
        
    in *)
 
-   (* let built_in_decls =
-     StringMap.add "concat" {
-       rtyp = String;
-       fname = "concat";
-       formals = [(String, "str1"); (String, "str2")];
-       body = [] } built_in_decls
-   in *)
-
   (* Collect function declarations for built-in functions: no bodies *)
   let built_in_decls =
     StringMap.add "print" {

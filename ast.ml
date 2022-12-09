@@ -69,7 +69,7 @@ let string_of_vdecl (decl, exp) = string_of_typ (fst decl) ^ " " ^ (snd decl) ^ 
 let rec string_of_stmt = function
     Expr(expr) -> string_of_expr expr ^ "\n"
   | Block(stmts) -> "{\n" ^
-      "    " ^ String.concat "" (List.map string_of_stmt stmts) ^ "}\n"
+      "    " ^ String.concat "   " (List.map string_of_stmt stmts) ^ "}\n"
   | DecAssn(decl, expr) -> string_of_vdecl (decl, expr)
   | If(expr, s, Block([])) -> "if (" ^ string_of_expr expr ^ ")\n" ^ "    " ^ string_of_stmt s
   | If(expr, s1, s2) ->  "if (" ^ string_of_expr expr ^ ")\n" ^ string_of_stmt s1 ^ "else\n" ^ string_of_stmt s2
@@ -77,7 +77,7 @@ let rec string_of_stmt = function
 let string_of_fdecl fdecl =
   "def " ^ string_of_typ fdecl.rtyp ^ " " ^
   fdecl.fname ^ "(" ^ String.concat ", " (List.map snd fdecl.formals) ^
-  "){\n" ^
+  ") {\n" ^
   String.concat "    " (""::List.map string_of_stmt fdecl.body) ^
   "}\n"
 

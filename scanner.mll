@@ -47,7 +47,7 @@ and comment = parse
 
 and comment2 = parse
   "\"\"\"" { token lexbuf }
-| _        { comment lexbuf }
+| _        { comment2 lexbuf }
 
 and slit s = parse
  "\""                         { SLIT (s)}

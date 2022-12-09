@@ -59,7 +59,7 @@ let string_of_svdecl (decl, exp) = string_of_typ (fst decl) ^ " " ^ (snd decl) ^
 let rec string_of_sstmt = function
    SExpr(expr) -> string_of_sexpr expr ^ "\n"
   | SBlock(stmts) -> "{\n" ^
-    "    " ^ String.concat "" (List.map string_of_sstmt stmts) ^ "}\n"
+    "    " ^ String.concat "    " (List.map string_of_sstmt stmts) ^ "}\n"
   | SDecAssn(decl, expr) -> string_of_svdecl (decl, expr)
   | SIf(expr, s, SBlock([])) ->
     "if (" ^ string_of_sexpr expr ^ ")\n" ^ string_of_sstmt s
@@ -69,9 +69,9 @@ let rec string_of_sstmt = function
 let string_of_sfdecl fdecl =
   "def " ^ string_of_typ fdecl.srtyp ^ " " ^
   fdecl.sfname ^ "(" ^ String.concat ", " (List.map snd fdecl.sformals) ^
-  ")\n" ^
+  ") {\n" ^
   String.concat "    " (""::List.map string_of_sstmt fdecl.sbody) ^
-  "\n"
+  "}\n"
 
 let string_of_sprogram (globals, funcs) =
   "\n\nSemantically checked program: \n\n" ^
