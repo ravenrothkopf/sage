@@ -1,14 +1,38 @@
-type bop = Concat
+module StringMap = Map.Make (String)
+
+type size =
+  Fixed of int
+| Param of string
+
+type op = 
+Add
+| Sub
+| Mult
+| Div
+| Mod
+| Eq 
+| Neq
+| Leq 
+| Geq
+| Less 
+| Greater
+| And 
+| Or
+
 type typ = String | Int | Float | Bool
+
+type uop = 
+  Pos | Neg | Not
 
 type expr =
     Id of string
   | Assign of string * expr
-  | Binop of expr * bop * expr
+  | Binop of expr * op * expr
   | StringLit of string
   | IntLit of int
   | FloatLit of float
   | BoolLit of bool
+  | Unop of uop * expr
   | Call of string * expr list
   | DecAssn of typ * string * expr
 
@@ -35,12 +59,12 @@ type program = stmt list * func_def list
 
 (* Pretty-printing functions *)
 let string_of_op = function
-    Add -> '+'
-  | Sub -> '-'
-  | Mult -> '*'
-  | Div -> '/'
-  | Mod -> '%'
-  | Eq -> '='
+    Add -> "+"
+  | Sub -> "-"
+  | Mult -> "*"
+  | Div -> "/"
+  | Mod -> "%"
+  | Eq -> "="
   | Neq -> "!="
   | Less -> "<"
   | Leq -> "<="
@@ -48,11 +72,11 @@ let string_of_op = function
   | Geq -> ">="
   | And -> "and"
   | Or -> "or"
-  | Not -> "not"
 
 let string_of_uop = function
-    Pos -> '+'
-  | Neg -> '-'
+    Pos -> "+"
+  | Neg -> "-"
+  | Not -> "!"
 
 let string_of_typ = function
     String -> "str"

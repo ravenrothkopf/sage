@@ -105,6 +105,10 @@ let check (statements, functions) =
         if t1 = t2 then
           let t = match op with
             Concat when t1 = String -> String
+          | Add | Sub when t1 = Int -> Int
+          | Eq | Neq -> Bool
+          | Less when t1 = Int -> Bool
+          | And | Or when t1 = Bool -> Bool
           | _ -> raise (Failure err)
         in 
         (t, SBinop ((t1,e1'), op, (t2, e2')))
@@ -149,6 +153,7 @@ let check (statements, functions) =
     { srtyp = func.rtyp;
       sfname = func.fname;
       sformals = func.formals;
+      slocals  = func.locals;
       sbody = match check_stmt (Block func.body) with
         SBlock(sl) -> sl
       | _ -> raise (Failure ("internal error: block didn't become a block?"))

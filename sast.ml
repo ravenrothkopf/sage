@@ -4,7 +4,7 @@ type sexpr = typ * sx
 and sx = 
   SId of string
 | SAssign of string * sexpr
-| SBinop of sexpr * bop * sexpr
+| SBinop of sexpr * op * sexpr
 | SStringLit of string
 | SIntLit of int
 | SFloatLit of float
@@ -21,6 +21,7 @@ type sfunc_def = {
   srtyp: typ;
   sfname: string;
   sformals: bind list;
+  slocals: bind list;
   sbody: sstmt list;
   }
 
@@ -50,11 +51,12 @@ let rec string_of_sstmt = function
     "    " ^ String.concat "" (List.map string_of_sstmt stmts) ^ "\n"
 
 let string_of_sfdecl fdecl =
-  string_of_typ fdecl.srtyp ^ " " ^
-  "funct " ^ fdecl.sfname ^ "(" ^ String.concat ", " (List.map snd fdecl.sformals) ^
-  ") : \n" ^
+  "def " ^ string_of_typ fdecl.srtyp ^ " " ^
+  fdecl.sfname ^ "(" ^ String.concat ", " (List.map snd fdecl.sformals) ^
+  ") {\n" ^
+  String.concat "    " (""::List.map string_of_vdecl fdecl.slocals) ^
   String.concat "    " (""::List.map string_of_sstmt fdecl.sbody) ^
-  "\n"
+  "}\n"
 
 let string_of_sprogram (funcs) =
   "\n\nSemantically checked program: \n\n" ^

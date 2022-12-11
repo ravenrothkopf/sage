@@ -28,7 +28,6 @@ let translate (globals, functions) =
     | A.Bool  -> i1_t
     | A.Float -> float_t
     | A.String -> str_t
-    | A.Func ftype -> ltype_of_clsr_func "" ftype
     (* need to add more as more features get set-up*)
   in
 
