@@ -147,6 +147,7 @@ Indicating that both s1 and s2 were successfully parsed by the compiler :)
 * Gabriela (12/1) - Merge Lauren's fixes to 37 shift/reduce conflicts, initial commit for IR generation
 * Gabriela (12/1) - Fix merging issues, IR generation testing
 * Gabriela (12/5) - LLVM Installation issues
+* Gabriela (12/10) - Resolve CodeGen bugs across multiple files, attempt to add math operations, attempt to merge Raven's conditional block statements 
 
 ## References
 
