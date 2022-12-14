@@ -25,7 +25,7 @@ def int main (str greeting) {
 
     if (t) str test = greeting + location
     else str ran = " "
-    
+
     voidTest()
 }
 

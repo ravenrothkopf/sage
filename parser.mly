@@ -63,6 +63,7 @@ typ:
   | FLOAT { Float }
   | STRING { String }
   | VOID { Void }
+  //TODO: add array type + implementation
 
 stmt_list:
     /* nothing */  { [] }
@@ -71,18 +72,19 @@ stmt_list:
 stmt:
     expr NEWLINE { Expr $1 }
   | LBRACE stmt_list RBRACE { Block $2 }
-  | global { DecAssn $1 }  //variable initialization and assignment as it's own statement separate from exprs
+  | global { DecAssn $1 }  //variable initialization and assignment as its own statement separate from exprs
   | if_stmt { $1 } 
   | NEWLINE stmt { $2 }
 
-//TODO: fix if stmts so that they work with more than just one line?
+//TODO: fix if stmts so that they work with more than just one line? def has to do with the NEWLINES
 if_stmt:
      IF LPAREN expr RPAREN stmt %prec NOELSE { If($3, $5, Block([])) }
    | IF LPAREN expr RPAREN stmt ELSE stmt { If($3, $5, $7) }
 
- // elif_stmt:
- //     ELIF expr LBRACE NEWLINE stmt_list RBRACE { [($2, $5)] }
- //   | elif ELIF expr LBRACE NEWLINE stmt_list RBRACE { ($3, $6) :: $1 }
+// TODO: add elif stmts
+// elif_stmt:
+//     ELIF expr LBRACE NEWLINE stmt_list RBRACE { [($2, $5)] }
+//   | elif ELIF expr LBRACE NEWLINE stmt_list RBRACE { ($3, $6) :: $1 }
 
 global: 
     typ ID ASSIGN expr NEWLINE { (($1, $2), $4) } //int x = 3, only expression we want to use globally and locally
