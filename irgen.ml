@@ -57,7 +57,7 @@ let translate (globals, functions) =
   List.fold_left global_var StringMap.empty globals in
   
   let printf_t : L.lltype =
-    L.var_arg_function_type i32_t [| L.pointer_type i8_t |] in
+    L.var_arg_function_type i32_t [| string_t |] in
   let printf_func : L.llvalue =
     L.declare_function "printf" printf_t the_module in
 
@@ -111,6 +111,36 @@ let translate (globals, functions) =
       with Not_found -> StringMap.find n global_vars
     in
 
+    (*matching types for printing*)
+    let i32_t_pt = L.string_of_lltype i32_t in
+    let i1t_pt = L.string_of_lltype i1_t in
+    let i8_t_pt = L.string_of_lltype i8_t in
+
+    let match_typ ty = 
+      let t_pt = L.string_of_lltype ty in
+      if t_pt = i8_t_pt then A.String else
+        if t_pt = i32_t_pt then A.Int else
+          if t_pt = i1t_pt then A.Int else
+            raise (Failure ("cant match type: " ^ t_pt))
+          in
+
+    let rec find_type map expr = match expr with
+        SIntLit _ -> A.Int
+      | SBoolLit _ -> A.Int
+      | SStringLit _ -> A.String
+      (* TODO: | SBinop((_, e_x, op, _) -> if ) *)
+      | SNoexpr -> raise (Failure "Unmatched Noexpr")
+      | SId v -> match_typ (L.element_type (L.element_type (L.type_of (lookup map v))))
+      (* TODO: | SCall(f, _) *)
+    in
+
+    let find_str_typ = function
+        A.Int -> int_format_str
+      | A.Bool -> int_format_str
+      | A.String -> string_format_str
+      | _ -> raise (Failure "Invalid type")
+    in
+
     (* Construct code for an expression; return its value *)
     let rec build_expr builder map ((_, e) : sexpr) = match e with
         SIntLit i  -> L.const_int i32_t i
@@ -133,10 +163,9 @@ let translate (globals, functions) =
          | A.Less    -> L.build_icmp L.Icmp.Slt *)
         ) e1' e2' "tmp" builder
       | SCall ("print", [e]) ->
-        L.build_call printf_func [| int_format_str ; (build_expr builder map e) |]
-          "printf" builder
-      | SCall ("prints", [e]) ->
-        L.build_call printf_func [| string_format_str ; (build_expr builder map e) |]
+        let (_, ex) = e in
+        let e_typ = find_type map ex in
+        L.build_call printf_func [| (find_str_typ e_typ) ; (build_expr builder map e) |]
           "printf" builder
       | SCall (f, args) ->
         let (fdef, fdecl) = StringMap.find f function_decls in

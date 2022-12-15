@@ -21,6 +21,6 @@ def void voidTest() {
 
 def int main (str greeting) {
     str location = "world"
-    greeting = hello
     voidTest()
+    print("hello world")
 }

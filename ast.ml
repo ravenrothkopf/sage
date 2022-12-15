@@ -1,5 +1,5 @@
 type bop = Add
- type typ = String | Int | Bool | Void
+type typ = String | Int | Bool | Void | Any
 
 type expr =
     Id of string
@@ -48,6 +48,7 @@ let string_of_typ = function
   (* | Float -> "float" *)
   | Bool -> "bool"
   | Void -> "void"
+  | Any -> "any"
 
 let rec string_of_expr = function
     Id(s) -> s
