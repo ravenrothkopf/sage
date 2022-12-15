@@ -93,7 +93,7 @@ ignore(check_binds "global" (global_symbols globals));
       | BoolLit l -> (Bool, SBoolLit l) 
       | StringLit l -> (String, SStringLit l)
       | IntLit l -> (Int, SIntLit l)
-      | FloatLit l -> (Float, SFloatLit l)
+      (* | FloatLit l -> (Float, SFloatLit l) *)
       | Noexpr -> (Void, SNoexpr)
       | Assign(var, e) as ex ->
         let lt = type_of_identifier var map

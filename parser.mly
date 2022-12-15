@@ -60,7 +60,7 @@ formal_list:
 typ:
     INT { Int }
   | BOOL { Bool }
-  | FLOAT { Float }
+  // | FLOAT { Float }
   | STRING { String }
   | VOID { Void }
   //TODO: add array type + implementation
@@ -91,7 +91,7 @@ global:
 
 expr:
     ILIT             { IntLit($1) }
-  | FLIT             { FloatLit($1) }
+  // | FLIT             { FloatLit($1) }
   | SLIT             { StringLit($1) }
   | BLIT             { BoolLit($1) }
   | ID               { Id($1) }

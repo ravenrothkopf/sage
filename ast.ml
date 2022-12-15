@@ -1,5 +1,5 @@
 type bop = Add
- type typ = String | Int | Float | Bool | Void
+ type typ = String | Int | Bool | Void
 
 type expr =
     Id of string
@@ -7,7 +7,7 @@ type expr =
   | Binop of expr * bop * expr
   | StringLit of string
   | IntLit of int
-  | FloatLit of float
+  (* | FloatLit of float *)
   | BoolLit of bool
   | Call of string * expr list
   | Noexpr
@@ -45,7 +45,7 @@ let string_of_op = function
 let string_of_typ = function
     String -> "str"
   | Int -> "int"
-  | Float -> "float"
+  (* | Float -> "float" *)
   | Bool -> "bool"
   | Void -> "void"
 
@@ -56,7 +56,7 @@ let rec string_of_expr = function
     string_of_expr e1 ^ " " ^ string_of_op op ^ " " ^ string_of_expr e2
   | StringLit(s) -> s
   | IntLit(s) -> string_of_int s
-  | FloatLit(s) -> string_of_float s
+  (* | FloatLit(s) -> string_of_float s *)
   | BoolLit(true) -> "True"
   | BoolLit(false) -> "False"
   | Call(f, el) ->
