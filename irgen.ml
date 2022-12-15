@@ -159,7 +159,7 @@ let translate (globals, functions) =
         ignore(L.build_cond_br bool_val then_bb else_bb builder);
         L.builder_at_end context end_bb
       (* implement below after loop structure *)
-       (*| SWhile (predicate, body) ->
+       | SWhile (predicate, body) ->
         let while_bb = L.append_block context "while" the_function in
         let build_br_while = L.build_br while_bb in (* partial function *)
         ignore (build_br_while builder);
@@ -173,7 +173,8 @@ let translate (globals, functions) =
 
         ignore(L.build_cond_br bool_val body_bb end_bb while_builder);
         L.builder_at_end context end_bb
-        *)
+      | SFor (e,body) -> stmt builder 
+        ( SBlock [SExpr e [body]])
     in
     (* Build the code for each statement in the function *)
     let func_builder = build_stmt builder (SBlock fdecl.sbody) in

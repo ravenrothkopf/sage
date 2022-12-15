@@ -16,6 +16,8 @@ type sstmt =
     SExpr of sexpr
   | SBlock of sstmt list
   | SDecAssn of typ * string * sexpr
+  | SFor of sexpr * sstmt
+  | SWhile of sexpr * sstmt
    
 type sfunc_def = {
   srtyp: typ;
@@ -48,6 +50,10 @@ let rec string_of_sstmt = function
   | SDecAssn(t, s, e) -> string_of_typ t ^ " " ^ s ^ " = " ^ string_of_sexpr e 
   | SBlock(stmts) ->
     "    " ^ String.concat "" (List.map string_of_sstmt stmts) ^ "\n"
+  | SFor(e, s) -> 
+    "for (" ^ string_of_sexpr e ^ " ) " ^ string_of_sstmt s  
+  | SWhile(e, s) -> "while (" ^ string_of_sexpr e ^ ") " ^ string_of_sstmt s
+ 
 
 let string_of_sfdecl fdecl =
   string_of_typ fdecl.srtyp ^ " " ^

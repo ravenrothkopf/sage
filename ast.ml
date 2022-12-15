@@ -82,7 +82,7 @@ let rec string_of_stmt = function
       "    " ^ String.concat "" (List.map string_of_stmt stmts) ^ "\n"
   | For(e, s) -> 
     "for (" ^ string_of_expr e ^ " ) " ^ string_of_stmt s  
-  | While(e, s) -> "while (" ^ string_of_expr e ^ ")" ^ string_of_stmt s
+  | While(e, s) -> "while (" ^ string_of_expr e ^ ") " ^ string_of_stmt s
   
 let string_of_vdecl (t, id, e) = string_of_typ t ^ " " ^ id ^ " = " ^  string_of_expr e ^ "\n"
 
