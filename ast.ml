@@ -1,5 +1,5 @@
 type bop = Concat
-type typ = String | Int | Float | Bool
+type typ = String | Int | Float | Bool 
 
 type expr =
     Id of string
@@ -16,6 +16,8 @@ type stmt =
    Expr of expr
   | Block of stmt list
   | DecAssn of typ * string * expr
+  | For of expr * stmt 
+  | While of expr * stmt
 
 (* int x = 3: value binding *)
 type bind = typ * string
@@ -78,7 +80,10 @@ let rec string_of_stmt = function
   | DecAssn(t, s, e) -> string_of_typ t ^ " " ^ s ^ " = " ^ string_of_expr e
   | Block(stmts) ->
       "    " ^ String.concat "" (List.map string_of_stmt stmts) ^ "\n"
-
+  | For(e, s) -> 
+    "for (" ^ string_of_expr e ^ " ) " ^ string_of_stmt s  
+  | While(e, s) -> "while (" ^ string_of_expr e ^ ")" ^ string_of_stmt s
+  
 let string_of_vdecl (t, id, e) = string_of_typ t ^ " " ^ id ^ " = " ^  string_of_expr e ^ "\n"
 
 let string_of_fdecl fdecl =
