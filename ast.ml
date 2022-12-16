@@ -10,34 +10,41 @@ type expr =
   | FloatLit of float
   | BoolLit of bool
   | Call of string * expr list
-  | DecAssn of typ * string * expr
+
+(* int x: name binding *)
+type bind_formal = typ * string
+
+(*int x = 3: value binding*)
+(*tuple, first element contains typ and ID, second is the expression*)
+type bind_init = bind_formal * expr
 
 type stmt =
-   Expr of expr
+    Expr of expr
   | Block of stmt list
-  | DecAssn of typ * string * expr
+  | DecAssn of bind_init
   | For of expr * stmt 
   | While of expr * stmt
+  
 
-(* int x = 3: value binding *)
-type bind = typ * string
-
-(* int x: name binding - used as parameters *)
 (*type name_bind = typ * string*)
 
 (* str funct main (int a): func_def *)
 type func_def = {
   rtyp: typ;
   fname: string;
-  formals: bind list;
+  formals: bind_formal list; (*type * string*)
   body: stmt list;
 }
 
-type program = stmt list * func_def list
+(*global decls + func decls*)
+type program = bind_init list * func_def list
 
 (* Pretty-printing functions *)
+
+(* Need to implement these in the parser/scanner before they can be in the AST!*)
 let string_of_op = function
-    Add -> '+'
+    Concat -> "+"
+  (* | Add -> '+'
   | Sub -> '-'
   | Mult -> '*'
   | Div -> '/'
@@ -50,17 +57,18 @@ let string_of_op = function
   | Geq -> ">="
   | And -> "and"
   | Or -> "or"
-  | Not -> "not"
+  | Not -> "not" *)
 
-let string_of_uop = function
+(* let string_of_uop = function
     Pos -> '+'
-  | Neg -> '-'
+  | Neg -> '-' *)
 
 let string_of_typ = function
     String -> "str"
   | Int -> "int"
   | Float -> "float"
   | Bool -> "bool"
+
 let rec string_of_expr = function
     Id(s) -> s
   | Assign(v, e) -> v ^ " = " ^ string_of_expr e
@@ -71,29 +79,29 @@ let rec string_of_expr = function
   | FloatLit(s) -> string_of_float s
   | BoolLit(true) -> "True"
   | BoolLit(false) -> "False"
-  | DecAssn(t, s, e) -> string_of_typ t ^ " " ^ s ^ " = " ^ string_of_expr e
   | Call(f, el) ->
     f ^ "(" ^ String.concat ", " (List.map string_of_expr el) ^ ")"
 
+let string_of_vdecl (decl, exp) = string_of_typ (fst decl) ^ " " ^ (snd decl) ^ " = " ^ string_of_expr exp
+^ "\n"
+
 let rec string_of_stmt = function
     Expr(expr) -> string_of_expr expr ^ "\n"
-  | DecAssn(t, s, e) -> string_of_typ t ^ " " ^ s ^ " = " ^ string_of_expr e
   | Block(stmts) ->
       "    " ^ String.concat "" (List.map string_of_stmt stmts) ^ "\n"
   | For(e, s) -> 
     "for (" ^ string_of_expr e ^ " ) " ^ string_of_stmt s  
   | While(e, s) -> "while (" ^ string_of_expr e ^ ") " ^ string_of_stmt s
-  
-let string_of_vdecl (t, id, e) = string_of_typ t ^ " " ^ id ^ " = " ^  string_of_expr e ^ "\n"
+  | DecAssn(decl, expr) -> string_of_vdecl (decl, expr)
 
 let string_of_fdecl fdecl =
   string_of_typ fdecl.rtyp ^ " " ^
   "funct " ^ fdecl.fname ^ "(" ^ String.concat ", " (List.map snd fdecl.formals) ^
-  ") : \n" ^
+  "){\n" ^
   String.concat "    " (""::List.map string_of_stmt fdecl.body) ^
-  "\n"
+  "}\n"
 
-let string_of_program (statements, funcs) =
+let string_of_program (globals, funcs) =
   "\n\nParsed program: \n\n" ^
-  String.concat "\n" (List.map string_of_stmt statements) ^
+  String.concat "\n" (List.map string_of_vdecl globals) ^
   String.concat "\n" (List.map string_of_fdecl funcs)  

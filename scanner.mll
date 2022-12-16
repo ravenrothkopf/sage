@@ -18,12 +18,20 @@ rule token = parse
 | '}'                                   { RBRACE }
 | ':'                                   { COLON }
 | ','                                   { COMMA }
+| '{'                                   { LBRACE }
+| '}'                                   { RBRACE }
 | '+'                                   { PLUS }
-| '-'                                   { MINUS }
+| '='                                   { ASSIGN }
+| "str"                                 { STRING }
+| "int"                                 { INT }
+| "float"                               { FLOAT }
+| "bool"                                { BOOL }
+| "funct"                               { FUNCT }
+(*All of these need to be implemented in the scanner + parser too, otherwise doesn't compile*)
+(* | '-'                                   { MINUS }
 | '*'                                   { TIMES }
 | '/'                                   { DIVIDE }
 | '%'                                   { MODULO }
-| '='                                   { ASSIGN }
 | "=="                                  { EQ }
 | "!="                                  { NEQ }
 | '<'                                   { LT }
@@ -40,24 +48,19 @@ rule token = parse
 | "elif"                                { ELIF }
 | "else"                                { ELSE }
 | "for"                                 { FOR }
-| "while"                               { WHILE }
-| "loop"                                { LOOP }
+| "while"                               { WHILE } *)
+(* | "loop"                                { LOOP }
 | "continue"                            { CONTINUE }
 | "break"                               { BREAK }
 | "in"                                  { IN }
 | "&"                                   { BORROW }
 | "static"                              { STATIC }
 | "const"                               { CONST }
-| "str"                                 { STRING }
-| "int"                                 { INT }
-| "float"                               { FLOAT }
-| "bool"                                { BOOL }
 | "True"                                { TRUE }
 | "False"                               { FALSE }
 | "struct"                              { STRUCT }
 | "void"                                { VOID }
-| "funct"                               { FUNCT }
-| "return"                              { RETURN }
+| "return"                              { RETURN } *)
 | int as lem                            { ILIT(int_of_string lem) }
 | float as lem                          { FLIT(float_of_string lem) }
 | letter (digit | letter | '_')* as lem { ID(lem) }

@@ -10,23 +10,27 @@ and sx =
 | SFloatLit of float
 | SBoolLit of bool
 | SCall of string * sexpr list
-| SDecAssn of typ * string * sexpr
+
+type sbind_formal = typ * string
+
+type sbind_init = sbind_formal * sexpr
 
 type sstmt = 
     SExpr of sexpr
   | SBlock of sstmt list
-  | SDecAssn of typ * string * sexpr
+  | SDecAssn of sbind_init
   | SFor of sexpr * sstmt
   | SWhile of sexpr * sstmt
-   
+  
+
 type sfunc_def = {
   srtyp: typ;
   sfname: string;
-  sformals: bind list;
+  sformals: bind_formal list;
   sbody: sstmt list;
   }
 
-type sprogram = sfunc_def list
+type sprogram = bind_init list * sfunc_def list
 
 (* Pretty-printing functions *)
 let rec string_of_sexpr(t,e) =
@@ -40,16 +44,17 @@ let rec string_of_sexpr(t,e) =
   | SFloatLit(s) -> string_of_float s
   | SBoolLit(true) -> "True"
   | SBoolLit(false) -> "False"
-  | SDecAssn(t, s, e) -> string_of_typ t ^ " " ^ s ^ " = " ^ string_of_sexpr e
   | SCall(f, el) ->
     f ^ "(" ^ String.concat ", " (List.map string_of_sexpr el) ^ ")"
   ) ^ ")"  
 
+let string_of_svdecl (decl, exp) = string_of_typ (fst decl) ^ " " ^ (snd decl) ^ " = " ^ string_of_sexpr
+  exp ^ "\n"
 let rec string_of_sstmt = function
-  | SExpr(expr) -> string_of_sexpr expr ^ "\n"
-  | SDecAssn(t, s, e) -> string_of_typ t ^ " " ^ s ^ " = " ^ string_of_sexpr e 
+    SExpr(expr) -> string_of_sexpr expr ^ "\n"
   | SBlock(stmts) ->
     "    " ^ String.concat "" (List.map string_of_sstmt stmts) ^ "\n"
+  | SDecAssn(decl, expr) -> string_of_svdecl (decl, expr)
   | SFor(e, s) -> 
     "for (" ^ string_of_sexpr e ^ " ) " ^ string_of_sstmt s  
   | SWhile(e, s) -> "while (" ^ string_of_sexpr e ^ ") " ^ string_of_sstmt s
@@ -58,10 +63,11 @@ let rec string_of_sstmt = function
 let string_of_sfdecl fdecl =
   string_of_typ fdecl.srtyp ^ " " ^
   "funct " ^ fdecl.sfname ^ "(" ^ String.concat ", " (List.map snd fdecl.sformals) ^
-  ") : \n" ^
+  "){\n" ^
   String.concat "    " (""::List.map string_of_sstmt fdecl.sbody) ^
-  "\n"
+  "}\n"
 
-let string_of_sprogram (funcs) =
+let string_of_sprogram (globals, funcs) =
   "\n\nSemantically checked program: \n\n" ^
-  String.concat "\n" (List.map string_of_sfdecl funcs)
+  String.concat "\n" (List.map string_of_svdecl globals) ^
+  String.concat "\n" (List.map string_of_sfdecl funcs) 
