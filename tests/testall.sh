@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# Regression testing script for sage (derived largely from MicroC)
+# Regression testing script for sage (derived largely from SAGE)
 # Step through a list of files
 #  Compile, run, and check the output of each expected-to-work test
 #  Compile and check the error of each expected-to-fail test
@@ -18,7 +18,7 @@ CC="cc"
 # sage compiler
 SAGE="./sage.native"
 SAGECEXEC="./sagec"
-#MICROC="_build/microc.native"
+#SAGE="_build/SAGE.native"
 
 # Set time limit for all operations
 ulimit -t 30
@@ -92,7 +92,7 @@ Check() {
     generatedfiles=""
 
     generatedfiles="$generatedfiles ${basename}.ll ${basename}.out" &&
-    Run "$MICROC" "<" $1 ">" "${basename}.ll" &&
+    Run "$SAGE" "<" $1 ">" "${basename}.ll" &&
     Run "$LLI" "${basename}.ll" ">" "${basename}.out" &&
     Compare ${basename}.out ${reffile}.out ${basename}.diff
 
@@ -125,7 +125,7 @@ CheckFail() {
     generatedfiles=""
 
     generatedfiles="$generatedfiles ${basename}.err ${basename}.diff" &&
-    RunFail "$MICROC" "<" $1 "2>" "${basename}.err" ">>" $globallog &&
+    RunFail "$SAGE" "<" $1 "2>" "${basename}.err" ">>" $globallog &&
     Compare ${basename}.err ${reffile}.err ${basename}.diff
 
     # Report the status and clean up the generated files
