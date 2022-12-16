@@ -26,41 +26,17 @@ rule token = parse
 | "int"                                 { INT }
 | "float"                               { FLOAT }
 | "bool"                                { BOOL }
-| "funct"                               { FUNCT }
-(*All of these need to be implemented in the scanner + parser too, otherwise doesn't compile*)
-(* | '-'                                   { MINUS }
-| '*'                                   { TIMES }
-| '/'                                   { DIVIDE }
-| '%'                                   { MODULO }
-| "=="                                  { EQ }
-| "!="                                  { NEQ }
-| '<'                                   { LT }
-| "<="                                  { LEQ }
-| ">"                                   { GT }
-| ">="                                  { GEQ }
+| "True"                                { BLIT(true) }
+| "False"                               { BLIT(false) }
 | "and"                                 { AND }
 | "or"                                  { OR }
 | "not"                                 { NOT }
-| '.'                                   { DOT }
-| '['                                   { LBRACK }
-| ']'                                   { RBRACK }
+| "def"                                 { DEF }
+| "void"                                { VOID }
 | "if"                                  { IF }
 | "elif"                                { ELIF }
 | "else"                                { ELSE }
-| "for"                                 { FOR }
-| "while"                               { WHILE } *)
-(* | "loop"                                { LOOP }
-| "continue"                            { CONTINUE }
-| "break"                               { BREAK }
-| "in"                                  { IN }
-| "&"                                   { BORROW }
-| "static"                              { STATIC }
-| "const"                               { CONST }
-| "True"                                { TRUE }
-| "False"                               { FALSE }
-| "struct"                              { STRUCT }
-| "void"                                { VOID }
-| "return"                              { RETURN } *)
+| "while"                               { WHILE }
 | int as lem                            { ILIT(int_of_string lem) }
 | float as lem                          { FLIT(float_of_string lem) }
 | letter (digit | letter | '_')* as lem { ID(lem) }
@@ -74,7 +50,7 @@ and comment = parse
 
 and comment2 = parse
   "\"\"\"" { token lexbuf }
-| _        { comment lexbuf }
+| _        { comment2 lexbuf }
 
 and slit s = parse
  "\""                         { SLIT (s)}

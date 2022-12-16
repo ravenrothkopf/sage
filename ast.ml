@@ -1,5 +1,5 @@
-type bop = Concat
-type typ = String | Int | Float | Bool 
+type bop = Add
+type typ = String | Int | Bool | Void 
 
 type expr =
     Id of string
@@ -7,9 +7,10 @@ type expr =
   | Binop of expr * bop * expr
   | StringLit of string
   | IntLit of int
-  | FloatLit of float
+  (* | FloatLit of float *)
   | BoolLit of bool
   | Call of string * expr list
+  | Noexpr
 
 (* int x: name binding *)
 type bind_formal = typ * string
@@ -22,9 +23,9 @@ type stmt =
     Expr of expr
   | Block of stmt list
   | DecAssn of bind_init
+  | If of expr * stmt * stmt
   | For of expr * stmt 
   | While of expr * stmt
-  
 
 (*type name_bind = typ * string*)
 
@@ -43,31 +44,14 @@ type program = bind_init list * func_def list
 
 (* Need to implement these in the parser/scanner before they can be in the AST!*)
 let string_of_op = function
-    Concat -> "+"
-  (* | Add -> '+'
-  | Sub -> '-'
-  | Mult -> '*'
-  | Div -> '/'
-  | Mod -> '%'
-  | Eq -> '='
-  | Neq -> "!="
-  | Less -> "<"
-  | Leq -> "<="
-  | Greater -> ">"
-  | Geq -> ">="
-  | And -> "and"
-  | Or -> "or"
-  | Not -> "not" *)
-
-(* let string_of_uop = function
-    Pos -> '+'
-  | Neg -> '-' *)
+  Add -> "+" 
 
 let string_of_typ = function
     String -> "str"
   | Int -> "int"
-  | Float -> "float"
+  (* | Float -> "float" *)
   | Bool -> "bool"
+  | Void -> "void"
 
 let rec string_of_expr = function
     Id(s) -> s
@@ -76,28 +60,31 @@ let rec string_of_expr = function
     string_of_expr e1 ^ " " ^ string_of_op op ^ " " ^ string_of_expr e2
   | StringLit(s) -> s
   | IntLit(s) -> string_of_int s
-  | FloatLit(s) -> string_of_float s
+  (* | FloatLit(s) -> string_of_float s *)
   | BoolLit(true) -> "True"
   | BoolLit(false) -> "False"
   | Call(f, el) ->
     f ^ "(" ^ String.concat ", " (List.map string_of_expr el) ^ ")"
+  | Noexpr -> ""
 
 let string_of_vdecl (decl, exp) = string_of_typ (fst decl) ^ " " ^ (snd decl) ^ " = " ^ string_of_expr exp
 ^ "\n"
 
 let rec string_of_stmt = function
     Expr(expr) -> string_of_expr expr ^ "\n"
-  | Block(stmts) ->
-      "    " ^ String.concat "" (List.map string_of_stmt stmts) ^ "\n"
+  | Block(stmts) -> "{\n" ^
+      "    " ^ String.concat "   " (List.map string_of_stmt stmts) ^ "}\n"
+  | DecAssn(decl, expr) -> string_of_vdecl (decl, expr)
+  | If(expr, s, Block([])) -> "if (" ^ string_of_expr expr ^ ")\n" ^ "    " ^ string_of_stmt s
+  | If(expr, s1, s2) ->  "if (" ^ string_of_expr expr ^ ")\n" ^ string_of_stmt s1 ^ "else\n" ^ string_of_stmt s2
   | For(e, s) -> 
     "for (" ^ string_of_expr e ^ " ) " ^ string_of_stmt s  
   | While(e, s) -> "while (" ^ string_of_expr e ^ ") " ^ string_of_stmt s
-  | DecAssn(decl, expr) -> string_of_vdecl (decl, expr)
 
 let string_of_fdecl fdecl =
-  string_of_typ fdecl.rtyp ^ " " ^
-  "funct " ^ fdecl.fname ^ "(" ^ String.concat ", " (List.map snd fdecl.formals) ^
-  "){\n" ^
+  "def " ^ string_of_typ fdecl.rtyp ^ " " ^
+  fdecl.fname ^ "(" ^ String.concat ", " (List.map snd fdecl.formals) ^
+  ") {\n" ^
   String.concat "    " (""::List.map string_of_stmt fdecl.body) ^
   "}\n"
 
