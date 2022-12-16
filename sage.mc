@@ -24,6 +24,6 @@ def int main (str greeting) {
     str location = "world"
     voidTest()
     print(1 + 2)
-    str test = concat("hello", location)
-    prints(test)
+    prints("hello")
+    prints(location)
 }
