@@ -17,15 +17,12 @@ bool t = True
 
 def void voidTest() {
     str test = "test"
+    prints("test")
 }
 
 def int main (str greeting) {
     str location = "world"
     greeting = hello
-
-    if (t) str test = greeting + location
-    else str ran = " "
-
     voidTest()
 }
 

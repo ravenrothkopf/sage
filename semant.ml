@@ -42,13 +42,14 @@ ignore(check_binds "global" (global_symbols globals));
 
   (* Collect function declarations for built-in functions: no bodies *)
   let built_in_decls =
-    let add_bind map name = StringMap.add name {
+    let add_bind map (name, ty) = StringMap.add name {
       rtyp = Void;
       fname = name;
-      formals = [(Any, "x")];
+      formals = [(ty, "x")];
       body = []
     } map
-    in List.fold_left add_bind StringMap.empty ["print"]
+    in List.fold_left add_bind StringMap.empty [("print", Int); ("printi", Int);
+    ("prints", String)];
   in
 
   (* Add function name to symbol table *)
