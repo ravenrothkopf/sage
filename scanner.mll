@@ -8,15 +8,18 @@ let float = digit* frac? exp?
 let int = '-'? digit digit*
 
 rule token = parse
-  [' ' '\r']                            { token lexbuf }          (* Whitespace *)
+  [' ' '\r' '\t']                       { token lexbuf }          (* Whitespace *)
 | "#"                                   { comment lexbuf }           (* Comments *)
 | "\"\"\""                              { comment2 lexbuf }
 | '\n'                                  { NEWLINE }
-| '\t'                                  { TAB }
 | '('                                   { LPAREN }
 | ')'                                   { RPAREN }
+| '{'                                   { LBRACE }
+| '}'                                   { RBRACE }
 | ':'                                   { COLON }
 | ','                                   { COMMA }
+| '{'                                   { LBRACE }
+| '}'                                   { RBRACE }
 | '+'                                   { PLUS }
 | '='                                   { ASSIGN }
 | "str"                                 { STRING }
@@ -25,7 +28,24 @@ rule token = parse
 | "bool"                                { BOOL }
 | "True"                                { BLIT(true) }
 | "False"                               { BLIT(false) }
-| "funct"                               { FUNCT }
+| "+"                                   { PLUS }
+| "-"                                   { MINUS }
+| "*"                                   { TIMES }
+| "/"                                   { DIVIDE }
+| "and"                                 { AND }
+| "or"                                  { OR }
+| "not"                                 { NOT }
+| "def"                                 { DEF }
+| "void"                                { VOID }
+| "if"                                  { IF }
+| "elif"                                { ELIF }
+| "else"                                { ELSE }
+| "=="                                  { EQ }
+| "!="                                  { NEQ }
+| ">"                                   { GT }
+| ">="                                  { GEQ }
+| "<"                                   { LT }
+| "<="                                  { LEQ }
 | int as lem                            { ILIT(int_of_string lem) }
 | float as lem                          { FLIT(float_of_string lem) }
 | letter (digit | letter | '_')* as lem { ID(lem) }
@@ -39,7 +59,7 @@ and comment = parse
 
 and comment2 = parse
   "\"\"\"" { token lexbuf }
-| _        { comment lexbuf }
+| _        { comment2 lexbuf }
 
 and slit s = parse
  "\""                         { SLIT (s)}

@@ -139,8 +139,16 @@ Indicating that both s1 and s2 were successfully parsed by the compiler :)
 * Gabriela (11/21) - Attended Hao's OH and push some debugging suggestions for binding
 * Mely (11/21) - Attended Hao's OH to ask about printing functionality and worked on implementing the print feature in semant.ml
 * Lauren (11/21) - Attended Hao's OH and fixed string concatenation, updated the README and finished updating the LRM (e.g., added a complete list of indices of all current features, fixed + enhanced syntax highlighting specifically for sage, updated/edited each section of the LRM). Worked on the test shell script, although currently incomplete
-* Raven (12/21) - Worked on debugging parser ast, and semantic checking to integrate binding
-
+* Raven (11/21) - Worked on debugging parser ast, and semantic checking to integrate binding
+* Gabriela (11/28) - Created branches for feature management and proposed new merging protocol moving forward
+* Gabriela (11/28) - Begin initial code for code generation portion of project
+* Gabriela (11/29) - More code generation work
+* Gabriela (11/30) - Review LLVM documentation & open issues for future features
+* Gabriela (12/1) - Merge Lauren's fixes to 37 shift/reduce conflicts, initial commit for IR generation
+* Gabriela (12/1) - Fix merging issues, IR generation testing
+* Gabriela (12/5) - LLVM Installation issues
+* Gabriela (12/10) - Resolve CodeGen bugs across multiple files, attempt to add math operations, attempt to merge Raven's conditional block statements 
+* Gabriela, Raven, Jenny, Lauren (12/13) - Code gen meeting
 ## References
 
 1. [Rusty Language Reference Manual](http://www.cs.columbia.edu/~sedwards/classes/2016/4115-fall/lrms/rusty.pdf"rusty, a rust-based PL")
