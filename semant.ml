@@ -11,6 +11,9 @@ module StringMap = Map.Make(String)
 let check (globals, functions) =
   (* Verify a list of bindings has no duplicate names *)
   let check_binds (kind : string) (binds : bind_formal list) =
+    List.iter (function
+       (Void, b) -> raise (Failure ("illegal void " ^ kind ^ " " ^ b))
+       | _ -> ()) binds;
     let rec dups = function
         [] -> ()
       |	((_,n1) :: (_,n2) :: _) when n1 = n2 ->
@@ -27,13 +30,35 @@ in
 (**** Check global variables ****)
 ignore(check_binds "global" (global_symbols globals));
 
+ (* let built_in_decls =
+     let add_bind map name = StringMap.add name {
+       rtyp = Void;
+       fname = name;
+       formals = [(Any, "x")];
+       body = [] 
+     } map in List.fold_left add_bind StringMap.empty ["print"]
+       
+   in *)
+
   (* Collect function declarations for built-in functions: no bodies *)
   let built_in_decls =
-    StringMap.add "print" {
+    let add_bind map (name, ty) = StringMap.add name {
+      rtyp = Void;
+      fname = name;
+      formals = [(ty, "x")];
+      body = []
+    } map
+    in List.fold_left add_bind StringMap.empty [("print", Int); ("printi", Int);
+    ("prints", String)];
+  in
+
+  let built_in_decls = 
+    StringMap.add "concat" {
       rtyp = String;
-      fname = "print";
-      formals = [(String, "x")];
-      body = [] } StringMap.empty
+      fname = "concat";
+      formals = [(String, "str1"); (String, "str2")];
+      body = []
+    } built_in_decls
   in
 
   (* Add function name to symbol table *)
@@ -73,7 +98,8 @@ ignore(check_binds "global" (global_symbols globals));
   (* Raise an exception if the given rvalue type cannot be assigned to
        the given lvalue type *)
   let check_assign lvaluet rvaluet err =
-    if lvaluet = rvaluet then lvaluet else raise (Failure err)
+    if lvaluet = Any then rvaluet else
+      if lvaluet = rvaluet then lvaluet else raise (Failure err)
   in
 
   let rec check_expr e map = match e with
@@ -81,7 +107,8 @@ ignore(check_binds "global" (global_symbols globals));
       | BoolLit l -> (Bool, SBoolLit l) 
       | StringLit l -> (String, SStringLit l)
       | IntLit l -> (Int, SIntLit l)
-      | FloatLit l -> (Float, SFloatLit l)
+      (* | FloatLit l -> (Float, SFloatLit l) *)
+      | Noexpr -> (Void, SNoexpr)
       | Assign(var, e) as ex ->
         let lt = type_of_identifier var map
         and (rt, e') = check_expr e map in
@@ -98,7 +125,8 @@ ignore(check_binds "global" (global_symbols globals));
         in
         if t1 = t2 then
           let t = match op with
-            Concat when t1 = String -> String
+            Add when t1 = Int -> Int
+          | Add when t1 = String -> String
           | _ -> raise (Failure err)
         in 
         (t, SBinop ((t1,e1'), op, (t2, e2')))
@@ -117,6 +145,7 @@ ignore(check_binds "global" (global_symbols globals));
           in
           let args' = List.map2 check_call fd.formals args
           in (fd.rtyp, SCall(fname, args'))
+      | Noexpr -> (Void, SNoexpr)
     in
 
   let check_func func =
@@ -157,6 +186,8 @@ ignore(check_binds "global" (global_symbols globals));
         in (SBlock(fst (check_stmt_list stmt_list vars bvars)), vars)
       | DecAssn((ty, n), e) -> (SDecAssn((ty, n), check_expr e vars), StringMap.add n ty
          vars)
+      | If(p, b1, b2) -> (SIf(check_bool_expr p vars, fst (check_stmt b1 vars), fst (check_stmt b2
+         vars)), vars)
     in (* body of check_func *)
     { 
       srtyp = func.rtyp;
