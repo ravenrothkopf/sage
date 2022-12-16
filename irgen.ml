@@ -92,47 +92,11 @@ in
       in List.fold_left2 add_formal StringMap.empty fdecl.sformals
       (Array.to_list (L.params the_function)) in
 
-      (* (* Allocate space for any locally declared variables and add the
-       * resulting registers to our map *)
-      and add_local m (t, n) =
-        let local_var = L.build_alloca (ltype_of_typ t) n builder
-        in StringMap.add n local_var m
-      in
-
-      let formals = List.fold_left2 add_formal StringMap.empty fdecl.sformals
-          (Array.to_list (L.params the_function)) in
-      List.fold_left add_local formals fdecl.slocals
-    in *)
-
     (* Return the value for a variable or formal argument.
        Check local names first, then global names *)
     let lookup map n = try StringMap.find n map
       with Not_found -> StringMap.find n global_vars
     in
-
-    (* matching types for printing
-    let i32_t_pt = L.string_of_lltype i32_t in
-    let i1t_pt = L.string_of_lltype i1_t in
-    let i8_t_pt = L.string_of_lltype i8_t in
-    *)
-    (* let match_typ ty = 
-      let t_pt = L.string_of_lltype ty in
-      if t_pt = i8_t_pt then A.String else
-        if t_pt = i32_t_pt then A.Int else
-          if t_pt = i1t_pt then A.Int else
-            raise (Failure ("cant match type: " ^ t_pt))
-          in *)
-    (* let rec find_type map name = try StringMap.find name map
-        with Not_found -> raise (Failure "variable type not found")
-      (* TODO: | SCall(f, _) *)
-    in *)
-    (*
-    let find_str_typ = function
-        A.Int -> int_format_str
-      | A.Bool -> int_format_str
-      | A.String -> string_format_str
-      | _ -> raise (Failure "Invalid type")
-    in *)
 
     (* Construct code for an expression; return its value *)
     let rec build_expr builder map ((_, e) : sexpr) = match e with
@@ -162,17 +126,6 @@ in
       | SCall ("prints", [e]) ->
         L.build_call printf_func [| string_format_str ; (build_expr builder map e) |]
           "printf" builder
-      (* | SCall ("print", [e]) ->
-          let e' = build_expr builder map e in ( match e with
-              (_, SIntLit i) -> L.build_call printf_func [| int_format_str ; e' |] "printf" builder
-            | (_, SBoolLit b) -> L.build_call printf_func [| int_format_str ; e' |] "printf" builder
-            | (_, SStringLit s) -> L.build_call printf_func [| string_format_str ; e' |] "printf" builder
-            | (_, SId s) ->
-                ( match lookup map s with
-                      A.Int -> L.build_call printf_func [| int_format_str ; e' |] "printf" builder
-                    | A.Boolean -> L.build_call printf_func [| int_format_str ; e' |] "printf" builder
-                    | A.String -> L.build_call printf_func [| string_format_str ; e' |] "printf" builder
-                    | _ -> raise (Failure "invalid arg called on print function"))) *)
       | SCall (f, args) ->
         let (fdef, fdecl) = StringMap.find f function_decls in
         let llargs = List.rev (List.map (build_expr builder map) (List.rev args)) in
@@ -220,22 +173,6 @@ in
 
         ignore(L.build_cond_br bool_val then_bb else_bb builder);
         (L.builder_at_end context end_bb, vars)
-
-      (* | SWhile (predicate, body) ->
-        let while_bb = L.append_block context "while" the_function in
-        let build_br_while = L.build_br while_bb in (* partial function *)
-        ignore (build_br_while builder);
-        let while_builder = L.builder_at_end context while_bb in
-        let bool_val = build_expr while_builder predicate in
-
-        let body_bb = L.append_block context "while_body" the_function in
-        add_terminal (build_stmt (L.builder_at_end context body_bb) body) build_br_while;
-
-        let end_bb = L.append_block context "while_end" the_function in
-
-        ignore(L.build_cond_br bool_val body_bb end_bb while_builder);
-        L.builder_at_end context end_bb *)
-
     in
     (* Build the code for each statement in the function, returns only the builder
        not the map w the globals *)

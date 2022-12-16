@@ -17,10 +17,13 @@ bool t = True
 
 def void voidTest() {
     str test = "test"
+    prints("void test")
 }
 
 def int main (str greeting) {
     str location = "world"
     voidTest()
     print(1 + 2)
+    prints(location)
+    prints("test")
 }
