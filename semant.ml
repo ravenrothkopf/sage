@@ -30,16 +30,6 @@ in
 (**** Check global variables ****)
 ignore(check_binds "global" (global_symbols globals));
 
- (* let built_in_decls =
-     let add_bind map name = StringMap.add name {
-       rtyp = Void;
-       fname = name;
-       formals = [(Any, "x")];
-       body = [] 
-     } map in List.fold_left add_bind StringMap.empty ["print"]
-       
-   in *)
-
   (* Collect function declarations for built-in functions: no bodies *)
   let built_in_decls =
     let add_bind map (name, ty) = StringMap.add name {
@@ -98,8 +88,7 @@ ignore(check_binds "global" (global_symbols globals));
   (* Raise an exception if the given rvalue type cannot be assigned to
        the given lvalue type *)
   let check_assign lvaluet rvaluet err =
-    if lvaluet = Any then rvaluet else
-      if lvaluet = rvaluet then lvaluet else raise (Failure err)
+    if lvaluet = rvaluet then lvaluet else raise (Failure err)
   in
 
   let rec check_expr e map = match e with
