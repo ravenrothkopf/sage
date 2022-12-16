@@ -26,12 +26,13 @@ in
     | A.String -> string_t
     | A.Void -> void_t
   in
-
+  (*print functions*)
   let printf_t : L.lltype =
     L.var_arg_function_type i32_t [| string_t |] in
   let printf_func : L.llvalue =
     L.declare_function "printf" printf_t the_module in
 
+  (*concatenation functions*)
   let concat_t : L.lltype =
       L.function_type string_t [| string_t ; string_t |] in
   let concat_func : L.llvalue =
@@ -81,6 +82,7 @@ in
     let (the_function, _) = StringMap.find fdecl.sfname function_decls in
     let builder = L.builder_at_end context (L.entry_block the_function) in
 
+    (*for printing*)
     let int_format_str = L.build_global_stringptr "%d\n" "fmt" builder in
     let string_format_str = L.build_global_stringptr "%s\n" "fmt" builder in
 
@@ -102,7 +104,7 @@ in
       with Not_found -> StringMap.find n global_vars
     in
 
-    (* Construct code for an expression; return its value *)
+    (* Construct code for an expression using a map of variables; return its value *)
     let rec build_expr builder map ((_, e) : sexpr) = match e with
         SIntLit i  -> L.const_int i32_t i
       | SBoolLit b  -> L.const_int i1_t (if b then 1 else 0)
@@ -123,6 +125,7 @@ in
          | A.Neq     -> L.build_icmp L.Icmp.Ne
          | A.Less    -> L.build_icmp L.Icmp.Slt *)
         ) e1' e2' "tmp" builder
+      (*calling print and concat functions*)
       | SCall ("print", [e])
       | SCall ("printi", [e]) ->
         L.build_call printf_func [| int_format_str ; (build_expr builder map e) |]

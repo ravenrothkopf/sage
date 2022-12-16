@@ -24,5 +24,6 @@ def int main (str greeting) {
     str location = "world"
     greeting = hello
     voidTest()
+    prints("hello" + location)
 }
 
