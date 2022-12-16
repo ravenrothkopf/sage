@@ -6,7 +6,7 @@
 #  Compile and check the error of each expected-to-fail test
 
 make
-gcc -c stdlibsext.c
+gcc -c sagelibs.c
 
 # PATHS
 # LLVM interpreter (LLI="/usr/local/opt/llvm/bin/lli")
@@ -94,6 +94,8 @@ Check() {
     generatedfiles="$generatedfiles ${basename}.ll ${basename}.out" &&
     Run "$SAGE" "<" $1 ">" "${basename}.ll" &&
     Run "$LLI" "${basename}.ll" ">" "${basename}.out" &&
+    Run "$CC" -o "${basename}.exe" "${basename}.s" "sagelibs.o" &&
+    Run "./${basename}.exe" > "${basename}check.out" &&
     Compare ${basename}.out ${reffile}.out ${basename}.diff
 
     # Report the status and clean up the generated files
