@@ -32,6 +32,11 @@ in
   let printf_func : L.llvalue =
     L.declare_function "printf" printf_t the_module in
 
+  let concat_t : L.lltype =
+      L.function_type string_t [| string_t ; string_t |] in
+  let concat_func : L.llvalue =
+      L.declare_function "concat" concat_t the_module in
+
   (* Create a map of global variables after creating each, and evaluating the assigned expr *)
   let global_vars : L.llvalue StringMap.t =
     let global_var m ((t, n), expr) =
@@ -79,7 +84,6 @@ in
     let int_format_str = L.build_global_stringptr "%d\n" "fmt" builder in
     let string_format_str = L.build_global_stringptr "%s\n" "fmt" builder in
 
-
     (* Construct the function's "locals": formal arguments and locally
        declared variables.  Allocate each on the stack, initialize their
        value, if appropriate, and remember their values in the "locals" map *)
@@ -126,6 +130,9 @@ in
       | SCall ("prints", [e]) ->
         L.build_call printf_func [| string_format_str ; (build_expr builder map e) |]
           "printf" builder
+      | SCall ("concat", [e1; e2]) ->
+        L.build_call concat_func [| (build_expr builder map e1) ; (build_expr builder map e2) |]
+           "concat" builder
       | SCall (f, args) ->
         let (fdef, fdecl) = StringMap.find f function_decls in
         let llargs = List.rev (List.map (build_expr builder map) (List.rev args)) in

@@ -52,6 +52,15 @@ ignore(check_binds "global" (global_symbols globals));
     ("prints", String)];
   in
 
+  let built_in_decls = 
+    StringMap.add "concat" {
+      rtyp = String;
+      fname = "concat";
+      formals = [(String, "str1"); (String, "str2")];
+      body = []
+    } built_in_decls
+  in
+
   (* Add function name to symbol table *)
   let add_func map fd =
     let built_in_err = "function " ^ fd.fname ^ " may not be defined"
