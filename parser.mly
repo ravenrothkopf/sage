@@ -4,7 +4,7 @@ open Ast
 
 %token LBRACE RBRACE NEWLINE
 %token LPAREN RPAREN PLUS ASSIGN
-%token STRING INT FLOAT BOOL
+%token STRING INT FLOAT BOOL WHILE
 %token FUNCT COLON COMMA
 %token <int> ILIT
 %token <float> FLIT
@@ -66,6 +66,7 @@ stmt_list:
 stmt:
     expr NEWLINE { Expr $1 }
   | LBRACE stmt_list RBRACE { Block $2 }
+  | WHILE LPAREN expr RPAREN stmt  { While ($3, $5) }
   | global { DecAssn $1 }  //variable initialization and assignment as it's own statement separate from exprs
 
 global: typ ID ASSIGN expr NEWLINE { (($1, $2), $4) } //int x = 3, only expression we want to use globally and locally

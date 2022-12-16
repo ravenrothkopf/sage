@@ -173,8 +173,10 @@ let translate (globals, functions) =
 
         ignore(L.build_cond_br bool_val body_bb end_bb while_builder);
         L.builder_at_end context end_bb
+        (*
       | SFor (e,body) -> stmt builder 
         ( SBlock [SExpr e [body]])
+        *)
     in
     (* Build the code for each statement in the function *)
     let func_builder = build_stmt builder (SBlock fdecl.sbody) in

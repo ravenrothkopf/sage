@@ -157,6 +157,7 @@ ignore(check_binds "global" (global_symbols globals));
         in (SBlock(fst (check_stmt_list stmt_list vars bvars)), vars)
       | DecAssn((ty, n), e) -> (SDecAssn((ty, n), check_expr e vars), StringMap.add n ty
          vars)
+      | While(e, st) -> SWhile(check_bool_expr e, check_stmt st)
     in (* body of check_func *)
     { 
       srtyp = func.rtyp;
