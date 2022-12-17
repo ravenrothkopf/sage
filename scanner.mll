@@ -20,7 +20,6 @@ rule token = parse
 | ','                                   { COMMA }
 | '{'                                   { LBRACE }
 | '}'                                   { RBRACE }
-| '+'                                   { PLUS }
 | '='                                   { ASSIGN }
 | "str"                                 { STRING }
 | "int"                                 { INT }

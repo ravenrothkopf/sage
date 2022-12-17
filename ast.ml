@@ -14,10 +14,13 @@ type bop =
 
 type typ = String | Int | Bool | Void 
 
+type uop = Neg | Pos
+
 type expr =
     Id of string
   | Assign of string * expr
   | Binop of expr * bop * expr
+  | Unop of uop * expr
   | StringLit of string
   | IntLit of int
   (* | FloatLit of float *)
@@ -75,12 +78,17 @@ let string_of_typ = function
   | Bool -> "bool"
   | Void -> "void"
 
+let string_of_uop = function 
+    Neg -> "-"
+  | Pos -> ""
+
 let rec string_of_expr = function
     Id(s) -> s
   | Assign(v, e) -> v ^ " = " ^ string_of_expr e
   | Binop(e1, op, e2) ->
     string_of_expr e1 ^ " " ^ string_of_op op ^ " " ^ string_of_expr e2
   | StringLit(s) -> s
+  | Unop(o, e) -> string_of_uop o ^ string_of_expr e
   | IntLit(s) -> string_of_int s
   (* | FloatLit(s) -> string_of_float s *)
   | BoolLit(true) -> "True"

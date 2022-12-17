@@ -3,7 +3,7 @@ open Ast
 %}
 
 %token LBRACE RBRACE NEWLINE
-%token LPAREN RPAREN PLUS ASSIGN MINUS TIMES DIVIDE
+%token LPAREN RPAREN PLUS ASSIGN MINUS TIMES DIVIDE POS NEG
 %token STRING INT FLOAT BOOL VOID
 %token IF ELIF ELSE EQ NEQ GT GEQ LT LEQ
 %token AND OR NOT
@@ -26,7 +26,7 @@ open Ast
 %left LT GT LEQ GEQ
 %left PLUS MINUS
 %left TIMES DIVIDE
-%right NOT
+%right NOT NEG POS
 
 %start program
 %type <Ast.program> program
@@ -37,7 +37,7 @@ program:
   decls EOF { $1 }
 
 decls:
-   /* nothing */ { ([] , []) }
+   /* nothing */ { ([], []) }
   // global variables outside functions
  | global decls { (($1 :: fst $2), snd $2) }
   //functions
@@ -75,19 +75,18 @@ stmt:
     expr NEWLINE { Expr $1 }
   | LBRACE stmt_list RBRACE { Block $2 }
   | global { DecAssn $1 }  //variable initialization and assignment as its own statement separate from exprs
-//  | if_stmt { $1 } 
+  | if_stmt { $1 }
   | NEWLINE stmt { $2 }
-  | IF LPAREN expr RPAREN stmt %prec NOELSE { If($3, $5, Block([])) }
-  | IF LPAREN expr RPAREN stmt ELSE stmt { If($3, $5, $7) }
+
 
 stmt_list:
     /* nothing */  { [] }
   | stmt stmt_list { $1 :: $2 }
   
 //TODO: fix if stmts so that they work with more than just one line? def has to do with the NEWLINES
-//if_stmt:
-//     IF LPAREN expr RPAREN stmt %prec NOELSE { If($3, $5, Block([])) }
-//   | IF LPAREN expr RPAREN stmt ELSE stmt { If($3, $5, $7) }
+if_stmt:
+    IF LPAREN expr RPAREN stmt %prec NOELSE { If($3, $5, Block([])) }
+  | IF LPAREN expr RPAREN stmt ELSE stmt { If($3, $5, $7) }
 
 // TODO: add elif stmts
 // elif_stmt:
@@ -118,6 +117,8 @@ expr:
   | expr LEQ expr { Binop ($1, Leq, $3) }
   | expr AND expr { Binop ($1, And, $3) }
   | expr OR expr { Binop ($1, Or, $3) }
+  | MINUS expr %prec NEG { Unop(Neg, $2) }
+  | PLUS expr %prec POS { Unop(Pos, $2) }
 
 args_opt:
     /* nothing */ { [] }
