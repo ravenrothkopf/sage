@@ -1,0 +1,54 @@
+
+
+Parsed program: 
+
+str h = hello
+
+int i = 3
+
+int j = 3
+
+int k = -3
+def int main(greeting) {
+    str location = world
+    greeting = hello
+    voidTest()
+    continue
+    break
+    x < 2
+    x <= 2
+    x == 2
+    x > 2
+    x >= 2
+    x != 3
+    2 and 3
+    3 or 4
+    x + 2
+    x - 2
+    x * 2
+    x / 3
+    {
+    x = 2
+   y = 3
+}
+    if (x < 2)
+    {
+    x = 3
+   x = x + 1
+}
+    if (x < 2)
+x = 3
+else
+x = 4
+    if (i = 3)
+    break
+    if (j = 2)
+    continue
+    j = 0
+    while (x < 3)
+{
+    x = x + 1
+}
+    prints(hello + location)
+}
+
