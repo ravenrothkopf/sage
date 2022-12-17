@@ -1,5 +1,9 @@
 %{
 open Ast
+
+let fst (a,_,_) = a;;
+let snd (_,b,_) = b;;
+let trd (_,_,c) = c;;
 %}
 
 %token LBRACE RBRACE NEWLINE
@@ -7,7 +11,7 @@ open Ast
 %token STRING INT FLOAT BOOL VOID
 %token IF ELIF ELSE EQ NEQ GT GEQ LT LEQ
 %token AND OR NOT
-%token DEF COLON COMMA 
+%token DEF COLON COMMA
 %token <int> ILIT
 %token <float> FLIT
 %token <bool> BLIT
@@ -37,12 +41,13 @@ program:
   decls EOF { $1 }
 
 decls:
-   /* nothing */ { ([] , []) }  
+   /* nothing */ { ([] , [],  []) }
   // global variables outside functions
- | global decls { (($1 :: fst $2), snd $2) }
+ | global decls { (($1 :: fst $2), snd $2, trd $2) }
   //functions
- | fdecl decls { fst $2, ($1 :: snd $2) }
- | NEWLINE decls { (fst $2, snd $2) }
+ | fdecl decls { (fst $2, ($1 :: snd $2), trd $2) }
+ | stmt decls { (fst $2, snd $2, (trd $2 @ [$1])) }
+ | NEWLINE decls { (fst $2, snd $2, trd $2) }
 
 fdecl:
   DEF typ ID LPAREN formals_opt RPAREN LBRACE NEWLINE stmt_list RBRACE
@@ -71,28 +76,30 @@ typ:
   | VOID { Void }
   //TODO: add array type + implementation
 
-stmt_list:
-    /* nothing */  { [] }
-  | stmt stmt_list { $1 :: $2 }
-
 stmt:
     expr NEWLINE { Expr $1 }
   | LBRACE stmt_list RBRACE { Block $2 }
   | global { DecAssn $1 }  //variable initialization and assignment as its own statement separate from exprs
-  | if_stmt { $1 } 
+//  | if_stmt { $1 } 
   | NEWLINE stmt { $2 }
+  | IF LPAREN expr RPAREN stmt %prec NOELSE { If($3, $5, Block([])) }
+  | IF LPAREN expr RPAREN stmt ELSE stmt { If($3, $5, $7) }
 
+stmt_list:
+    /* nothing */  { [] }
+  | stmt stmt_list { $1 :: $2 }
+  
 //TODO: fix if stmts so that they work with more than just one line? def has to do with the NEWLINES
-if_stmt:
-     IF LPAREN expr RPAREN stmt %prec NOELSE { If($3, $5, Block([])) }
-   | IF LPAREN expr RPAREN stmt ELSE stmt { If($3, $5, $7) }
+//if_stmt:
+//     IF LPAREN expr RPAREN stmt %prec NOELSE { If($3, $5, Block([])) }
+//   | IF LPAREN expr RPAREN stmt ELSE stmt { If($3, $5, $7) }
 
 // TODO: add elif stmts
 // elif_stmt:
 //     ELIF expr LBRACE NEWLINE stmt_list RBRACE { [($2, $5)] }
 //   | elif ELIF expr LBRACE NEWLINE stmt_list RBRACE { ($3, $6) :: $1 }
 
-global: 
+global:
     typ ID ASSIGN expr NEWLINE { (($1, $2), $4) } //int x = 3, only expression we want to use globally and locally
 
 expr:

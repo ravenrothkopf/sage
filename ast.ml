@@ -49,7 +49,7 @@ type func_def = {
 }
 
 (*global decls + func decls*)
-type program = bind_init list * func_def list
+type program = bind_init list * func_def list * stmt list
 
 (* Pretty-printing functions *)
 
@@ -107,7 +107,8 @@ let string_of_fdecl fdecl =
   String.concat "    " (""::List.map string_of_stmt fdecl.body) ^
   "}\n"
 
-let string_of_program (globals, funcs) =
+let string_of_program (globals, funcs, statements) =
   "\n\nParsed program: \n\n" ^
   String.concat "\n" (List.map string_of_vdecl globals) ^
-  String.concat "\n" (List.map string_of_fdecl funcs)  
+  String.concat "\n" (List.map string_of_fdecl funcs) ^
+  String.concat "\n" (List.map string_of_stmt statements) 
