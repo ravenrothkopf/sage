@@ -186,17 +186,18 @@ in
         let bool_val = build_expr builder vars predicate in
 
         let then_bb = L.append_block context "then" the_function in
-        ignore (fst (build_stmt ((L.builder_at_end context then_bb), vars) then_stmt));
         let else_bb = L.append_block context "else" the_function in
-        ignore (fst (build_stmt ((L.builder_at_end context then_bb), vars) else_stmt));
-
-        let end_bb = L.append_block context "if_end" the_function in
-        let build_br_end = L.build_br end_bb in (* partial function *)
-        add_terminal (L.builder_at_end context then_bb) build_br_end;
-        add_terminal (L.builder_at_end context else_bb) build_br_end;
+        
+        (*for else if stmts*)
+        let merge_bb = L.append_block context "merge" the_function in
+        let build_br_merge = L.build_br merge_bb in
+        (* let end_bb = L.append_block context "if_end" the_function in
+        let build_br_end = L.build_br end_bb in partial function *)
+        add_terminal (fst (build_stmt ((L.builder_at_end context then_bb), vars) then_stmt)) build_br_merge;
+        add_terminal (fst (build_stmt ((L.builder_at_end context else_bb), vars) else_stmt)) build_br_merge;
 
         ignore(L.build_cond_br bool_val then_bb else_bb builder);
-        (L.builder_at_end context end_bb, vars)
+        (L.builder_at_end context merge_bb, vars)
     in
     (* Build the code for each statement in the function, returns only the builder
        not the map w the globals *)
