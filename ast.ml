@@ -26,6 +26,7 @@ type expr =
   (* | FloatLit of float *)
   | BoolLit of bool
   | Call of string * expr list
+  | Array of expr list
   | Noexpr
 
 (* int x: name binding *)
@@ -40,7 +41,7 @@ type stmt =
   | Block of stmt list
   | DecAssn of bind_init
   | If of expr * stmt * stmt
-
+  | While of expr * stmt
 (*type name_bind = typ * string*)
 
 (* str funct main (int a): func_def *)
@@ -71,7 +72,7 @@ let string_of_op = function
   | And -> "and"
   | Or -> "or"
 
-let string_of_typ = function
+let rec string_of_typ = function
     String -> "str"
   | Int -> "int"
   (* | Float -> "float" *)
@@ -95,6 +96,7 @@ let rec string_of_expr = function
   | BoolLit(false) -> "False"
   | Call(f, el) ->
     f ^ "(" ^ String.concat ", " (List.map string_of_expr el) ^ ")"
+  | Array(l) -> "[" ^ String.concat ", " (List.map string_of_expr l) ^ "]"
   | Noexpr -> ""
 
 let string_of_vdecl (decl, exp) = string_of_typ (fst decl) ^ " " ^ (snd decl) ^ " = " ^ string_of_expr exp
@@ -107,6 +109,7 @@ let rec string_of_stmt = function
   | DecAssn(decl, expr) -> string_of_vdecl (decl, expr)
   | If(expr, s, Block([])) -> "if (" ^ string_of_expr expr ^ ")\n" ^ "    " ^ string_of_stmt s
   | If(expr, s1, s2) ->  "if (" ^ string_of_expr expr ^ ")\n" ^ string_of_stmt s1 ^ "else\n" ^ string_of_stmt s2
+  | While(expr, s) ->  "while (" ^ string_of_expr expr ^ ")\n" ^ string_of_stmt s
 
 let string_of_fdecl fdecl =
   "def " ^ string_of_typ fdecl.rtyp ^ " " ^

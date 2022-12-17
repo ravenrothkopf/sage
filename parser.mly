@@ -2,10 +2,10 @@
 open Ast
 %}
 
-%token LBRACE RBRACE NEWLINE
+%token LBRACE RBRACE LBRACKET RBRACKET NEWLINE
 %token LPAREN RPAREN PLUS ASSIGN MINUS TIMES DIVIDE POS NEG
 %token STRING INT FLOAT BOOL VOID
-%token IF ELIF ELSE EQ NEQ GT GEQ LT LEQ
+%token IF ELIF ELSE EQ NEQ GT GEQ LT LEQ WHILE FOR
 %token AND OR NOT
 %token DEF COLON COMMA
 %token <int> ILIT
@@ -87,6 +87,7 @@ stmt_list:
 if_stmt:
     IF LPAREN expr RPAREN stmt %prec NOELSE { If($3, $5, Block([])) }
   | IF LPAREN expr RPAREN stmt ELSE stmt { If($3, $5, $7) }
+  | WHILE LPAREN expr RPAREN stmt { While($3, $5) }
 
 // TODO: add elif stmts
 // elif_stmt:
@@ -119,6 +120,15 @@ expr:
   | expr OR expr { Binop ($1, Or, $3) }
   | MINUS expr %prec NEG { Unop(Neg, $2) }
   | PLUS expr %prec POS { Unop(Pos, $2) }
+  | arr { $1 }
+
+arr:
+  LBRACKET arr_elems RBRACKET { Array($2) }
+
+arr_elems:
+    {[]}
+  | expr { [$1] }
+  | expr COMMA arr_elems { $1 :: $3 }
 
 args_opt:
     /* nothing */ { [] }

@@ -16,6 +16,8 @@ rule token = parse
 | ')'                                   { RPAREN }
 | '{'                                   { LBRACE }
 | '}'                                   { RBRACE }
+| '['                                   { LBRACKET }
+| ']'                                   { RBRACKET }
 | ':'                                   { COLON }
 | ','                                   { COMMA }
 | '{'                                   { LBRACE }
@@ -39,6 +41,8 @@ rule token = parse
 | "if"                                  { IF }
 | "elif"                                { ELIF }
 | "else"                                { ELSE }
+| "while"                               { WHILE }
+| "for"                                 { FOR }
 | "=="                                  { EQ }
 | "!="                                  { NEQ }
 | ">"                                   { GT }
