@@ -2,7 +2,7 @@
 open Ast
 %}
 
-%token LBRACE RBRACE LBRACKET RBRACKET NEWLINE
+%token LBRACE RBRACE LBRACKET RBRACKET NEWLINE RETURN
 %token LPAREN RPAREN PLUS ASSIGN MINUS TIMES DIVIDE POS NEG
 %token STRING INT FLOAT BOOL VOID
 %token IF ELIF ELSE EQ NEQ GT GEQ LT LEQ WHILE FOR
@@ -82,13 +82,13 @@ stmt:
 stmt_list:
     /* nothing */  { [] }
   | stmt stmt_list { $1 :: $2 }
-  
+ 
 //TODO: fix if stmts so that they work with more than just one line? def has to do with the NEWLINES
 if_stmt:
     IF LPAREN expr RPAREN stmt %prec NOELSE { If($3, $5, Block([])) }
   | IF LPAREN expr RPAREN stmt ELSE stmt { If($3, $5, $7) }
   | WHILE LPAREN expr RPAREN stmt { While($3, $5) }
-
+  | RETURN expr { Return($2) }
 // TODO: add elif stmts
 // elif_stmt:
 //     ELIF expr LBRACE NEWLINE stmt_list RBRACE { [($2, $5)] }

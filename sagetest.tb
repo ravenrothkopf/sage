@@ -52,8 +52,9 @@ def int main (str greeting) {
     j = 0
 
     while (x < 3) {
-    x = x + 1 
+    x = x + 1
     }
 
     prints("hello" + location)
 }
+

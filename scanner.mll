@@ -49,6 +49,7 @@ rule token = parse
 | ">="                                  { GEQ }
 | "<"                                   { LT }
 | "<="                                  { LEQ }
+| "return"                              { RETURN }
 | int as lem                            { ILIT(int_of_string lem) }
 | float as lem                          { FLIT(float_of_string lem) }
 | letter (digit | letter | '_')* as lem { ID(lem) }
