@@ -16,11 +16,12 @@ rule token = parse
 | ')'                                   { RPAREN }
 | '{'                                   { LBRACE }
 | '}'                                   { RBRACE }
+| '['                                   { LBRACKET }
+| ']'                                   { RBRACKET }
 | ':'                                   { COLON }
 | ','                                   { COMMA }
 | '{'                                   { LBRACE }
 | '}'                                   { RBRACE }
-| '+'                                   { PLUS }
 | '='                                   { ASSIGN }
 | "str"                                 { STRING }
 | "int"                                 { INT }
@@ -28,6 +29,10 @@ rule token = parse
 | "bool"                                { BOOL }
 | "True"                                { BLIT(true) }
 | "False"                               { BLIT(false) }
+| "+"                                   { PLUS }
+| "-"                                   { MINUS }
+| "*"                                   { TIMES }
+| "/"                                   { DIVIDE }
 | "and"                                 { AND }
 | "or"                                  { OR }
 | "not"                                 { NOT }
@@ -37,6 +42,14 @@ rule token = parse
 | "elif"                                { ELIF }
 | "else"                                { ELSE }
 | "while"                               { WHILE }
+| "for"                                 { FOR }
+| "=="                                  { EQ }
+| "!="                                  { NEQ }
+| ">"                                   { GT }
+| ">="                                  { GEQ }
+| "<"                                   { LT }
+| "<="                                  { LEQ }
+| "return"                              { RETURN }
 | int as lem                            { ILIT(int_of_string lem) }
 | float as lem                          { FLIT(float_of_string lem) }
 | letter (digit | letter | '_')* as lem { ID(lem) }
