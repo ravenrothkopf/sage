@@ -1,9 +1,5 @@
 %{
 open Ast
-
-let fst (a,_,_) = a;;
-let snd (_,b,_) = b;;
-let trd (_,_,c) = c;;
 %}
 
 %token LBRACE RBRACE NEWLINE
@@ -41,13 +37,12 @@ program:
   decls EOF { $1 }
 
 decls:
-   /* nothing */ { ([] , [],  []) }
+   /* nothing */ { ([] , []) }
   // global variables outside functions
- | global decls { (($1 :: fst $2), snd $2, trd $2) }
+ | global decls { (($1 :: fst $2), snd $2) }
   //functions
- | fdecl decls { (fst $2, ($1 :: snd $2), trd $2) }
- | stmt decls { (fst $2, snd $2, (trd $2 @ [$1])) }
- | NEWLINE decls { (fst $2, snd $2, trd $2) }
+ | fdecl decls { (fst $2, ($1 :: snd $2)) }
+ | NEWLINE decls { (fst $2, snd $2) }
 
 fdecl:
   DEF typ ID LPAREN formals_opt RPAREN LBRACE NEWLINE stmt_list RBRACE
