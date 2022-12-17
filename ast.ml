@@ -112,7 +112,7 @@ let rec string_of_stmt = function
   | If(expr, s, Block([])) -> "if (" ^ string_of_expr expr ^ ")\n" ^ "    " ^ string_of_stmt s
   | If(expr, s1, s2) ->  "if (" ^ string_of_expr expr ^ ")\n" ^ string_of_stmt s1 ^ "else\n" ^ string_of_stmt s2
   | For(expr, s) -> 
-    "for (" ^ string_of_expr e ^ " ) " ^ string_of_stmt s  
+    "for (" ^ string_of_expr expr ^ " )\n " ^ string_of_stmt s  
   | While(expr, s) ->  "while (" ^ string_of_expr expr ^ ")\n" ^ string_of_stmt s
   | Return(expr) -> "return" ^ string_of_expr expr
 
