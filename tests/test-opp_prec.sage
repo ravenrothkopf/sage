@@ -1,5 +1,5 @@
 # test-operator_precedence
 
-def int main() {
+def int main():
     print(5 + 5 * 2 / 10)
-}
+

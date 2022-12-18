@@ -1,6 +1,6 @@
 # test integer assignment
 
-def int main() {
+def int main():
     str a = "hi"
     prints(a)
-}
+

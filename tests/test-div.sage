@@ -1,5 +1,5 @@
 # test division
 
-def int main() {
+def int main():
     print(2 / 2)
-}
+
