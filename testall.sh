@@ -5,12 +5,9 @@
 #  Compile, run, and check the output of each expected-to-work test
 #  Compile and check the error of each expected-to-fail test
 
-LIBC="./libc/builtins.c"
-
-make
-gcc -c $LIBC
-
 # PATHS
+LIBDIR="./libc/"
+LIBC="./libc/stdlibc.c"
 # LLVM interpreter (LLI="/usr/local/opt/llvm/bin/lli")
 LLI="lli"
 # LLI="/opt/homebrew/opt/llvm/bin/lli"
@@ -22,6 +19,9 @@ CC="cc"
 SAGE="./sage.native"
 SAGECEXEC="./sagec"
 #SAGE="_build/SAGE.native"
+
+make
+gcc -c -o $LIBC
 
 # Set time limit for all operations
 ulimit -t 30
@@ -97,7 +97,7 @@ Check() {
     generatedfiles="$generatedfiles ${basename}.ll ${basename}.s ${basename}.exe ${basename}.out" &&
     Run "$SAGE" "$1" ">" "${basename}.ll" &&
     Run "$LLC" "-relocation-model=pic" "${basename}.ll" ">" "${basename}.s" &&
-    Run "$CC" "-o" "${basename}.exe" "${basename}.s" "builtins.o" &&
+    Run "$CC" "-o" "${basename}.exe" "${basename}.s" "${LIBDIR}stdlibc.o" &&
     Run "./${basename}.exe" > "${basename}.out" &&
     Compare ${basename}.out ${reffile}.out ${basename}.diff
 
@@ -105,7 +105,7 @@ Check() {
 	if [ $keep -eq 0 ] ; then
 	    rm -f $generatedfiles
 	fi
-	echo "OK"
+	echo "PASSED"
 	echo "###### SUCCESS" 1>&2
     else
 	echo "###### FAILED" 1>&2
@@ -135,7 +135,7 @@ CheckFail() {
 	if [ $keep -eq 0 ] ; then
 	    rm -f $generatedfiles
 	fi
-	echo "OK" 1>&2
+	echo "PASSED" 1>&2
 	echo "###### SUCCESS" 1>&2
     else
 	echo "###### FAILED" 1>&2
