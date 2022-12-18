@@ -43,6 +43,8 @@ rule token = parse
 | "else"                                { ELSE }
 | "while"                               { WHILE }
 | "for"                                 { FOR }
+| "in"                                  { IN }
+| "range"                               { RANGE }
 | "=="                                  { EQ }
 | "!="                                  { NEQ }
 | ">"                                   { GT }

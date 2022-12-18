@@ -4,8 +4,9 @@ open Ast
 
 %token LPAREN RPAREN LBRACKET RBRACKET PLUS MINUS TIMES DIVIDE POS NEG ASSIGN
 %token EQ NEQ GT GEQ LT LEQ AND OR NOT
-%token DEF LBRACE RBRACE NEWLINE RETURN IF ELIF ELSE WHILE FOR STRING INT FLOAT BOOL VOID IN
-%token COLON COMMA
+%token DEF LBRACE RBRACE NEWLINE RETURN IF ELIF ELSE WHILE FOR STRING INT FLOAT BOOL VOID 
+%token RANGE IN
+%token COLON COMMA 
 %token <int> ILIT
 %token <float> FLIT
 %token <bool> BLIT
@@ -78,7 +79,8 @@ stmt:
   | WHILE LPAREN expr RPAREN stmt { While($3, $5) }
   | RETURN expr { Return($2) }
   | NEWLINE stmt { $2 }
-  | FOR expr IN stmt  { For($2, $4) } 
+  | FOR expr IN expr stmt  { For($2, $4, $5) } 
+  | FOR expr IN RANGE LPAREN expr RPAREN stmt { Range($2, $6, $8)}
   | WHILE LPAREN expr RPAREN stmt  { While ($3, $5) }
 
 stmt_list:

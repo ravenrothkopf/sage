@@ -36,12 +36,15 @@ type bind_formal = typ * string
 (*tuple, first element contains typ and ID, second is the expression*)
 type bind_init = bind_formal * expr
 
+type bind = Bind of string * typ
+
 type stmt =
     Expr of expr
   | Block of stmt list
   | DecAssn of bind_init
   | If of expr * stmt * stmt
-  | For of expr * stmt 
+  | For of expr * expr * stmt 
+  | Range of expr * expr * stmt 
   | While of expr * stmt
   | Return of expr
 (*type name_bind = typ * string*)
@@ -81,6 +84,10 @@ let rec string_of_typ = function
   | Bool -> "bool"
   | Void -> "void"
 
+(* Created specifically for the range stmt *)
+let rec string_of_bind = function
+  | Bind(s, t) -> s ^ ": " ^ string_of_typ t
+
 let string_of_uop = function 
     Neg -> "-"
   | Pos -> ""
@@ -111,7 +118,8 @@ let rec string_of_stmt = function
   | DecAssn(decl, expr) -> string_of_vdecl (decl, expr)
   | If(expr, s, Block([])) -> "if (" ^ string_of_expr expr ^ ")\n" ^ "    " ^ string_of_stmt s
   | If(expr, s1, s2) ->  "if (" ^ string_of_expr expr ^ ")\n" ^ string_of_stmt s1 ^ "else\n" ^ string_of_stmt s2
-  | For(expr, s) -> "for (" ^ string_of_expr expr ^ " )\n " ^ string_of_stmt s  
+  | For(e1,e2, s) -> "for " ^ string_of_expr e1 ^ " in " ^ string_of_expr e2 ^ "\n" ^ string_of_stmt s  
+  | Range(e1,e2, s) -> "for " ^ string_of_expr e1 ^ " in range (" ^ string_of_expr e2 ^ ")\n" ^ string_of_stmt s
   | While(expr, s) ->  "while (" ^ string_of_expr expr ^ ")\n" ^ string_of_stmt s
   | Return(expr) -> "return" ^ string_of_expr expr
 

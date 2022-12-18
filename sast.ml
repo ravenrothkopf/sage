@@ -21,7 +21,8 @@ type sstmt =
   | SBlock of sstmt list
   | SDecAssn of sbind_init
   | SIf of sexpr * sstmt * sstmt
-  | SFor of sexpr * sstmt
+  | SFor of sexpr * sexpr * sstmt
+  | SRange of sexpr * sexpr * sstmt 
   | SWhile of sexpr * sstmt
 
 type sfunc_def = {
@@ -66,7 +67,8 @@ let rec string_of_sstmt = function
     "if (" ^ string_of_sexpr expr ^ ")\n" ^ string_of_sstmt s
   | SIf(expr, s1, s2) ->  "if (" ^ string_of_sexpr expr ^ ")\n" ^
     string_of_sstmt s1 ^ "else\n" ^ string_of_sstmt s2
-  | SFor(expr, s) -> "for (" ^ string_of_sexpr expr ^ " )\n " ^ string_of_sstmt s  
+  | SFor(e1,e2, s) -> "for " ^ string_of_sexpr e1 ^ " in " ^ string_of_sexpr e2 ^ "\n" ^ string_of_sstmt s  
+  | SRange(e1,e2, s) -> "for " ^ string_of_sexpr e1 ^ " in range (" ^ string_of_sexpr e2 ^ ")\n" ^ string_of_sstmt s  
   | SWhile(expr, s) ->  "while (" ^ string_of_sexpr expr ^ ")\n" ^ string_of_sstmt s
  
 
