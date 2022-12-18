@@ -21,9 +21,8 @@ native:
 
 clean:
 	$(OCAMLB) -clean
-	rm -rf ocamlllvm *.diff
 	rm -rf \
-	_build sage.native *.out *.o *.s *.exe testall.log
+	_build ocamlllvm sage.native *.diff *.ll *.out *.o *.s *.exe testall.log
 
 sageexec: native sage.tb
 	./sage.native < sage.tb > sage.out
