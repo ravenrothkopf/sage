@@ -15,15 +15,29 @@ sage.tb currently tests (only for semantic analysis):
 str hello = "hello"
 bool t = True
 
+"""
 def void voidTest() {
     str test = "test"
     prints("test")
-}
+
 
 def int main (str greeting) {
     str location = "world"
     greeting = hello
     voidTest()
     prints("hello" + location)
-}
+
+"""
+
+def void voidTest() : 
+    str test = "test" 
+    prints("test")
+
+def int main (str greeting) :
+    str location = "world" 
+    greeting = hello 
+    prints("hello" + location)
+
+
+
 
