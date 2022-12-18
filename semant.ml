@@ -32,17 +32,19 @@ ignore(check_binds "global" (global_symbols globals));
 
   (* Collect function declarations for built-in functions: no bodies *)
   let built_in_decls =
-    let add_bind map (name, ty) = StringMap.add name {
-      rtyp = Void;
+    let add_bind map (name, ty, rty) = StringMap.add name {
+      rtyp = rty;
       fname = name;
-      formals = [(ty, "x")];
+      formals = List.fold_left (fun l t -> l @ [(t, "x")]) [] ty;
       body = []
     } map
-    in List.fold_left add_bind StringMap.empty [("print", Int); ("printi", Int);
-    ("prints", String)];
+    in List.fold_left add_bind StringMap.empty 
+    [("print", [Int], Void); ("printi", [Int], Void); ("prints", [String], Void); ("printb", [Bool], Void); 
+    ("concat", [String ; String], String); 
+    ("string", [Int], String); (*("string", [Bool], String); ("string", [String], String)*)];
   in
 
-  let built_in_decls = 
+  (* let built_in_decls = 
     StringMap.add "concat" {
       rtyp = String;
       fname = "concat";
@@ -50,6 +52,17 @@ ignore(check_binds "global" (global_symbols globals));
       body = []
     } built_in_decls
   in
+
+  let built_in_cast_decls = 
+    let add_cast_bind map (name, rty, ty) = StringMap.add name {
+      rtyp = rty;
+      fname = name;
+      formals = [(ty, "x")];
+      body = []
+    } map
+    in List.fold_left add_cast_bind StringMap.empty [("string", Int, String); ("string", Bool, String);
+    ("string", String, String)];
+  in *)
 
   (* Add function name to symbol table *)
   let add_func map fd =
@@ -88,7 +101,8 @@ ignore(check_binds "global" (global_symbols globals));
   (* Raise an exception if the given rvalue type cannot be assigned to
        the given lvalue type *)
   let check_assign lvaluet rvaluet err =
-    if lvaluet = rvaluet then lvaluet else raise (Failure err)
+    if lvaluet = rvaluet then lvaluet else 
+        raise (Failure err)
   in
 
   let rec check_expr e map = match e with
@@ -188,6 +202,7 @@ ignore(check_binds "global" (global_symbols globals));
       sbody = match fst (check_stmt (Block func.body) symbols) with
         SBlock(stmt_list) -> stmt_list
       | _ -> raise (Failure ("internal error"))
+
     }
   in
 

@@ -5,12 +5,15 @@
 #  Compile, run, and check the output of each expected-to-work test
 #  Compile and check the error of each expected-to-fail test
 
+LIBC="./libc/builtins.c"
+
 make
-gcc -c sagelibs.c
+gcc -c $LIBC
 
 # PATHS
 # LLVM interpreter (LLI="/usr/local/opt/llvm/bin/lli")
 LLI="lli"
+# LLI="/opt/homebrew/opt/llvm/bin/lli"
 # LLVM compiler
 LLC="llc"
 # C compiler
@@ -31,7 +34,7 @@ globalerror=0
 keep=0
 
 Usage() {
-    echo "Usage: testall.sh [options] [.sage files]"
+    echo "Usage: testall.sh [options] [.native files]"
     echo "-k    Keep intermediate files"
     echo "-h    Print this help"
     exit 1
@@ -91,14 +94,12 @@ Check() {
 
     generatedfiles=""
 
-    generatedfiles="$generatedfiles ${basename}.ll ${basename}.out" &&
-    Run "$SAGE" "<" $1 ">" "${basename}.ll" &&
-    Run "$LLI" "${basename}.ll" ">" "${basename}.out" &&
-    Run "$CC" -o "${basename}.exe" "${basename}.s" "sagelibs.o" &&
-    Run "./${basename}.exe" > "${basename}check.out" &&
+    generatedfiles="$generatedfiles ${basename}.ll ${basename}.s ${basename}.exe ${basename}.out" &&
+    Run "$SAGE" "$1" ">" "${basename}.ll" &&
+    Run "$LLC" "-relocation-model=pic" "${basename}.ll" ">" "${basename}.s" &&
+    Run "$CC" "-o" "${basename}.exe" "${basename}.s" "builtins.o" &&
+    Run "./${basename}.exe" > "${basename}.out" &&
     Compare ${basename}.out ${reffile}.out ${basename}.diff
-
-    # Report the status and clean up the generated files
 
     if [ $error -eq 0 ] ; then
 	if [ $keep -eq 0 ] ; then
@@ -130,13 +131,11 @@ CheckFail() {
     RunFail "$SAGE" "<" $1 "2>" "${basename}.err" ">>" $globallog &&
     Compare ${basename}.err ${reffile}.err ${basename}.diff
 
-    # Report the status and clean up the generated files
-
     if [ $error -eq 0 ] ; then
 	if [ $keep -eq 0 ] ; then
 	    rm -f $generatedfiles
 	fi
-	echo "OK"
+	echo "OK" 1>&2
 	echo "###### SUCCESS" 1>&2
     else
 	echo "###### FAILED" 1>&2
