@@ -176,6 +176,7 @@ ignore(check_binds "global" (global_symbols globals));
       | DecAssn((ty, n), e) -> (SDecAssn((ty, n), check_expr e vars), StringMap.add n ty
          vars)
       | While(e, st) -> SWhile(check_bool_expr e, check_stmt st)
+      | For(e, st) -> SFor(expr e, check_stmt st)
       | If(p, b1, b2) -> (SIf(check_bool_expr p vars, fst (check_stmt b1 vars), fst (check_stmt b2
          vars)), vars)
     in (* body of check_func *)

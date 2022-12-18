@@ -66,9 +66,8 @@ let rec string_of_sstmt = function
     "if (" ^ string_of_sexpr expr ^ ")\n" ^ string_of_sstmt s
   | SIf(expr, s1, s2) ->  "if (" ^ string_of_sexpr expr ^ ")\n" ^
     string_of_sstmt s1 ^ "else\n" ^ string_of_sstmt s2
-  | SFor(e, s) -> 
-    "for (" ^ string_of_sexpr e ^ " ) " ^ string_of_sstmt s  
-  | SWhile(e, s) -> "while (" ^ string_of_sexpr e ^ ") " ^ string_of_sstmt s
+  | SFor(expr, s) -> "for (" ^ string_of_sexpr expr ^ " )\n " ^ string_of_sstmt s  
+  | SWhile(expr, s) ->  "while (" ^ string_of_sexpr expr ^ ")\n" ^ string_of_sstmt s
  
 
 let string_of_sfdecl fdecl =

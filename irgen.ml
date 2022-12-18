@@ -183,10 +183,17 @@ in
 
         ignore(L.build_cond_br bool_val body_bb end_bb while_builder);
         L.builder_at_end context end_bb
-        (*
+       
       | SFor (e,body) -> stmt builder 
-        ( SBlock [SExpr e [body]])
-        *)
+        let whole_body = SBlock[stl;SExpr(e)] in 
+        let pred_bb = append_block context "for" the_function in
+        ignore(build_br pred_bb builder);
+
+        let body_bb = append_block context "for_body" the_function in
+        add_terminal (stmt (builder_at_end context body_bb) whole_body) (build_br pred_bb);
+
+        let pred_builder = builder_at_end context pred_bb
+      
       | SIf (predicate, then_stmt, else_stmt) ->
         let bool_val = build_expr builder vars predicate in
 

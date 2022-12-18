@@ -77,6 +77,7 @@ stmt:
   | global { DecAssn $1 }  //variable initialization and assignment as its own statement separate from exprs
   | if_stmt { $1 }
   | NEWLINE stmt { $2 }
+  | FOR ID IN stmt  { For($2, $4) } 
   | WHILE LPAREN expr RPAREN stmt  { While ($3, $5) }
 
 
