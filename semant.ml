@@ -188,6 +188,7 @@ ignore(check_binds "global" (global_symbols globals));
       sbody = match fst (check_stmt (Block func.body) symbols) with
         SBlock(stmt_list) -> stmt_list
       | _ -> raise (Failure ("internal error"))
+
     }
   in
 

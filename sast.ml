@@ -4,7 +4,7 @@ type sexpr = typ * sx
 and sx = 
   SId of string
 | SAssign of string * sexpr
-| SBinop of sexpr * bop * sexpr
+| SBinop of sexpr * op * sexpr
 | SStringLit of string
 | SIntLit of int
 (* | SFloatLit of float *)
