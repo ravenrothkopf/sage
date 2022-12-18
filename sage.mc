@@ -13,17 +13,26 @@ sage.tb currently tests (only for semantic analysis):
 # test single-line comment
 
 str hello = "hello"
+
+
+
 bool t = True
+
 
 def void voidTest() :
     str test = "test"
-    prints("void test")
+    
 
+
+    prints("void test")
 
 def int main (str greeting) :
     str location = "world"
     voidTest()
     print(1 + 2)
+
+
+    
     prints("hello")
     prints(location)
-
+    
