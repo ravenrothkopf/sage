@@ -19,7 +19,7 @@ open Ast
 
 %nonassoc NOELSE
 %nonassoc ELSE
-%right ASSIGN
+%right ASSIGN PLUSEQ MINEQ TIMEQ DIVEQ
 %left OR
 %left AND
 %left EQ NEQ
@@ -104,6 +104,10 @@ expr:
   | BLIT             { BoolLit($1) }
   | ID               { Id($1) }
   | ID ASSIGN expr   { Assign($1, $3) }
+  | ID PLUSEQ expr { Assign([$1], Binop ($1, Add, $3))}
+  | ID MINEQ  expr { Assign([$1], Binop ($1, Sub, $3))}
+  | ID MULTEQ expr { Assign([$1], Binop ($1, Mult, $3))}
+  | ID DIVEQ expr { Assign([$1], Binop ($1, Div, $3))}
   | ID LPAREN args_opt RPAREN { Call($1, $3) }
   | LPAREN expr RPAREN { $2 }
   | expr PLUS expr { Binop ($1, Add, $3) }

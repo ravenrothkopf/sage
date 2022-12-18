@@ -33,6 +33,10 @@ rule token = parse
 | "-"                                   { MINUS }
 | "*"                                   { TIMES }
 | "/"                                   { DIVIDE }
+| "+="                                  { PLUSEQ }
+| "-="                                  { MINEQ }
+| "*="                                  { TIMEQ }
+| "/="                                  { DIVEQ }
 | "and"                                 { AND }
 | "or"                                  { OR }
 | "not"                                 { NOT }
