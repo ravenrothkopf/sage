@@ -16,16 +16,16 @@ native:
 %.cmo: %.ml
 	$(OCAMLC) $<
 
-%.cmi : %.mli
+%.cmi: %.mli
 	$(OCAMLC) $<
+
+sageexec: native sage.tb
+	./sage.native < sage.tb > sage.out
 
 clean:
 	$(OCAMLB) -clean
 	rm -rf \
 	_build ocamlllvm sage.native *.diff *.ll *.out *.o *.s *.exe testall.log
-
-sageexec: native sage.tb
-	./sage.native < sage.tb > sage.out
 
 test: clean native
 	./testall.sh
