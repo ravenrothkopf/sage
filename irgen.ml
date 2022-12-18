@@ -14,10 +14,13 @@ let translate (globals, functions) =
 
   (* Get types from the context *)
   let i32_t      = L.i32_type    context
+  and i8_t       = L.i8_type     context
   and i1_t       = L.i1_type     context 
   and void_t     = L.void_type   context 
-  and string_t = L.pointer_type (L.i8_type context) 
+  and i64_t      = L.i64_type    context
 in
+
+  let string_t   = L.pointer_type i8_t in
 
   (* Return the LLVM type for a sage type *)
   let ltype_of_typ = function
@@ -45,7 +48,12 @@ in
       let rec build_global_expr ((_, e) : sexpr) = match e with
         SIntLit i -> L.const_int (ltype_of_typ t) i
       | SBoolLit b  -> L.const_int (ltype_of_typ t) (if b then 1 else 0)
-      | SStringLit s -> L.const_stringz context s
+      | SStringLit s -> 
+        (*define_global + const_stringz returns a global constant char array (with null term) in the module 
+           in the default address space*)
+          let global = L.define_global ".str" (L.const_stringz context s) the_module in
+          (* const ints of the char array*)
+          L.const_gep global [|L.const_int i64_t 0; L.const_int i64_t 0|]
       | SNoexpr -> raise (Failure "empty global initializer")
       | SBinop (e1, op, e2) -> 
         let e1' = build_global_expr e1
@@ -150,6 +158,11 @@ in
       | SCall ("prints", [e]) ->
         L.build_call printf_func [| string_format_str ; (build_expr builder map e) |]
           "printf" builder
+      | SCall ("printb", [e]) ->
+        L.build_call printf_func [| int_format_str ; (build_expr builder map e) |]
+          "printf" builder
+      (*type casting hack using OCaml oooh*)
+      | SCall ("string", [e]) -> build_expr builder map (Sast.to_string e)
       | SCall (f, args) ->
         let (fdef, fdecl) = StringMap.find f function_decls in
         let llargs = List.rev (List.map (build_expr builder map) (List.rev args)) in

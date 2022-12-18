@@ -3,10 +3,10 @@
 #include <string.h>
 #include <ctype.h>
 
-void println(char *s)
-{
-    printf("%s\n", s);
-}
+// void println(char *s)
+// {
+//     printf("%s\n", s);
+// }
 
 char *concat(const char *s1, const char *s2)
 {
