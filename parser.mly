@@ -78,7 +78,7 @@ stmt:
   | WHILE LPAREN expr RPAREN stmt { While($3, $5) }
   | RETURN expr { Return($2) }
   | NEWLINE stmt { $2 }
-  | FOR ID IN stmt  { For($2, $4) } 
+  | FOR expr IN stmt  { For($2, $4) } 
   | WHILE LPAREN expr RPAREN stmt  { While ($3, $5) }
 
 stmt_list:
