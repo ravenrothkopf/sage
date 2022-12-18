@@ -1,13 +1,12 @@
-# sage<! -- omit in toc -->
+# sage`<! -- omit in toc -->`
 
-#### *a beautiful intersection of your favorite modern, imperative programming languages `<!-- omit in toc -->`*
+#### *the beautiful intersection of your favorite modern, imperative programming languages `<!-- omit in toc -->`*
 
 sage is an imperative programming language inspired by the elegant simplicity of Python, enhanced with features from Java and C/C++. sage is a strongly and statically typed language, with strict evaluation. order and incorporates higher order functions in addition to partial applications.
 
 Efficient prototyping requires the use of a language that is not too heavy in specific syntax in order to quickly translate ideas into working proof-of-concept models. Unfortunately, modern languages of choice like Python, offers ease of use at the expense of significant trade-offs; compiling and running Python programs are often slow and consume a substantial amount of system resources.
 
-sage preserves the “stripped” feeling of Python while adding some strict implementation protocols that will give sage the strict-typing of C++.
-
+sage preserves the “stripped” feeling of Python while adding some strict implementation protocols to provide that familiar strict-typing feel of C++.
 
 ## Table of Contents `<!-- omit in toc -->`
 
@@ -24,20 +23,23 @@ sage preserves the “stripped” feeling of Python while adding some strict imp
 ```
 
 sage
-
 ├── Makefile
 ├── README.md
 ├── ast.ml
 ├── helloWorld.ml
+├── irgen.ml
+├── libc
+    ├── builtins.c
+    └── stack.c
 ├── parser.mly
 ├── sage.out
 ├── sage.tb
 ├── sast.ml
 ├── scanner.mll
 ├── semant.ml
-├── test.ml
-├── test2.ml
-└── test_cases
+├── testall.sh
+└── tests
+    ├── test.ml
     ├── test-assign1.ml
     └── test-function1.ml
 
@@ -45,21 +47,19 @@ sage
 
 ## Compiling sage programs
 
-From your terminal, navigate to the `sage` directory:
+From your terminal, navigate to the top level `sage` directory:
 
 `cd ../sage`
 
-Run the Makefile via the `make` command to compile the contents of test2.ml in sage:
+Run the Makefile via the `make` command to compile the frontend `sage` compiler:
 
 `make`
 
-#### WIP: Test suite
+#### Full testing suite
 
-Test using test cases (`sage/test_cases`) by running `make alltests` from within the `sage` directory:
+From within the top level folder (`sage`), run the following command to execute the full `sage` testing suite:
 
-``# functionality incomplete``
-
-> `make alltests`
+> `make test`
 
 ## Features provided in this current release (v1.0.0)
 
@@ -147,11 +147,14 @@ Indicating that both s1 and s2 were successfully parsed by the compiler :)
 * Gabriela (12/1) - Merge Lauren's fixes to 37 shift/reduce conflicts, initial commit for IR generation
 * Gabriela (12/1) - Fix merging issues, IR generation testing
 * Gabriela (12/5) - LLVM Installation issues
-* Gabriela (12/10) - Resolve CodeGen bugs across multiple files, attempt to add math operations, attempt to merge Raven's conditional block statements 
+* Gabriela (12/10) - Resolve CodeGen bugs across multiple files, attempt to add math operations, attempt to merge Raven's conditional block statements
 * Gabriela, Raven, Jenny, Lauren (12/13) - Code gen meeting
+* Lauren (12/13) - Updated LRM to reflect the current state of sage
+
 ## References
 
-1. [Rusty Language Reference Manual](http://www.cs.columbia.edu/~sedwards/classes/2016/4115-fall/lrms/rusty.pdf"rusty, a rust-based PL")
+1. [Rusty Language Reference Manual](http://www.cs.columbia.edu/~sedwards/classes/2016/4115-fall/lrms/rusty.pdf "rusty, a rust-based PL")
 2. [Python Reference Manual](https://docs.python.org/3/reference/)
 3. [Java Reference Manual](https://docs.oracle.com/javase/specs/jls/se7/html/index.html)
 4. [C Language Reference Manual](https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=&cad=rja&uact=8&ved=2ahUKEwjSmfW_0cD7AhWQEFkFHYUjD10QFnoECBMQAQ&url=http%3A%2F%2Fwww.cs.columbia.edu%2F~sedwards%2Fpapers%2Fsgi1999c.pdf&usg=AOvVaw2CW2iJl-QTyHQS8sWDWGTZ)
+5. [MicroC Language](http://www.cs.columbia.edu/~sedwards/classes/2021/4115-fall/index.html "The MicroC language")

@@ -11,6 +11,8 @@ type bop =
   | Leq
   | And
   | Or
+  | Mod
+  | Floordiv 
 
 type typ = String | Int | Bool | Void 
 
@@ -72,6 +74,8 @@ let string_of_op = function
   | Leq -> "<="
   | And -> "and"
   | Or -> "or"
+  | Mod -> "%"
+  | Floordiv -> "//"
 
 let rec string_of_typ = function
     String -> "str"

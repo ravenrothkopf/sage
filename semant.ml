@@ -104,7 +104,16 @@ ignore(check_binds "global" (global_symbols globals));
         let err = "illegal assignment " ^ string_of_typ lt ^ " = " ^
                   string_of_typ rt ^ " in " ^ string_of_expr ex
         in
-        (check_assign lt rt err, SAssign(var, (rt, e')))
+        (check_assign lt rt err, SAssign(var, (rt, e'))) 
+      | Unop(op, e) as ex ->
+        let (t, e’) = expr e in 
+        let ty = match op with
+          Neg when t = Int || t = Float -> t
+        | Not when t = Bool -> Bool
+        | _ -> raise (Failure ("illegal unary operator " ^
+          string_of_uop op ^ string_of_typ t ^
+          " in " ^ string_of_expr ex)) in
+        (ty, SUnop(op, (t, e’)))
       | Binop(e1, op, e2) as e ->
         let (t1, e1') = check_expr e1 map
         and (t2, e2') = check_expr e2 map in

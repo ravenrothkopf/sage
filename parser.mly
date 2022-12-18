@@ -2,7 +2,7 @@
 open Ast
 %}
 
-%token LPAREN RPAREN LBRACKET RBRACKET PLUS MINUS TIMES DIVIDE POS NEG ASSIGN
+%token LPAREN RPAREN LBRACKET RBRACKET PLUS MINUS TIMES DIVIDE ASSIGN MODULO
 %token EQ NEQ GT GEQ LT LEQ AND OR NOT
 %token DEF LBRACE RBRACE NEWLINE RETURN IF ELIF ELSE WHILE FOR STRING INT FLOAT BOOL VOID
 %token COLON COMMA
@@ -16,7 +16,7 @@ open Ast
 %token NoOp
 
 %nonassoc NOELSE
-%nonassoc ELSE
+%nonassoc ELSE 
 %right ASSIGN PLUSEQ MINEQ TIMEQ DIVEQ
 %left OR
 %left AND
@@ -24,7 +24,7 @@ open Ast
 %left LT GT LEQ GEQ
 %left PLUS MINUS
 %left TIMES DIVIDE
-%right NOT NEG POS
+%right NOT NEG
 
 %start program
 %type <Ast.program> program
@@ -102,10 +102,6 @@ expr:
   | BLIT             { BoolLit($1) }
   | ID               { Id($1) }
   | ID ASSIGN expr   { Assign($1, $3) }
-  | ID PLUSEQ expr { Assign([$1], Binop ($1, Add, $3))}
-  | ID MINEQ  expr { Assign([$1], Binop ($1, Sub, $3))}
-  | ID MULTEQ expr { Assign([$1], Binop ($1, Mult, $3))}
-  | ID DIVEQ expr { Assign([$1], Binop ($1, Div, $3))}
   | ID LPAREN args_opt RPAREN { Call($1, $3) }
   | LPAREN expr RPAREN { $2 }
   | expr PLUS expr { Binop ($1, Add, $3) }
@@ -120,9 +116,9 @@ expr:
   | expr LEQ expr { Binop ($1, Leq, $3) }
   | expr AND expr { Binop ($1, And, $3) }
   | expr OR expr { Binop ($1, Or, $3) }
-  | MINUS expr %prec NEG { Unop(Neg, $2) }
-  | PLUS expr %prec POS { Unop(Pos, $2) }
+  | MINUS expr %prec NEG { Unop (Neg, $2) }
   | arr { $1 }
+  | expr MODULO expr { Binop ($1, Mod, $3) }
 
 arr:
   LBRACKET arr_elems RBRACKET { Array($2) }

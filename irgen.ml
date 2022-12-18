@@ -121,6 +121,11 @@ in
         ignore(L.build_store e' (lookup map s) builder); e'
       | SNoexpr -> L.const_int i32_t 0
       (*for string concatenation!*)
+      | SUnop (op, ((t, _) as e)) ->
+        let e' = build_expr builder map e in
+        (match op with
+           A.Neg when t = A.Float -> L.build_fneg
+         | A.Neg -> L.build_neg) e' "tmp" builder
       | SBinop ((A.String, _) as e1, op, e2) ->
         (match op with
            A.Add -> L.build_call concat_func [| (build_expr builder map e1); (build_expr builder map e2)|] "concat" builder
@@ -141,6 +146,7 @@ in
          | A.Leq     -> L.build_icmp L.Icmp.Sle
          | A.Greater -> L.build_icmp L.Icmp.Sgt
          | A.Geq     -> L.build_icmp L.Icmp.Sge
+         | A.Mod     -> L.build_srem
         ) e1' e2' "tmp" builder
       (*calling print and concat functions*)
       | SCall ("print", [e])
