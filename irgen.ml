@@ -120,7 +120,7 @@ in
     in
 
     (*anything to string type casting*)
-    let rec to_string map e = 
+    let rec to_string e = 
       match e with
         (_, SIntLit i) -> (A.String, SStringLit (string_of_int i))
       | (_, SBoolLit true) -> (A.String, SStringLit "true")
@@ -128,7 +128,7 @@ in
       (* | (typ, SId s) -> to_string map (typ, (snd (lookup map s))) *)
       | _ -> raise (Failure ("Failure:" ^ string_of_sexpr e ^ "type cant be cast to a string")) in
     
-    let rec to_int map e = 
+    let rec to_int e = 
       match e with
         (_, SBoolLit true) -> (A.Int, SIntLit 1)
       | (_, SBoolLit false) -> (A.Int, SIntLit 0)
@@ -181,10 +181,10 @@ in
         L.build_call printf_func [| int_format_str ; (build_expr builder map e) |]
           "printf" builder
       (*type casting hack using OCaml oooh*)
-      | SCall ("int2str",  [e]) -> build_expr builder map (to_string map e)
+      (* | SCall ("int2str",  [e]) -> build_expr builder map (to_string map e)
       | SCall ("bool2str", [e]) -> build_expr builder map (to_string map e)
       | SCall ("str2int",  [e]) -> build_expr builder map (to_int map e)
-      | SCall ("bool2int", [e]) -> build_expr builder map (to_int map e)
+      | SCall ("bool2int", [e]) -> build_expr builder map (to_int map e) *)
       | SCall (f, args) ->
         let (fdef, fdecl) = StringMap.find f function_decls in
         let llargs = List.rev (List.map (build_expr builder map) (List.rev args)) in
@@ -192,6 +192,11 @@ in
              A.Void -> ""
             | _ -> f ^ "_result") in
         L.build_call fdef (Array.of_list llargs) result builder
+      | SCast (c_type, e) -> 
+        let (ty, _) = e in
+        match c_type with
+          A.String -> build_expr builder map (to_string e)
+        | A.Int    -> build_expr builder map (to_int e)
     in
 
     (* LLVM insists each basic block end with exactly one "terminator"
@@ -234,6 +239,7 @@ in
 
         ignore(L.build_cond_br bool_val then_bb else_bb builder);
         (L.builder_at_end context merge_bb, vars)
+        (* | A.Bool   -> ignore(build_expr builder vars (to_bool e)) ; (builder, vars) *)
     in
     (* Build the code for each statement in the function, returns only the builder
        not the map w the globals *)
