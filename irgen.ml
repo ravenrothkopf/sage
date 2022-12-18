@@ -119,7 +119,8 @@ in
       with Not_found -> StringMap.find n global_vars
     in
 
-    (*anything to string type casting*)
+    (*type casting between strings, bools, and ints*)
+    (*TODO: add type casting for variables*)
     let rec to_string e = 
       match e with
         (_, SIntLit i) -> (A.String, SStringLit (string_of_int i))
