@@ -16,14 +16,10 @@ type typ = String | Int | Bool | Void
 
 type uop = Neg | Pos
 
-type uop = 
-  Pos | Neg | Not
-
 type expr =
     Id of string
   | Assign of string * expr
   | Binop of expr * bop * expr
-  | Unop of uop * expr
   | StringLit of string
   | IntLit of int
   (* | FloatLit of float *)
