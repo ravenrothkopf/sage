@@ -158,6 +158,9 @@ in
       | SCall ("prints", [e]) ->
         L.build_call printf_func [| string_format_str ; (build_expr builder map e) |]
           "printf" builder
+      | SCall ("printb", [e]) ->
+        L.build_call printf_func [| int_format_str ; (build_expr builder map e) |]
+          "printf" builder
       (*type casting hack using OCaml oooh*)
       (* | SCall ("string", [e]) -> build_expr builder map (Sast.to_string e) *)
       | SCall (f, args) ->
