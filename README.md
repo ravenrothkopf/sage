@@ -61,6 +61,11 @@ Test using test cases (`sage/test_cases`) by running `make alltests` from within
 
 > `make alltests`
 
+##### Basic `string` assignment statements
+`ocamlbuild -pkgs llvm sage.native ` builds the sage compiler 
+`./sage.native -l sage.mc > sage.out` runs the compiler and generates llvm 
+`lli sage.out ` executes llvm 
+
 ## Features provided in this current release (v1.0.0)
 
 * Basic scanner, parser, AST, and semantic checker implementations
