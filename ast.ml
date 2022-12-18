@@ -20,11 +20,11 @@ type expr =
     Id of string
   | Assign of string * expr
   | Binop of expr * bop * expr
+  | Unop of uop * expr
   | StringLit of string
   | IntLit of int
   (* | FloatLit of float *)
   | BoolLit of bool
-  | Unop of uop * expr
   | Call of string * expr list
   | Array of expr list
   | Noexpr
@@ -73,7 +73,7 @@ let string_of_op = function
   | Leq -> "<="
   | And -> "and"
   | Or -> "or"
-  
+
 let rec string_of_typ = function
     String -> "str"
   | Int -> "int"
@@ -111,8 +111,7 @@ let rec string_of_stmt = function
   | DecAssn(decl, expr) -> string_of_vdecl (decl, expr)
   | If(expr, s, Block([])) -> "if (" ^ string_of_expr expr ^ ")\n" ^ "    " ^ string_of_stmt s
   | If(expr, s1, s2) ->  "if (" ^ string_of_expr expr ^ ")\n" ^ string_of_stmt s1 ^ "else\n" ^ string_of_stmt s2
-  | For(expr, s) -> 
-    "for (" ^ string_of_expr expr ^ " )\n " ^ string_of_stmt s  
+  | For(expr, s) -> "for (" ^ string_of_expr expr ^ " )\n " ^ string_of_stmt s  
   | While(expr, s) ->  "while (" ^ string_of_expr expr ^ ")\n" ^ string_of_stmt s
   | Return(expr) -> "return" ^ string_of_expr expr
 
