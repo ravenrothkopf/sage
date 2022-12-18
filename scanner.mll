@@ -16,47 +16,39 @@ rule token = parse
 | ')'                                   { RPAREN }
 | '{'                                   { LBRACE }
 | '}'                                   { RBRACE }
+| '['                                   { LBRACKET }
+| ']'                                   { RBRACKET }
 | ':'                                   { COLON }
 | ','                                   { COMMA }
-| '+'                                   { PLUS }
-| '-'                                   { MINUS }
-| '*'                                   { TIMES }
-| '/'                                   { DIVIDE }
-| '%'                                   { MODULO }
+| '{'                                   { LBRACE }
+| '}'                                   { RBRACE }
 | '='                                   { ASSIGN }
-| "=="                                  { EQ }
-| "!="                                  { NEQ }
-| '<'                                   { LT }
-| "<="                                  { LEQ }
-| ">"                                   { GT }
-| ">="                                  { GEQ }
-| "and"                                 { AND }
-| "or"                                  { OR }
-| "not"                                 { NOT }
-| '.'                                   { DOT }
-| '['                                   { LBRACK }
-| ']'                                   { RBRACK }
-| "if"                                  { IF }
-| "elif"                                { ELIF }
-| "else"                                { ELSE }
-| "for"                                 { FOR }
-| "while"                               { WHILE }
-| "loop"                                { LOOP }
-| "continue"                            { CONTINUE }
-| "break"                               { BREAK }
-| "in"                                  { IN }
-| "&"                                   { BORROW }
-| "static"                              { STATIC }
-| "const"                               { CONST }
 | "str"                                 { STRING }
 | "int"                                 { INT }
 | "float"                               { FLOAT }
 | "bool"                                { BOOL }
-| "True"                                { TRUE }
-| "False"                               { FALSE }
-| "struct"                              { STRUCT }
+| "True"                                { BLIT(true) }
+| "False"                               { BLIT(false) }
+| "+"                                   { PLUS }
+| "-"                                   { MINUS }
+| "*"                                   { TIMES }
+| "/"                                   { DIVIDE }
+| "and"                                 { AND }
+| "or"                                  { OR }
+| "not"                                 { NOT }
+| "def"                                 { DEF }
 | "void"                                { VOID }
-| "funct"                               { FUNCT }
+| "if"                                  { IF }
+| "elif"                                { ELIF }
+| "else"                                { ELSE }
+| "while"                               { WHILE }
+| "for"                                 { FOR }
+| "=="                                  { EQ }
+| "!="                                  { NEQ }
+| ">"                                   { GT }
+| ">="                                  { GEQ }
+| "<"                                   { LT }
+| "<="                                  { LEQ }
 | "return"                              { RETURN }
 | int as lem                            { ILIT(int_of_string lem) }
 | float as lem                          { FLIT(float_of_string lem) }
@@ -71,7 +63,7 @@ and comment = parse
 
 and comment2 = parse
   "\"\"\"" { token lexbuf }
-| _        { comment lexbuf }
+| _        { comment2 lexbuf }
 
 and slit s = parse
  "\""                         { SLIT (s)}

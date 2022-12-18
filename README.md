@@ -146,7 +146,9 @@ Indicating that both s1 and s2 were successfully parsed by the compiler :)
 * Gabriela (11/30) - Review LLVM documentation & open issues for future features
 * Gabriela (12/1) - Merge Lauren's fixes to 37 shift/reduce conflicts, initial commit for IR generation
 * Gabriela (12/1) - Fix merging issues, IR generation testing
-
+* Gabriela (12/5) - LLVM Installation issues
+* Gabriela (12/10) - Resolve CodeGen bugs across multiple files, attempt to add math operations, attempt to merge Raven's conditional block statements 
+* Gabriela, Raven, Jenny, Lauren (12/13) - Code gen meeting
 ## References
 
 1. [Rusty Language Reference Manual](http://www.cs.columbia.edu/~sedwards/classes/2016/4115-fall/lrms/rusty.pdf"rusty, a rust-based PL")
