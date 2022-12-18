@@ -20,11 +20,11 @@ type expr =
     Id of string
   | Assign of string * expr
   | Binop of expr * bop * expr
-  | Unop of uop * expr
   | StringLit of string
   | IntLit of int
   (* | FloatLit of float *)
   | BoolLit of bool
+  | Unop of uop * expr
   | Call of string * expr list
   | Array of expr list
   | Noexpr
@@ -72,7 +72,7 @@ let string_of_op = function
   | Leq -> "<="
   | And -> "and"
   | Or -> "or"
-
+  
 let rec string_of_typ = function
     String -> "str"
   | Int -> "int"
