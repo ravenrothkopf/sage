@@ -1,13 +1,22 @@
 #include <stdio.h>
-#include <string.h>
 #include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
 
-char* concat(const char *str1, const char *str2)
+void println(char *s)
 {
-    size_t len1 = strlen(str1);
-    size_t len2 = strlen(str2);
-    char* newStr = (char*)malloc(len1 + len2 + 1);
-    strcpy(newStr, str1);
-    strcat(newStr, str2);
-    return newStr;
+    printf("%s\n", s);
+}
+
+char *concat(const char *s1, const char *s2)
+{
+    char *result = (char *)malloc(strlen(s1) + strlen(s2) + 1);
+    strcpy(result, s1);
+    strcat(result, s2);
+    return result;
+}
+
+int compare_string(const char *s1, const char *s2)
+{
+    return (strcmp(s1, s2) == 0);
 }
