@@ -43,8 +43,8 @@ decls:
  | NEWLINE decls   { (fst $2, snd $2) }
 
 fdecl:
-  DEF typ ID LPAREN formals_opt RPAREN COLON stmt_list NEWLINE
-  {
+  DEF typ ID LPAREN formals_opt RPAREN COLON stmt_list
+  { 
     {
       rtyp = $2;
       fname = $3;
