@@ -137,6 +137,14 @@ in
         with Failure _ -> raise (Failure ("string cant be cast to an int"))
       (* | (typ, SId s) -> to_string map (typ, (snd (lookup map s))) *)
       | _ -> raise (Failure ("Failure:" ^ string_of_sexpr e ^ "type cant be cast to an int")) in
+    
+    let to_bool e =
+      match e with
+        (_, SIntLit(i)) when i = 0 -> (A.Bool, SBoolLit(false))
+      | (_, SStringLit(s)) when s = "0" -> (A.Bool, SBoolLit(false))
+      | (_, SIntLit(_))    -> (A.Bool, SBoolLit(true))
+      | (_, SStringLit(_)) -> (A.Bool, SBoolLit(true)) 
+      | _ -> raise (Failure ("Failure:" ^ string_of_sexpr e ^ "type cant be cast to an int")) in
 
     (* Construct code for an expression using a map of variables; return its value *)
     let rec build_expr builder map ((_, e) : sexpr) = match e with
@@ -197,6 +205,7 @@ in
         match c_type with
           A.String -> build_expr builder map (to_string e)
         | A.Int    -> build_expr builder map (to_int e)
+        | A.Bool   -> build_expr builder map (to_bool e)
     in
 
     (* LLVM insists each basic block end with exactly one "terminator"
