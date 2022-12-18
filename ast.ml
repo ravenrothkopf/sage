@@ -116,9 +116,9 @@ let rec string_of_stmt = function
 let string_of_fdecl fdecl =
   "def " ^ string_of_typ fdecl.rtyp ^ " " ^
   fdecl.fname ^ "(" ^ String.concat ", " (List.map snd fdecl.formals) ^
-  ") {\n" ^
+  ") :\n" ^
   String.concat "    " (""::List.map string_of_stmt fdecl.body) ^
-  "}\n"
+  "\n"
 
 let string_of_program (globals, funcs) =
   "\n\nParsed program: \n\n" ^

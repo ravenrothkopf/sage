@@ -68,9 +68,9 @@ let rec string_of_sstmt = function
 let string_of_sfdecl fdecl =
   "def " ^ string_of_typ fdecl.srtyp ^ " " ^
   fdecl.sfname ^ "(" ^ String.concat ", " (List.map snd fdecl.sformals) ^
-  ") {\n" ^
+  ") :\n" ^
   String.concat "    " (""::List.map string_of_sstmt fdecl.sbody) ^
-  "}\n"
+  "\n"
 
 let string_of_sprogram (globals, funcs) =
   "\n\nSemantically checked program: \n\n" ^
