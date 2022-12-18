@@ -1,37 +1,3 @@
-slit
-GLOBEEhello
-blit
-GLOBEEt
-slit
-GLOBEEtest
-stmt global
-slit
-arg expr
-ARS
-CALL
-exr
-oneline
-List
-AEE
-slit
-GLOBEElocation
-stmt global
-id
-id assign
-exr
-slit
-id
-+
-arg expr
-ARS
-CALL
-exr
-oneline
-List
-List
-AEE
-GLOBAL
-GLOBAL
 
 
 Semantically checked program: 
@@ -39,14 +5,14 @@ Semantically checked program:
 str hello = (str : hello)
 
 bool t = (bool : True)
-def void voidTest() {
+def void voidTest() :
     str test = (str : test)
     (void : prints((str : test)))
-}
 
-def int main(greeting) {
+
+def int main(greeting) :
     str location = (str : world)
     (str : greeting = (str : hello))
     (void : prints((str : (str : hello) + (str : location))))
-}
+
 
