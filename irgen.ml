@@ -162,7 +162,7 @@ in
         L.build_call printf_func [| int_format_str ; (build_expr builder map e) |]
           "printf" builder
       (*type casting hack using OCaml oooh*)
-      (* | SCall ("string", [e]) -> build_expr builder map (Sast.to_string e) *)
+      | SCall ("string", [e]) -> build_expr builder map (Sast.to_string e)
       | SCall (f, args) ->
         let (fdef, fdecl) = StringMap.find f function_decls in
         let llargs = List.rev (List.map (build_expr builder map) (List.rev args)) in

@@ -12,7 +12,7 @@ type bop =
   | And
   | Or
 
-type typ = String | Int | Bool | Void 
+type typ = String | Int | Bool | Void
 
 type uop = Neg | Pos
 

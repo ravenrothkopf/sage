@@ -31,6 +31,8 @@ type sfunc_def = {
 
 type sprogram = bind_init list * sfunc_def list
 
+(*type casting hack, verifies the var can be cast to a string and then does so, otherwise raise err*)
+
 (* Pretty-printing functions *)
 let rec string_of_sexpr(t,e) =
   "(" ^ string_of_typ t ^ " : " ^ (match e with
@@ -47,6 +49,15 @@ let rec string_of_sexpr(t,e) =
     f ^ "(" ^ String.concat ", " (List.map string_of_sexpr el) ^ ")"
   | SNoexpr -> ""
     ) ^ ")"   
+
+let to_string e = 
+  match e with
+      (_, SStringLit s) -> (String, SStringLit s)
+    | (_, SIntLit i) -> (String, SStringLit (string_of_int i))
+    | (_, SBoolLit true) -> (String, SStringLit "true")
+    | (_, SBoolLit false) -> (String, SStringLit "false")
+    | (Void, _) -> (String, SStringLit "void")
+    | _ -> raise (Failure ("Failure:" ^ string_of_sexpr e ^ "type cant be cast to a string"))
 
 (*for printing*)
  (* let print_sstring (_, exp) = match exp with 
