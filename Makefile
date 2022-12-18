@@ -1,30 +1,32 @@
 # "make all" to compile sage and run hello world test file, sage.tb
-all: sage.native
-.PHONY : all
-# test2.native sage.out
+.PHONY: all clean native sageexec
 
-# test2.native:
-sage.native:
+OCAMLB_FLAGS = -use-ocamlfind -pkgs llvm
+OCAMLC_FLAGS = -w -c
+
+OCAMLB = ocamlbuild $(OCAMLB_FLAGS)
+OCAMLC = ocamlc $(OCAMLC_FLAGS)
+
+all: clean native sageexec
+
+native:
 	opam exec -- \
-	ocamlbuild -use-ocamlfind -pkgs llvm sage.native
-# ocamlbuild -use-ocamlfind test2.native
+	$(OCAMLB) sage.native
 
-%.cmo : %.ml
-	ocamlc -w -c $<
+%.cmo: %.ml
+	$(OCAMLC) $<
 
 %.cmi : %.mli
-	ocamlc -w -c $<
+	$(OCAMLC) $<
 
-.PHONY : clean
-clean :
-	ocamlbuild -clean
+clean:
+	$(OCAMLB) -clean
 	rm -rf ocamlllvm *.diff
 	rm -rf \
-	_build sage.native *.ll *.out *.o *.s *.exe testall.log
-# _build test2.native *.ll *.out *.o *.s *.exe testall.log
+	_build sage.native *.out *.o *.s *.exe testall.log
 
-sage.out : sage.native sage.tb
+sageexec: native sage.tb
 	./sage.native < sage.tb > sage.out
 
-test : all
-	tests/testall.sh
+test: clean native
+	./testall.sh
