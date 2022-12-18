@@ -2,12 +2,10 @@
 open Ast
 %}
 
-%token LBRACE RBRACE LBRACKET RBRACKET NEWLINE RETURN
-%token LPAREN RPAREN PLUS ASSIGN MINUS TIMES DIVIDE POS NEG
-%token STRING INT FLOAT BOOL VOID
-%token IF ELIF ELSE EQ NEQ GT GEQ LT LEQ WHILE FOR
-%token AND OR NOT
-%token DEF COLON COMMA
+%token LPAREN RPAREN LBRACKET RBRACKET PLUS MINUS TIMES DIVIDE POS NEG ASSIGN
+%token EQ NEQ GT GEQ LT LEQ AND OR NOT
+%token DEF LBRACE RBRACE NEWLINE RETURN IF ELIF ELSE WHILE FOR STRING INT FLOAT BOOL VOID
+%token COLON COMMA
 %token <int> ILIT
 %token <float> FLIT
 %token <bool> BLIT
@@ -73,22 +71,22 @@ typ:
 
 stmt:
     expr NEWLINE { Expr $1 }
-  | LBRACE stmt_list RBRACE { Block $2 }
+  | LBRACE stmt_list RBRACE NEWLINE { Block $2 }
   | global { DecAssn $1 }  //variable initialization and assignment as its own statement separate from exprs
-  | if_stmt { $1 }
+  | IF LPAREN expr RPAREN stmt %prec NOELSE { If($3, $5, Block([])) }
+  | IF LPAREN expr RPAREN stmt ELSE stmt { If($3, $5, $7) }
+  | WHILE LPAREN expr RPAREN stmt { While($3, $5) }
+  | RETURN expr { Return($2) }
   | NEWLINE stmt { $2 }
-
 
 stmt_list:
     /* nothing */  { [] }
   | stmt stmt_list { $1 :: $2 }
  
 //TODO: fix if stmts so that they work with more than just one line? def has to do with the NEWLINES
-if_stmt:
-    IF LPAREN expr RPAREN stmt %prec NOELSE { If($3, $5, Block([])) }
-  | IF LPAREN expr RPAREN stmt ELSE stmt { If($3, $5, $7) }
-  | WHILE LPAREN expr RPAREN stmt { While($3, $5) }
-  | RETURN expr { Return($2) }
+// if_stmt:
+//     IF LPAREN expr RPAREN stmt %prec NOELSE { If($3, $5, Block([])) }
+//   | IF LPAREN expr RPAREN stmt ELSE stmt { If($3, $5, $7) }
 // TODO: add elif stmts
 // elif_stmt:
 //     ELIF expr LBRACE NEWLINE stmt_list RBRACE { [($2, $5)] }

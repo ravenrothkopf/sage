@@ -114,8 +114,11 @@ ignore(check_binds "global" (global_symbols globals));
         in
         if t1 = t2 then
           let t = match op with
-            Add when t1 = Int -> Int
+            Add | Sub | Mul | Div when t1 = Int -> Int
           | Add when t1 = String -> String
+          | Equal | Neq -> Bool
+          | Less | Leq | Greater | Geq when t1 = Int -> Bool
+          | And | Or when t1 = Bool -> Bool
           | _ -> raise (Failure err)
         in 
         (t, SBinop ((t1,e1'), op, (t2, e2')))
@@ -175,7 +178,7 @@ ignore(check_binds "global" (global_symbols globals));
         in (SBlock(fst (check_stmt_list stmt_list vars bvars)), vars)
       | DecAssn((ty, n), e) -> (SDecAssn((ty, n), check_expr e vars), StringMap.add n ty
          vars)
-      | If(p, b1, b2) -> (SIf(check_bool_expr p vars, fst (check_stmt b1 vars), fst (check_stmt b2
+      | If(e, st1, st2) -> (SIf(check_bool_expr e vars, fst (check_stmt st1 vars), fst (check_stmt st2
          vars)), vars)
     in (* body of check_func *)
     { 
