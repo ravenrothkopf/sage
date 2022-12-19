@@ -43,7 +43,7 @@ ignore(check_binds "global" (global_symbols globals));
     (*put your function definitions here!*)
     [("print", [Int], Void);
      ("printi", [Int], Void); 
-     ("printf", [Float], Void);
+     ("printfl", [Float], Void);
      ("prints", [String], Void); 
      ("printb", [Bool], Void); 
      ("concat", [String ; String], String); 
