@@ -77,7 +77,6 @@ stmt:
   | IF LPAREN expr RPAREN stmt %prec NOELSE { If($3, $5, Block([])) }
   | IF LPAREN expr RPAREN stmt ELSE stmt { If($3, $5, $7) }
   | WHILE LPAREN expr RPAREN stmt { While($3, $5) }
-  | RETURN expr NEWLINE { Return($2) }
   | NEWLINE stmt { $2 }
   // | typ LPAREN expr RPAREN NEWLINE { Cast($1, $3) }
 

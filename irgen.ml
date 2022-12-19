@@ -240,13 +240,17 @@ in
         SBlock sl -> 
           (fst (List.fold_left build_stmt (builder, vars) sl), vars)
       | SExpr e -> ignore(build_expr builder vars e); (builder, vars)
-      | SReturn e -> ignore(L.build_ret (build_expr builder e) builder); builder *)
       | SDecAssn ((t, n), expr) -> (builder, 
         let e' = build_expr builder vars expr
         in L.set_value_name n e';
         let local_var = L.build_alloca (ltype_of_typ t) n builder
         in ignore (L.build_store e' local_var builder);
         StringMap.add n local_var vars)
+      | SReturn e -> ignore(match fdecl.srtyp with
+          (* Special "return nothing" instr *)
+            A.Void -> L.build_ret_void builder
+          (* Build return statement *)
+          | _ -> L.build_ret (build_expr builder vars e) builder ); (builder, vars)
       | SIf (predicate, then_stmt, else_stmt) ->
         let bool_val = build_expr builder vars predicate in
 

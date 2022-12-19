@@ -1,6 +1,10 @@
-# test return statement
+# test return statement for ints
+
+def int test(int i) {
+    return i = i + 1
+}
 
 def int main() {
-    print(2 + 2)
-    return 4
+    int j = 2
+    print(test(j))
 }
