@@ -98,7 +98,7 @@ ignore(check_binds "global" (global_symbols globals));
       | BoolLit l -> (Bool, SBoolLit l) 
       | StringLit l -> (String, SStringLit l)
       | IntLit l -> (Int, SIntLit l)
-      (* | FloatLit l -> (Float, SFloatLit l) *)
+      | FloatLit l -> (Float, SFloatLit l)
       | Noexpr -> (Void, SNoexpr)
       | Assign(var, e) as ex ->
         let lt = type_of_identifier var map
@@ -117,6 +117,9 @@ ignore(check_binds "global" (global_symbols globals));
         if t1 = t2 then
           let t = match op with
             Add | Sub | Mul | Div | Mod when t1 = Int -> Int
+          | Add | Sub | Mul | Div when t1 = Float -> Float
+          | Add | Sub | Mul | Div when t1 = Float && t2 = Int -> Float
+          | Add | Sub | Mul | Div when t1 = Int && t2 = Float -> Float
           | Add when t1 = String -> String
           | Equal | Neq -> Bool
           | Less | Leq | Greater | Geq when t1 = Int -> Bool
