@@ -3,6 +3,7 @@ open Ast
 type sexpr = typ * sx 
 and sx = 
   SId of string
+| SType of typ * string
 | SAssign of string * sexpr
 | SBinop of sexpr * bop * sexpr
 | SStringLit of string
@@ -41,6 +42,7 @@ type sprogram = bind_init list * sfunc_def list
 let rec string_of_sexpr(t,e) =
   "(" ^ string_of_typ t ^ " : " ^ (match e with
     SId(s) -> s
+  | SType(t,s) -> string_of_typ t ^ " " ^  s
   | SAssign(v, e) -> v ^ " = " ^ string_of_sexpr e
   | SBinop(e1, op, e2) ->
     string_of_sexpr e1 ^ " " ^ string_of_op op ^ " " ^ string_of_sexpr e2

@@ -18,6 +18,7 @@ type uop = Neg | Pos
 
 type expr =
     Id of string
+  | Type of typ * string
   | Assign of string * expr
   | Binop of expr * bop * expr
   | Unop of uop * expr
@@ -85,16 +86,13 @@ let rec string_of_typ = function
   | Bool -> "bool"
   | Void -> "void"
 
-(* Created specifically for the range stmt *)
-let rec string_of_bind = function
-  | Bind(s, t) -> s ^ ": " ^ string_of_typ t
-
 let string_of_uop = function 
     Neg -> "-"
   | Pos -> ""
 
 let rec string_of_expr = function
     Id(s) -> s
+  | Type(t,s) -> string_of_typ t ^ " " ^  s
   | Assign(v, e) -> v ^ " = " ^ string_of_expr e
   | Binop(e1, op, e2) ->
     string_of_expr e1 ^ " " ^ string_of_op op ^ " " ^ string_of_expr e2
