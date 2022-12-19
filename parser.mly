@@ -12,10 +12,7 @@ open Ast
 %token <string> SLIT
 %token <string> ID
 %token EOF
-%token NoOp
 
-%right TAB
-%left NEWLINE
 %nonassoc NOELSE
 %nonassoc ELSE
 %right ASSIGN
@@ -38,7 +35,6 @@ program:
 decls:
    /* nothing */   { ([], []) }
  | global decls    { (($1 :: fst $2), snd $2) }
-  //functions
  | fdecl decls     { (fst $2, ($1 :: snd $2)) }
  | NEWLINE decls   { (fst $2, snd $2) }
 
@@ -72,8 +68,14 @@ typ:
 stmt_list:
     /* nothing */  { [] }
   | NEWLINE TAB stmt stmt_list   { $3 :: $4 }
-  | NEWLINE TAB stmt_list        { $3 }
+  // | NEWLINE TAB stmt_list        { $3 }
   | NEWLINE TAB stmt NEWLINE     { [$3] }
+  // | stmt_blank stmt_list         { $2 }
+
+// stmt_blank:
+//   | NEWLINE TAB
+  // | NEWLINE 
+
 
 stmt:
     expr                                     { Expr $1 }
