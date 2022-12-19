@@ -1,30 +1,40 @@
 #!/bin/sh
 
-# Regression testing script for sage (derived largely from SAGE)
+# Regression testing script for sage (derived from MicroC)
 # Step through a list of files
 #  Compile, run, and check the output of each expected-to-work test
 #  Compile and check the error of each expected-to-fail test
 
-# PATHS
+# ----------Paths------------
 LIBDIR="./libc/"
 LIBC="./libc/stdlibc.c"
+LOGDIR="./logs/"
+DBUILD="./_build/"
 # LLVM interpreter (LLI="/usr/local/opt/llvm/bin/lli")
 LLI="lli"
 # LLI="/opt/homebrew/opt/llvm/bin/lli"
 # LLVM compiler
 LLC="llc"
 # C compiler
-CC="cc"
+CC="gcc"
 # sage compiler
 SAGE="./sage.native"
 SAGECEXEC="./sagec"
 #SAGE="_build/SAGE.native"
 
-make
-gcc -c -o $LIBC
-
+# ----------Setup------------
+numbasic=13
+numtest=13
+numfail=1
 # Set time limit for all operations
 ulimit -t 30
+testnum=0
+tflag=0
+
+# TESTING BEGINS
+make
+gcc -c -o $LIBC
+echo "\n\n======================= Running Tests... ======================="
 
 globallog=testall.log
 rm -f $globallog
@@ -54,7 +64,7 @@ Compare() {
     generatedfiles="$generatedfiles $3"
     echo diff -b $1 $2 ">" $3 1>&2
     diff -b "$1" "$2" > "$3" 2>&1 || {
-	SignalError "$1 differs"
+	SignalError "$1 output differs"
 	echo "FAILED $1 differs from $2" 1>&2
     }
 }
@@ -87,7 +97,7 @@ Check() {
     reffile=`echo $1 | sed 's/.sage$//'`
     basedir="`echo $1 | sed 's/\/[^\/]*$//'`/."
 
-    echo -n "$basename..."
+    echo "TEST $testnum $basename..."
 
     echo 1>&2
     echo "###### Testing $basename" 1>&2
@@ -105,7 +115,7 @@ Check() {
 	if [ $keep -eq 0 ] ; then
 	    rm -f $generatedfiles
 	fi
-	echo "PASSED"
+	echo -n "PASSED"
 	echo "###### SUCCESS" 1>&2
     else
 	echo "###### FAILED" 1>&2
@@ -113,14 +123,17 @@ Check() {
     fi
 }
 
-CheckFail() {
+CheckFailureExceptions() {
     error=0
     basename=`echo $1 | sed 's/.*\\///
                              s/.sage//'`
     reffile=`echo $1 | sed 's/.sage$//'`
     basedir="`echo $1 | sed 's/\/[^\/]*$//'`/."
 
-    echo -n "$basename..."
+    if [[ $tflag -eq 2 ]]; then
+        echo "\nChecking failure / exception handling.. ($numfail tests)\n"
+    fi
+    echo -n "TEST $testnum $basename..."
 
     echo 1>&2
     echo "###### Testing $basename" 1>&2
@@ -135,7 +148,7 @@ CheckFail() {
 	if [ $keep -eq 0 ] ; then
 	    rm -f $generatedfiles
 	fi
-	echo "PASSED" 1>&2
+	echo -n "PASSED"
 	echo "###### SUCCESS" 1>&2
     else
 	echo "###### FAILED" 1>&2
@@ -164,22 +177,33 @@ LLIFail() {
 
 which "$LLI" >> $globallog || LLIFail
 
-
 if [ $# -ge 1 ]
 then
     files=$@
 else
-    files="tests/test-*.sage tests/fail-*.sage"
+    files="tests/basic-*/basic-*/basic-*.sage tests/basic-*/*/*.sage tests/basic-*/*.sage tests/test-*/*/*.sage tests/test-*/test-*.sage tests/fail-*/*.sage"
 fi
 
 for file in $files
 do
+    testnum=$((testnum+1))
     case $file in
+    *basic-*)
+        if [[ $tflag -eq 0 ]]; then
+            let tflag++
+            echo "Running basic tests.. ($numbasic tests)\n"
+        fi
+        Check $file 2>> $globallog
+        ;;
 	*test-*)
+        if [[ $tflag -eq 1 ]]; then
+            let tflag++
+            echo "\nRunning tests.. ($numtest tests)\n"
+        fi
 	    Check $file 2>> $globallog
 	    ;;
 	*fail-*)
-	    CheckFail $file 2>> $globallog
+	    CheckFailureExceptions $file 2>> $globallog
 	    ;;
 	*)
 	    echo "unknown file type $file"
@@ -188,4 +212,5 @@ do
     esac
 done
 
-exit $globalerror
+exit 0
+#  $globalerror

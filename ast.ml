@@ -3,6 +3,7 @@ type bop =
   | Sub
   | Mul
   | Div
+  | Mod
   | Equal
   | Neq
   | Greater
@@ -65,6 +66,7 @@ let string_of_op = function
   | Sub -> "-"
   | Mul -> "*"
   | Div -> "/"
+  | Mod -> "%"
   | Equal -> "=="
   | Neq -> "!="
   | Greater -> ">"

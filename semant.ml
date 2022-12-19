@@ -109,7 +109,7 @@ ignore(check_binds "global" (global_symbols globals));
         in
         if t1 = t2 then
           let t = match op with
-            Add | Sub | Mul | Div when t1 = Int -> Int
+            Add | Sub | Mul | Div | Mod when t1 = Int -> Int
           | Add when t1 = String -> String
           | Equal | Neq -> Bool
           | Less | Leq | Greater | Geq when t1 = Int -> Bool
