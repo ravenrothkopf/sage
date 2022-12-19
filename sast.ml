@@ -3,7 +3,7 @@ open Ast
 type sexpr = typ * sx 
 and sx = 
   SId of string
-| SType of typ * string
+| SBind of typ * string
 | SAssign of string * sexpr
 | SBinop of sexpr * bop * sexpr
 | SStringLit of string
@@ -18,13 +18,14 @@ type sbind_formal = typ * string
 
 type sbind_init = sbind_formal * sexpr
 
+type bind = Bind of typ * string
+
 type sstmt = 
     SExpr of sexpr
   | SBlock of sstmt list
   | SDecAssn of sbind_init
-  | SIf of sexpr * sstmt * sstmt
-  | SFor of sexpr * sexpr * sstmt
-  | SRange of sexpr * sexpr * sstmt 
+  | SFor of sexpr * sexpr * sstmt 
+  | SRange of sexpr * sexpr * sstmt
   | SWhile of sexpr * sstmt
 
 type sfunc_def = {
@@ -42,7 +43,7 @@ type sprogram = bind_init list * sfunc_def list
 let rec string_of_sexpr(t,e) =
   "(" ^ string_of_typ t ^ " : " ^ (match e with
     SId(s) -> s
-  | SType(t,s) -> string_of_typ t ^ " " ^  s
+  | SBind(t,s) -> string_of_typ t ^ " " ^ s
   | SAssign(v, e) -> v ^ " = " ^ string_of_sexpr e
   | SBinop(e1, op, e2) ->
     string_of_sexpr e1 ^ " " ^ string_of_op op ^ " " ^ string_of_sexpr e2
@@ -64,17 +65,18 @@ let rec string_of_sexpr(t,e) =
 
 let string_of_svdecl (decl, exp) = string_of_typ (fst decl) ^ " " ^ (snd decl) ^ " = " ^ string_of_sexpr
   exp ^ "\n"
+
 let rec string_of_sstmt = function
    SExpr(expr) -> string_of_sexpr expr ^ "\n"
   | SBlock(stmts) -> "{\n" ^
     "    " ^ String.concat "    " (List.map string_of_sstmt stmts) ^ "}\n"
   | SDecAssn(decl, expr) -> string_of_svdecl (decl, expr)
-  | SIf(expr, s, SBlock([])) ->
-    "if (" ^ string_of_sexpr expr ^ ")\n" ^ string_of_sstmt s
+  (*| SIf(expr, s, SBlock([])) ->
+    "if (" ^ string_of_sexpr expr ^ ")\n" ^ string_of_sstmt s 
   | SIf(expr, s1, s2) ->  "if (" ^ string_of_sexpr expr ^ ")\n" ^
-    string_of_sstmt s1 ^ "else\n" ^ string_of_sstmt s2
-  | SFor(e1,e2, s) -> "for " ^ string_of_sexpr e1 ^ " in " ^ string_of_sexpr e2 ^ "\n" ^ string_of_sstmt s  
-  | SRange(e1,e2, s) -> "for " ^ string_of_sexpr e1 ^ " in range (" ^ string_of_sexpr e2 ^ ")\n" ^ string_of_sstmt s  
+    string_of_sstmt s1 ^ "else\n" ^ string_of_sstmt s2  *)
+  | SFor(b,e, s) -> "for " ^ string_of_sexpr b ^ " in " ^ string_of_sexpr e ^ "\n" ^ string_of_sstmt s  
+  | SRange(b,e, s) -> "for " ^ string_of_sexpr b ^ " in range (" ^ string_of_sexpr e ^ ")\n" ^ string_of_sstmt s 
   | SWhile(expr, s) ->  "while (" ^ string_of_sexpr expr ^ ")\n" ^ string_of_sstmt s
  
 

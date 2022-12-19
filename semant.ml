@@ -198,9 +198,9 @@ ignore(check_binds "global" (global_symbols globals));
       | DecAssn((ty, n), e) -> (SDecAssn((ty, n), check_expr e vars), StringMap.add n ty
          vars)
       | While(e, st) -> (SWhile(check_bool_expr e vars, fst (check_stmt st vars)), vars)
-      | For(e1, e2, st) -> (SFor(check_expr e1 vars, check_expr e2 vars, fst(check_stmt st vars)), vars)
-      | If(e, st1, st2) -> (SIf(check_bool_expr e vars, fst (check_stmt st1 vars), fst (check_stmt st2
-         vars)), vars)
+      | For(b, e, st) -> (SFor(check_expr b vars, check_expr e vars, fst(check_stmt st vars)), vars)
+    (*  | If(e, st1, st2) -> (SIf(check_bool_expr e vars, fst (check_stmt st1 vars), fst (check_stmt st2
+         vars)), vars) *)
     in (* body of check_func *)
     { 
       srtyp = func.rtyp;

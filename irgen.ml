@@ -230,16 +230,14 @@ in
         ignore (build_br_while builder);
         let while_builder = L.builder_at_end context while_bb in
         let bool_val = build_expr while_builder vars predicate in
-
         let body_bb = L.append_block context "while_body" the_function in
         add_terminal (fst (build_stmt ((L.builder_at_end context body_bb), vars) body)) build_br_while;
-
         let end_bb = L.append_block context "while_end" the_function in
 
         ignore(L.build_cond_br bool_val body_bb end_bb while_builder);
         (L.builder_at_end context end_bb, vars)
        
-      | SFor (expr1, expr2, body) -> 
+      SFor (expr1, expr2, body) -> 
         let for_bb = L.append_block context "for" the_function in
         let pred_bb = L.build_br for_bb in
         ignore(pred_bb builder);
@@ -252,7 +250,7 @@ in
         ignore(L.build_cond_br bool_val body_bb end_bb for_builder); 
         (L.builder_at_end context end_bb, vars)
      (* | SRange (expr, stmt) -> *)
-
+     
       | SIf (predicate, then_stmt, else_stmt) ->
         let bool_val = build_expr builder vars predicate in
 

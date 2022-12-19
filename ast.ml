@@ -18,7 +18,7 @@ type uop = Neg | Pos
 
 type expr =
     Id of string
-  | Type of typ * string
+  | Bind of typ * string
   | Assign of string * expr
   | Binop of expr * bop * expr
   | Unop of uop * expr
@@ -38,7 +38,7 @@ type bind_formal = typ * string
 (*tuple, first element contains typ and ID, second is the expression*)
 type bind_init = bind_formal * expr
 
-type bind = Bind of string * typ
+(*type bind = Bind of typ * string *)
 
 type stmt =
     Expr of expr
@@ -92,7 +92,7 @@ let string_of_uop = function
 
 let rec string_of_expr = function
     Id(s) -> s
-  | Type(t,s) -> string_of_typ t ^ " " ^  s
+  | Bind(t,s) -> string_of_typ t ^ " " ^ s
   | Assign(v, e) -> v ^ " = " ^ string_of_expr e
   | Binop(e1, op, e2) ->
     string_of_expr e1 ^ " " ^ string_of_op op ^ " " ^ string_of_expr e2
@@ -111,6 +111,7 @@ let rec string_of_expr = function
 let string_of_vdecl (decl, exp) = string_of_typ (fst decl) ^ " " ^ (snd decl) ^ " = " ^ string_of_expr exp
 ^ "\n"
 
+
 let rec string_of_stmt = function
     Expr(expr) -> string_of_expr expr ^ "\n"
   | Block(stmts) -> "{\n" ^
@@ -118,8 +119,8 @@ let rec string_of_stmt = function
   | DecAssn(decl, expr) -> string_of_vdecl (decl, expr)
   | If(expr, s, Block([])) -> "if (" ^ string_of_expr expr ^ ")\n" ^ "    " ^ string_of_stmt s
   | If(expr, s1, s2) ->  "if (" ^ string_of_expr expr ^ ")\n" ^ string_of_stmt s1 ^ "else\n" ^ string_of_stmt s2
-  | For(e1,e2, s) -> "for " ^ string_of_expr e1 ^ " in " ^ string_of_expr e2 ^ "\n" ^ string_of_stmt s  
-  | Range(e1,e2, s) -> "for " ^ string_of_expr e1 ^ " in range (" ^ string_of_expr e2 ^ ")\n" ^ string_of_stmt s
+  | For(b,e, s) -> "for " ^ string_of_expr b ^ " in " ^ string_of_expr e ^ "\n" ^ string_of_stmt s  
+  | Range(b,e, s) -> "for " ^ string_of_expr b ^ " in range (" ^ string_of_expr e ^ ")\n" ^ string_of_stmt s 
   | While(expr, s) ->  "while (" ^ string_of_expr expr ^ ")\n" ^ string_of_stmt s
   | Return(expr) -> "return" ^ string_of_expr expr
 
