@@ -2,7 +2,7 @@
 open Ast
 %}
 
-%token LPAREN RPAREN LBRACKET RBRACKET PLUS MINUS TIMES DIVIDE POS NEG ASSIGN
+%token LPAREN RPAREN LBRACKET RBRACKET PLUS MINUS TIMES DIVIDE POS NEG ASSIGN MODULO
 %token EQ NEQ GT GEQ LT LEQ AND OR NOT
 %token DEF LBRACE RBRACE NEWLINE RETURN IF ELIF ELSE WHILE FOR STRING INT FLOAT BOOL VOID RETURN
 %token COLON COMMA
@@ -23,7 +23,7 @@ open Ast
 %left EQ NEQ
 %left LT GT LEQ GEQ
 %left PLUS MINUS
-%left TIMES DIVIDE
+%left TIMES DIVIDE MODULO
 %right NOT NEG POS
 
 %start program
@@ -111,6 +111,7 @@ expr:
   | expr OR expr { Binop ($1, Or, $3) }
   | MINUS expr %prec NEG { Unop(Neg, $2) }
   | PLUS expr %prec POS { Unop(Pos, $2) }
+  | expr MODULO expr { Binop ($1, Mod, $3) }
   | arr { $1 }
 
 arr:

@@ -9,6 +9,7 @@
 LIBDIR="./libc/"
 LIBC="./libc/stdlibc.c"
 LOGDIR="./logs/"
+DBUILD="./_build/"
 # LLVM interpreter (LLI="/usr/local/opt/llvm/bin/lli")
 LLI="lli"
 # LLI="/opt/homebrew/opt/llvm/bin/lli"
@@ -29,10 +30,6 @@ numfail=1
 ulimit -t 30
 testnum=0
 tflag=0
-basic_flag=0
-test_flag=0
-fail_flag=0
-
 
 # TESTING BEGINS
 make
