@@ -5,17 +5,18 @@ VPATH = ./libc/
 DLIB = ./libc/
 DLOG = ./logs/
 SRC = ./src/
-DTEMP = ./tests/
+BUILD = ./_build/
 
 OCAMLBFLAGS 	= -use-ocamlfind -pkgs llvm
 OCAMLCFLAGS 	= -w -c
-# CFLAGS			=
+CFLAGS			= -std=c99 -Wall -W
+DBFLAGS			= -DBUILD_TEST
 
 OCAMLB 			= ocamlbuild $(OCAMLBFLAGS)
 OCAMLC 			= ocamlc $(OCAMLCFLAGS)
-CC				= cc
+CC				= gcc $(CFLAGS)
 
-all: clean native $(DLIB)stdlibc.o sageexec
+all: clean native stdlibc sageexec
 
 native:
 	opam exec -- \
@@ -27,8 +28,8 @@ native:
 %.cmi: %.mli
 	$(OCAMLC) $<
 
-stdlibc: $(DLIB)stdlibc.c $(DLIB)stdlibc.o
-	$(CC) -o stdlibc -DBUILD_TEST $(DLIB)stdlibc.c
+stdlibc: $(DLIB)stdlibc.o $(DLIB)stdlibc.c
+	$(CC) -c $(DLIB)stdlibc.c -o $(BUILD)stdlibc.o
 
 sageexec: native sage.tb
 	./sage.native < sage.tb > sage.out
@@ -37,7 +38,9 @@ clean:
 	$(OCAMLB) -clean
 	rm -rf \
 	_build ocamlllvm sage.native *.diff *.err $(DLOG)*.err \
-	*.ll *.log $(DLOG)*.log *.out *.o $(DLIB)*.o *.s *.exe
+	*.ll *.log $(DLOG)*.log *.out *.o $(BUILD)*.o *.s *.exe
 
-test: clean native
+test: clean native testall
+
+testall:
 	./testall.sh

@@ -15,19 +15,24 @@ LLI="lli"
 # LLVM compiler
 LLC="llc"
 # C compiler
-CC="cc"
+CC="gcc"
 # sage compiler
 SAGE="./sage.native"
 SAGECEXEC="./sagec"
 #SAGE="_build/SAGE.native"
 
 # ----------Setup------------
+numbasic=13
+numtest=13
+numfail=1
 # Set time limit for all operations
 ulimit -t 30
 testnum=0
+tflag=0
 basic_flag=0
 test_flag=0
 fail_flag=0
+
 
 # TESTING BEGINS
 make
@@ -128,9 +133,8 @@ CheckFailureExceptions() {
     reffile=`echo $1 | sed 's/.sage$//'`
     basedir="`echo $1 | sed 's/\/[^\/]*$//'`/."
 
-    if [[ $fail_flag -eq 0 ]]; then
-        let fail_flag++
-        echo "Checking failure / exception handling..\n"
+    if [[ $tflag -eq 2 ]]; then
+        echo "\nChecking failure / exception handling.. ($numfail tests)\n"
     fi
     echo -n "TEST $testnum $basename..."
 
@@ -188,13 +192,17 @@ do
     testnum=$((testnum+1))
     case $file in
     *basic-*)
-        if [[ $basic_flag -eq 0 ]]; then
-            let basic_flag++
-            echo "Running basic tests..\n"
+        if [[ $tflag -eq 0 ]]; then
+            let tflag++
+            echo "Running basic tests.. ($numbasic tests)\n"
         fi
         Check $file 2>> $globallog
         ;;
 	*test-*)
+        if [[ $tflag -eq 1 ]]; then
+            let tflag++
+            echo "\nRunning tests.. ($numtest tests)\n"
+        fi
 	    Check $file 2>> $globallog
 	    ;;
 	*fail-*)
@@ -207,4 +215,5 @@ do
     esac
 done
 
-exit $globalerror
+exit 0
+#  $globalerror
