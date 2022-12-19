@@ -67,4 +67,4 @@ and comment2 = parse
 
 and slit s = parse
  "\""                         { SLIT (s)}
-| (letter | digit | ' ') as x { slit (s ^ (String.make 1 x)) lexbuf}
+| (letter | digit | ' ' | '!' | '?') as x { slit (s ^ (String.make 1 x)) lexbuf}
