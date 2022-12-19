@@ -23,7 +23,7 @@ type expr =
   | Binop of expr * bop * expr
   | StringLit of string
   | IntLit of int
-  | FloatLit of string
+  | FloatLit of float
   | BoolLit of bool
   | Unop of uop * expr
   | Call of string * expr list
@@ -95,7 +95,7 @@ let rec string_of_expr = function
   | StringLit(s) -> s
   | Unop(o, e) -> string_of_uop o ^ string_of_expr e
   | IntLit(s) -> string_of_int s
-  | FloatLit(f) -> f
+  | FloatLit(s) -> string_of_float s
   | BoolLit(true) -> "True"
   | BoolLit(false) -> "False"
   | Call(f, el) ->
