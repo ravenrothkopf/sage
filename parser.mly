@@ -66,10 +66,11 @@ typ:
   //TODO: add array type + implementation
 
 stmt_list:
-    /* nothing */  { [] }
+  //  /* nothing */  { [] }
+  | NEWLINE                      { [] }
   | NEWLINE TAB stmt stmt_list   { $3 :: $4 }
   // | NEWLINE TAB stmt_list        { $3 }
-  | NEWLINE TAB stmt NEWLINE     { [$3] }
+  // | NEWLINE TAB stmt NEWLINE     { [$3] }
   // | stmt_blank stmt_list         { $2 }
 
 // stmt_blank:
