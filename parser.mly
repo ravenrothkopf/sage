@@ -65,6 +65,10 @@ typ:
   | VOID     { Void }
   //TODO: add array type + implementation
 
+stmt_block:
+  | NEWLINE           /* nothing */  { [] }
+  | NEWLINE TAB TAB stmt stmt_block  { ($4 :: $5) }
+  
 stmt_list:
   //  /* nothing */  { [] }
   | NEWLINE stmt_list            {$2}
@@ -82,7 +86,8 @@ stmt_list:
 
 stmt:
     expr                                     { Expr $1 }
-  | LBRACE stmt_list RBRACE                  { Block $2 }
+  | COLON stmt_block                         { Block $2 }
+ // | LBRACE stmt_list RBRACE                  { Block $2 }
   | global                                   { DecAssn $1 }  //variable initialization and assignment as its own statement separate from exprs
   | IF LPAREN expr RPAREN stmt %prec NOELSE  { If($3, $5, Block([])) }
   | IF LPAREN expr RPAREN stmt ELSE stmt     { If($3, $5, $7) }
