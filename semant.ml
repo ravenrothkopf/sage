@@ -109,7 +109,7 @@ ignore(check_binds "global" (global_symbols globals));
         in
         if t1 = t2 then
           let t = match op with
-            Add | Sub | Mul | Div when t1 = Int -> Int
+            Add | Sub | Mul | Div | Mod when t1 = Int -> Int
           | Add when t1 = String -> String
           | Equal | Neq -> Bool
           | Less | Leq | Greater | Geq when t1 = Int -> Bool
@@ -117,7 +117,16 @@ ignore(check_binds "global" (global_symbols globals));
           | _ -> raise (Failure err)
         in 
         (t, SBinop ((t1,e1'), op, (t2, e2')))
-      else raise (Failure err)
+        else raise (Failure err)
+      | Unop(op, e) as x ->
+        let (t, e') = check_expr e map in
+          let ty = match op with
+            Neg when t = Int -> t
+          | Not when t = Bool -> Bool
+          | _ -> raise (Failure ("illegal unary operator " ^
+                                 string_of_uop op ^ string_of_typ t ^
+                                 " in " ^ string_of_expr x))
+          in (ty, SUnop(op, (t, e')))
       | Call(fname, args) as call ->
         let fd = find_func fname in
         let param_length = List.length fd.formals in

@@ -3,6 +3,7 @@ type bop =
   | Sub
   | Mul
   | Div
+  | Mod
   | Equal
   | Neq
   | Greater
@@ -14,7 +15,7 @@ type bop =
 
 type typ = String | Int | Bool | Void
 
-type uop = Neg | Pos
+type uop = Neg | Not
 
 type expr =
     Id of string
@@ -70,6 +71,7 @@ let string_of_op = function
   | Sub -> "-"
   | Mul -> "*"
   | Div -> "/"
+  | Mod -> "%"
   | Equal -> "=="
   | Neq -> "!="
   | Greater -> ">"
@@ -88,7 +90,7 @@ let rec string_of_typ = function
 
 let string_of_uop = function 
     Neg -> "-"
-  | Pos -> ""
+  | Not -> "not"
 
 let rec string_of_expr = function
     Id(s) -> s
