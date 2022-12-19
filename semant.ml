@@ -41,8 +41,15 @@ ignore(check_binds "global" (global_symbols globals));
     } map
     in List.fold_left add_bind StringMap.empty 
     (*put your function definitions here!*)
-    [("print", [Int], Void); ("printi", [Int], Void); ("prints", [String], Void); ("printb", [Bool], Void); 
-    ("concat", [String ; String], String); ("len", [String], Int); ("indexOf", [String; String], Int)]; 
+    [("print", [Int], Void);
+     ("printi", [Int], Void); 
+     ("printf", [Float], Void);
+     ("prints", [String], Void); 
+     ("printb", [Bool], Void); 
+     ("concat", [String ; String], String); 
+     ("len", [String], Int); 
+     ("indexOf", [String; String], Int)];
+
   in
 
   (* Add function name to symbol table *)
