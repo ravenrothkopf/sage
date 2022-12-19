@@ -111,7 +111,7 @@ let rec string_of_stmt = function
   | If(expr, s, Block([])) -> "if (" ^ string_of_expr expr ^ ")\n" ^ "    " ^ string_of_stmt s
   | If(expr, s1, s2) ->  "if (" ^ string_of_expr expr ^ ")\n" ^ string_of_stmt s1 ^ "else\n" ^ string_of_stmt s2
   | While(expr, s) ->  "while (" ^ string_of_expr expr ^ ")\n" ^ string_of_stmt s
-  | Return(expr) -> "return" ^ string_of_expr expr
+  | Return(expr) -> "return" ^ string_of_expr expr ^ "\n"
 
 let string_of_fdecl fdecl =
   "def " ^ string_of_typ fdecl.rtyp ^ " " ^

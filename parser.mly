@@ -4,7 +4,7 @@ open Ast
 
 %token LPAREN RPAREN LBRACKET RBRACKET PLUS MINUS TIMES DIVIDE POS NEG ASSIGN
 %token EQ NEQ GT GEQ LT LEQ AND OR NOT
-%token DEF LBRACE RBRACE NEWLINE RETURN IF ELIF ELSE WHILE FOR STRING INT FLOAT BOOL VOID
+%token DEF LBRACE RBRACE NEWLINE RETURN IF ELIF ELSE WHILE FOR STRING INT FLOAT BOOL VOID RETURN
 %token COLON COMMA
 %token <int> ILIT
 %token <float> FLIT
@@ -71,6 +71,7 @@ typ:
 
 stmt:
     expr NEWLINE { Expr $1 }
+  | RETURN expr NEWLINE { Return $2 }
   | LBRACE stmt_list RBRACE NEWLINE { Block $2 }
   | global { DecAssn $1 }  //variable initialization and assignment as its own statement separate from exprs
   | IF LPAREN expr RPAREN stmt %prec NOELSE { If($3, $5, Block([])) }
