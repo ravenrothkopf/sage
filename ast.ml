@@ -13,7 +13,7 @@ type bop =
   | And
   | Or
 
-type typ = String | Int | Bool | Void
+type typ = String | Int | Bool | Void | ArrayTyp of typ
 
 type uop = Neg | Pos
 

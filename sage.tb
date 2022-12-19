@@ -12,6 +12,9 @@ sage.tb currently tests (only for semantic analysis):
 
 # test single-line comment
 
+str[] a = ["heyy", "hi"]
+int[] b = [3, 5, 139]
+bool[] c = [True, False, True]
 str hello = "hello"
 bool t = True
 
