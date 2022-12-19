@@ -189,7 +189,7 @@ in
         SBlock sl -> 
           (fst (List.fold_left build_stmt (builder, vars) sl), vars)
       | SExpr e -> ignore(build_expr builder vars e); (builder, vars)
-      (* | SReturn e -> ignore(L.build_ret (build_expr builder e) builder); builder *)
+      | SReturn e -> ignore(L.build_ret (build_expr builder e) builder); builder *)
       | SDecAssn ((t, n), expr) -> (builder, 
         let e' = build_expr builder vars expr
         in L.set_value_name n e';
