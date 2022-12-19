@@ -64,7 +64,7 @@ formal_list:
 typ:
     INT { Int }
   | BOOL { Bool }
-  // | FLOAT { Float }
+  | FLOAT { Float }
   | STRING { String }
   | VOID { Void }
   //TODO: add array type + implementation
@@ -88,8 +88,8 @@ global:
     typ ID ASSIGN expr NEWLINE { (($1, $2), $4) } //int x = 3, only expression we want to use globally and locally
 
 expr:
-    ILIT             { IntLit($1) }
-  // | FLIT             { FloatLit($1) }
+    ILIT             { IntLit($1) } 
+  | FLIT             { FloatLit($1) }
   | SLIT             { StringLit($1) }
   | BLIT             { BoolLit($1) }
   | ID               { Id($1) }
