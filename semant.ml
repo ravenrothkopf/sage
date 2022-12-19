@@ -35,34 +35,15 @@ ignore(check_binds "global" (global_symbols globals));
     let add_bind map (name, ty, rty) = StringMap.add name {
       rtyp = rty;
       fname = name;
+      (*initializes the list of formals*)
       formals = List.fold_left (fun l t -> l @ [(t, "x")]) [] ty;
       body = []
     } map
     in List.fold_left add_bind StringMap.empty 
+    (*put your function definitions here!*)
     [("print", [Int], Void); ("printi", [Int], Void); ("prints", [String], Void); ("printb", [Bool], Void); 
-    ("concat", [String ; String], String); 
-    ("string", [Int], String); (*("string", [Bool], String); ("string", [String], String)*)];
+    ("concat", [String ; String], String); ("len", [String], Int); ("indexOf", [String; String], Int)]; 
   in
-
-  (* let built_in_decls = 
-    StringMap.add "concat" {
-      rtyp = String;
-      fname = "concat";
-      formals = [(String, "str1"); (String, "str2")];
-      body = []
-    } built_in_decls
-  in
-
-  let built_in_cast_decls = 
-    let add_cast_bind map (name, rty, ty) = StringMap.add name {
-      rtyp = rty;
-      fname = name;
-      formals = [(ty, "x")];
-      body = []
-    } map
-    in List.fold_left add_cast_bind StringMap.empty [("string", Int, String); ("string", Bool, String);
-    ("string", String, String)];
-  in *)
 
   (* Add function name to symbol table *)
   let add_func map fd =
@@ -152,6 +133,10 @@ ignore(check_binds "global" (global_symbols globals));
           let args' = List.map2 check_call fd.formals args
           in (fd.rtyp, SCall(fname, args'))
       | Noexpr -> (Void, SNoexpr)
+      | Cast(t, e) -> match t with
+          Int -> (Int, (SCast(t, check_expr e map)))
+        | String -> (String, (SCast(t, check_expr e map)))
+        | Bool -> (Bool, (SCast(t, check_expr e map)))
     in
 
   let check_func func =

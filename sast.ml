@@ -11,6 +11,7 @@ and sx =
 | SBoolLit of bool
 | SCall of string * sexpr list
 | SNoexpr
+| SCast of typ * sexpr
 
 type sbind_formal = typ * string
 
@@ -49,16 +50,8 @@ let rec string_of_sexpr(t,e) =
   | SCall(f, el) ->
     f ^ "(" ^ String.concat ", " (List.map string_of_sexpr el) ^ ")"
   | SNoexpr -> ""
-    ) ^ ")"   
-
-let to_string e = 
-  match e with
-      (_, SStringLit s) -> (String, SStringLit s)
-    | (_, SIntLit i) -> (String, SStringLit (string_of_int i))
-    | (_, SBoolLit true) -> (String, SStringLit "true")
-    | (_, SBoolLit false) -> (String, SStringLit "false")
-    | (Void, _) -> (String, SStringLit "void")
-    | _ -> raise (Failure ("Failure:" ^ string_of_sexpr e ^ "type cant be cast to a string"))
+  | SCast(t, e) -> string_of_typ t ^ "(" ^ string_of_sexpr e ^ ")" 
+    ) ^ ")"  
 
 (*for printing*)
  (* let print_sstring (_, exp) = match exp with 
