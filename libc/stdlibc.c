@@ -29,14 +29,12 @@ int len(const char *str)
     return l;
 }
 
-int indexOf(const char *str, const char *c)
-{
-    int i;
-    size_t len = strlen(str);
-    for (i = 0; i < len; i++)
-    {
-        if (str[i] == *c)
-        return i;
-    }
-    return -1;
-}
+// int indexOf(const char *str, const char *c)
+// {
+//     char *found = strchr(str, *c);
+//     if (found == NULL) {
+//         return -1;
+//     }
+
+//     return (int)(found - str);
+// }
