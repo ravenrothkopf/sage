@@ -5,6 +5,9 @@ VPATH = ./libc/
 DLIB = ./libc/
 DLOG = ./logs/
 DTESTS = ./tests/
+BASICTESTS = ./tests/basic/
+TESTFILES = ./tests/tests/
+FAILTESTS = ./tests/checkfail/
 SRC = ./src/
 BUILD = ./_build/
 
@@ -46,18 +49,13 @@ test: clean native testall
 testall:
 	./testall.sh
 
+basic: clean
+	./testbasic.sh
+
 # basicdir = ./tests/basic 
 # basic-tests := $(addsuffix .test, $(basename $(wildcard *.test-in)))
 
-BASIC = \
-	divide-by-neg divide-simple mod1 multiply1 sub1 sum1 helloworld \
-	if if-else if-sequential print-bool operator-prec varassign-int1 \
-	varassign-int2 varassign-str1
 
-TESTS = \
-	invoke-func-from-main if-else_func if-else1 return-bool return-int \
-	return-str typecast-bool typecast-int typecast-str concat strlen \
-	indexof
 # ./testall.sh $(DTESTS)
 
 # .PHONY : test all %.test
