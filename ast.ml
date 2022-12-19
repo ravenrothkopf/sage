@@ -28,6 +28,7 @@ type expr =
   | Call of string * expr list
   | Array of expr list
   | Noexpr
+  | Cast of typ * expr
 
 (* int x: name binding *)
 type bind_formal = typ * string
@@ -107,6 +108,7 @@ let rec string_of_expr = function
     f ^ "(" ^ String.concat ", " (List.map string_of_expr el) ^ ")"
   | Array(l) -> "[" ^ String.concat ", " (List.map string_of_expr l) ^ "]"
   | Noexpr -> ""
+  | Cast (t, e)  -> string_of_typ t ^ "(" ^ string_of_expr e ^ ")"
 
 let string_of_vdecl (decl, exp) = string_of_typ (fst decl) ^ " " ^ (snd decl) ^ " = " ^ string_of_expr exp
 ^ "\n"

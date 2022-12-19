@@ -40,8 +40,9 @@ ignore(check_binds "global" (global_symbols globals));
     } map
     in List.fold_left add_bind StringMap.empty 
     [("print", [Int], Void); ("printi", [Int], Void); ("prints", [String], Void); ("printb", [Bool], Void); 
-    ("concat", [String ; String], String); 
-    ("string", [Int], String); (*("string", [Bool], String); ("string", [String], String)*)];
+    ("concat", [String ; String], String)]; 
+    (* ("int2str", [Int], String); ("bool2str", [Bool], String); 
+    ("str2int", [String], Int); ("bool2int", [Bool], Int);("string", [String], String)]; *)
   in
 
   (* let built_in_decls = 
@@ -152,6 +153,10 @@ ignore(check_binds "global" (global_symbols globals));
           let args' = List.map2 check_call fd.formals args
           in (fd.rtyp, SCall(fname, args'))
       | Noexpr -> (Void, SNoexpr)
+      | Cast(t, e) -> match t with
+          Int -> (Int, (SCast(t, check_expr e map)))
+        | String -> (String, (SCast(t, check_expr e map)))
+        | Bool -> (Bool, (SCast(t, check_expr e map)))
     in
 
   let check_func func =
