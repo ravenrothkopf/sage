@@ -51,22 +51,3 @@ testall:
 
 basic: clean
 	./testbasic.sh
-
-# basicdir = ./tests/basic 
-# basic-tests := $(addsuffix .test, $(basename $(wildcard *.test-in)))
-
-
-# ./testall.sh $(DTESTS)
-
-# .PHONY : test all %.test
-
-# BC := /usr/bin/bc
-
-# test : $(all-tests)
-
-# %.test : %.test-in %.test-cmp $(BC)
-#     @$(BC) <$< 2>&1 | diff -q $(word 2, $?) - >/dev/null || \
-#     (echo "Test $@ failed" && exit 1)
-
-# all : test
-#     @echo "Success, all tests passed."
