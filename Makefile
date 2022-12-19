@@ -39,7 +39,7 @@ clean:
 	$(OCAMLB) -clean
 	rm -rf \
 	_build ocamlllvm sage.native *.diff *.err $(DLOG)*.err \
-	*.ll *.log $(DLOG)*.log *.out *.o $(BUILD)*.o $(DLIB)*.o *.s *.exe
+	*.ll *.log $(DLOG)*.log parser.ml parser.mli *.out *.o $(BUILD)*.o $(DLIB)*.o *.s *.exe
 
 test: clean native testall
 
