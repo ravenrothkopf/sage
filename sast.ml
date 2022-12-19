@@ -21,6 +21,7 @@ type sbind_init = sbind_formal * sexpr
 type sstmt = 
     SExpr of sexpr
   | SBlock of sstmt list
+  | SReturn of sexpr
   | SDecAssn of sbind_init
   | SIf of sexpr * sstmt * sstmt
   | SFor of sexpr * sexpr * sstmt
@@ -68,6 +69,7 @@ let rec string_of_sstmt = function
    SExpr(expr) -> string_of_sexpr expr ^ "\n"
   | SBlock(stmts) -> "{\n" ^
     "    " ^ String.concat "    " (List.map string_of_sstmt stmts) ^ "}\n"
+  |SReturn(expr) -> "return " ^ string_of_sexpr expr ^ "\n"
   | SDecAssn(decl, expr) -> string_of_svdecl (decl, expr)
   | SIf(expr, s, SBlock([])) ->
     "if (" ^ string_of_sexpr expr ^ ")\n" ^ string_of_sstmt s

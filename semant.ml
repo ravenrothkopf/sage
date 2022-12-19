@@ -35,35 +35,15 @@ ignore(check_binds "global" (global_symbols globals));
     let add_bind map (name, ty, rty) = StringMap.add name {
       rtyp = rty;
       fname = name;
+      (*initializes the list of formals*)
       formals = List.fold_left (fun l t -> l @ [(t, "x")]) [] ty;
       body = []
     } map
     in List.fold_left add_bind StringMap.empty 
+    (*put your function definitions here!*)
     [("print", [Int], Void); ("printi", [Int], Void); ("prints", [String], Void); ("printb", [Bool], Void); 
-    ("concat", [String ; String], String)]; 
-    (* ("int2str", [Int], String); ("bool2str", [Bool], String); 
-    ("str2int", [String], Int); ("bool2int", [Bool], Int);("string", [String], String)]; *)
+    ("concat", [String ; String], String); ("len", [String], Int); ("indexOf", [String; String], Int)]; 
   in
-
-  (* let built_in_decls = 
-    StringMap.add "concat" {
-      rtyp = String;
-      fname = "concat";
-      formals = [(String, "str1"); (String, "str2")];
-      body = []
-    } built_in_decls
-  in
-
-  let built_in_cast_decls = 
-    let add_cast_bind map (name, rty, ty) = StringMap.add name {
-      rtyp = rty;
-      fname = name;
-      formals = [(ty, "x")];
-      body = []
-    } map
-    in List.fold_left add_cast_bind StringMap.empty [("string", Int, String); ("string", Bool, String);
-    ("string", String, String)];
-  in *)
 
   (* Add function name to symbol table *)
   let add_func map fd =
@@ -178,6 +158,11 @@ ignore(check_binds "global" (global_symbols globals));
     (* Return a semantically-checked statement i.e. containing sexprs *)
     let rec check_stmt stmt vars = match stmt with
         Expr e -> (SExpr (check_expr e vars), vars)
+      | Return e -> let (t,e') = check_expr e vars in
+        if t = func.rtyp then (SReturn (t, e'), vars)
+        else raise (
+          Failure ("return gives " ^ string_of_typ t ^ ", but expected "
+          ^ string_of_typ func.rtyp ^ " in " ^ string_of_expr e))
       | Block stmt_list -> 
         let bvars = StringMap.empty in
         let rec check_stmt_list stmt_list vars bvars = 
@@ -187,7 +172,9 @@ ignore(check_binds "global" (global_symbols globals));
             (fst checked :: fst checked_rest, snd checked_rest)
           in
           match stmt_list with
-          DecAssn ((ty, n), _) as s :: ss ->
+            [Return _ as s] -> ([fst (check_stmt s vars)], bvars)
+          | Return _ :: _ -> raise (Failure "nothing can follow a return statement")
+          | DecAssn ((ty, n), _) as s :: ss ->
             let check_decl ty n = match StringMap.find_opt n bvars with
             Some _ -> raise (Failure ("duplicate local variable " ^ n))
             | None -> ()

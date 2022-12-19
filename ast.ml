@@ -121,7 +121,7 @@ let rec string_of_stmt = function
   | For(e1,e2, s) -> "for " ^ string_of_expr e1 ^ " in " ^ string_of_expr e2 ^ "\n" ^ string_of_stmt s  
   | Range(e1,e2, s) -> "for " ^ string_of_expr e1 ^ " in range (" ^ string_of_expr e2 ^ ")\n" ^ string_of_stmt s
   | While(expr, s) ->  "while (" ^ string_of_expr expr ^ ")\n" ^ string_of_stmt s
-  | Return(expr) -> "return" ^ string_of_expr expr
+  | Return(expr) -> "return" ^ string_of_expr expr ^ "\n"
 
 let string_of_fdecl fdecl =
   "def " ^ string_of_typ fdecl.rtyp ^ " " ^

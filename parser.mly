@@ -6,7 +6,8 @@ open Ast
 %token EQ NEQ GT GEQ LT LEQ AND OR NOT
 %token DEF LBRACE RBRACE NEWLINE RETURN IF ELIF ELSE WHILE FOR STRING INT FLOAT BOOL VOID 
 %token RANGE IN
-%token COLON COMMA 
+%token DEF LBRACE RBRACE NEWLINE RETURN IF ELIF ELSE WHILE FOR STRING INT FLOAT BOOL VOID RETURN
+%token COLON COMMA
 %token <int> ILIT
 %token <float> FLIT
 %token <bool> BLIT
@@ -72,16 +73,15 @@ typ:
 
 stmt:
     expr NEWLINE { Expr $1 }
+  | RETURN expr NEWLINE { Return $2 }
   | LBRACE stmt_list RBRACE NEWLINE { Block $2 }
   | global { DecAssn $1 }  //variable initialization and assignment as its own statement separate from exprs
   | IF LPAREN expr RPAREN stmt %prec NOELSE { If($3, $5, Block([])) }
   | IF LPAREN expr RPAREN stmt ELSE stmt { If($3, $5, $7) }
   | WHILE LPAREN expr RPAREN stmt { While($3, $5) }
-  | RETURN expr { Return($2) }
   | NEWLINE stmt { $2 }
   | FOR expr IN expr stmt  { For($2, $4, $5) } 
   /*| FOR typ ID IN RANGE LPAREN expr RPAREN stmt { Range($2, $6, $8) } */
-  | WHILE LPAREN expr RPAREN stmt  { While ($3, $5) }
 
 stmt_list:
     /* nothing */  { [] }
@@ -100,7 +100,7 @@ expr:
   | ID ASSIGN expr   { Assign($1, $3) }
   | ID LPAREN args_opt RPAREN { Call($1, $3) }
   | typ LPAREN expr RPAREN { Cast($1, $3) }
-  // | LPAREN expr RPAREN { $2 }
+  | LPAREN expr RPAREN { $2 }
   | expr PLUS expr { Binop ($1, Add, $3) }
   | expr MINUS expr { Binop ($1, Sub, $3) }
   | expr TIMES expr { Binop ($1, Mul, $3) }
