@@ -15,7 +15,7 @@ type bop =
 
 type typ = String | Int | Float | Bool | Void 
 
-type uop = Neg | Pos
+type uop = Neg | Not
 
 type expr =
     Id of string
@@ -85,7 +85,7 @@ let rec string_of_typ = function
 
 let string_of_uop = function 
     Neg -> "-"
-  | Pos -> ""
+  | Not -> "not"
 
 let rec string_of_expr = function
     Id(s) -> s

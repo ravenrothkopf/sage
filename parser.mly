@@ -2,7 +2,7 @@
 open Ast
 %}
 
-%token LPAREN RPAREN LBRACKET RBRACKET PLUS MINUS TIMES DIVIDE POS NEG ASSIGN MODULO
+%token LPAREN RPAREN LBRACKET RBRACKET PLUS MINUS TIMES DIVIDE NEG ASSIGN MODULO
 %token EQ NEQ GT GEQ LT LEQ AND OR NOT
 %token DEF LBRACE RBRACE NEWLINE RETURN IF ELIF ELSE WHILE FOR STRING INT FLOAT BOOL VOID RETURN
 %token COLON COMMA
@@ -24,7 +24,7 @@ open Ast
 %left LT GT LEQ GEQ
 %left PLUS MINUS
 %left TIMES DIVIDE MODULO
-%right NOT NEG POS
+%right NOT NEG 
 
 %start program
 %type <Ast.program> program
@@ -78,7 +78,6 @@ stmt:
   | IF LPAREN expr RPAREN stmt ELSE stmt { If($3, $5, $7) }
   | WHILE LPAREN expr RPAREN stmt { While($3, $5) }
   | NEWLINE stmt { $2 }
-  // | typ LPAREN expr RPAREN NEWLINE { Cast($1, $3) }
 
 stmt_list:
     /* nothing */  { [] }
@@ -110,7 +109,7 @@ expr:
   | expr AND expr { Binop ($1, And, $3) }
   | expr OR expr { Binop ($1, Or, $3) }
   | MINUS expr %prec NEG { Unop(Neg, $2) }
-  | PLUS expr %prec POS { Unop(Pos, $2) }
+  | NOT expr { Unop(Not, $2) }
   | expr MODULO expr { Binop ($1, Mod, $3) }
   | arr { $1 }
 

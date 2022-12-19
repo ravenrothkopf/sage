@@ -1,5 +1,5 @@
-def int iftrue() {
-    print("if case")
+def void iftrue() {
+    prints("if case")
 }
 
 def int main() {
@@ -7,7 +7,8 @@ def int main() {
     int neg = -2
     if (pos > 0) {
         iftrue()
-    } else {
-        print("else case")
+    } 
+    else {
+        prints("else case")
     }
 }
