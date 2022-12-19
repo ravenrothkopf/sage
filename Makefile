@@ -24,7 +24,7 @@ native:
 %.cmi: %.mli
 	$(OCAMLC) $<
 
-stdlibc: $(LIBS)stdlibc.c
+stdlibc: $(LIBS)stdlibc.c $(LIBS)stdlibc.o
 	$(CC) -o stdlibc -DBUILD_TEST $(LIBS)stdlibc.c
 
 sageexec: native sage.tb
