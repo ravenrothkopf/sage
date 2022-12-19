@@ -40,6 +40,16 @@ in
       L.function_type string_t [| string_t ; string_t |] in
   let concat_func : L.llvalue =
       L.declare_function "concat" concat_t the_module in
+    
+  let len_t : L.lltype =
+      L.function_type i32_t [| string_t |] in
+  let len_func : L.llvalue =
+      L.declare_function "len" len_t the_module in
+
+  let indexOf_t : L.lltype =
+      L.function_type i32_t [| string_t ; string_t |] in
+  let indexOf_func : L.llvalue =
+      L.declare_function "indexOf" indexOf_t the_module in
 
   (* Create a map of global variables after creating each, and evaluating the assigned expr *)
   (*constant expressions*)
@@ -189,6 +199,10 @@ in
       | SCall ("printb", [e]) ->
         L.build_call printf_func [| int_format_str ; (build_expr builder map e) |]
           "printf" builder
+      | SCall ("len", [e]) ->
+        L.build_call len_func [| (build_expr builder map e) |] "len" builder
+      | SCall ("indexOf", [e1; e2]) ->
+        L.build_call indexOf_func [|(build_expr builder map e1); (build_expr builder map e2)|] "indexOf" builder
       (*type casting hack using OCaml oooh*)
       (* | SCall ("int2str",  [e]) -> build_expr builder map (to_string map e)
       | SCall ("bool2str", [e]) -> build_expr builder map (to_string map e)
