@@ -24,9 +24,11 @@ SAGECEXEC="./sagec"
 #SAGE="_build/SAGE.native"
 
 # ----------Setup------------
-numbasic=14
-numtest=13
-numfail=2
+shopt -s nullglob
+basictests=(*/basic/*.sage)
+testfiles=(*/tests/*.sage)
+failtests=(*/checkfail/*.sage)
+echo ${#testfiles[@]}
 # Set time limit for all operations
 ulimit -t 30
 testnum=0
