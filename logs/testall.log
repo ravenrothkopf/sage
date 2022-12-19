@@ -1,0 +1,255 @@
+/usr/local/opt/llvm/bin//lli
+
+###### Testing divide-by-neg
+./sage.native tests/basic/divide-by-neg.sage > divide-by-neg.ll
+Fatal error: exception Stdlib.Parsing.Parse_error
+###### FAILED
+
+###### Testing divide-simple
+./sage.native tests/basic/divide-simple.sage > divide-simple.ll
+llc -relocation-model=pic divide-simple.ll > divide-simple.s
+gcc -o divide-simple.exe divide-simple.s ./libc/stdlibc.o
+./divide-simple.exe
+diff -b divide-simple.out tests/basic/divide-simple.out > divide-simple.diff
+###### SUCCESS
+
+###### Testing helloworld
+./sage.native tests/basic/helloworld.sage > helloworld.ll
+llc -relocation-model=pic helloworld.ll > helloworld.s
+gcc -o helloworld.exe helloworld.s ./libc/stdlibc.o
+./helloworld.exe
+diff -b helloworld.out tests/basic/helloworld.out > helloworld.diff
+###### SUCCESS
+
+###### Testing if-else
+./sage.native tests/basic/if-else.sage > if-else.ll
+llc -relocation-model=pic if-else.ll > if-else.s
+gcc -o if-else.exe if-else.s ./libc/stdlibc.o
+./if-else.exe
+diff -b if-else.out tests/basic/if-else.out > if-else.diff
+###### SUCCESS
+
+###### Testing if-sequential
+./sage.native tests/basic/if-sequential.sage > if-sequential.ll
+llc -relocation-model=pic if-sequential.ll > if-sequential.s
+gcc -o if-sequential.exe if-sequential.s ./libc/stdlibc.o
+./if-sequential.exe
+diff -b if-sequential.out tests/basic/if-sequential.out > if-sequential.diff
+###### SUCCESS
+
+###### Testing if
+./sage.native tests/basic/if.sage > if.ll
+llc -relocation-model=pic if.ll > if.s
+gcc -o if.exe if.s ./libc/stdlibc.o
+./if.exe
+diff -b if.out tests/basic/if.out > if.diff
+###### SUCCESS
+
+###### Testing mod1
+./sage.native tests/basic/mod1.sage > mod1.ll
+llc -relocation-model=pic mod1.ll > mod1.s
+gcc -o mod1.exe mod1.s ./libc/stdlibc.o
+./mod1.exe
+diff -b mod1.out tests/basic/mod1.out > mod1.diff
+###### SUCCESS
+
+###### Testing mod2
+./sage.native tests/basic/mod2.sage > mod2.ll
+llc -relocation-model=pic mod2.ll > mod2.s
+gcc -o mod2.exe mod2.s ./libc/stdlibc.o
+./mod2.exe
+diff -b mod2.out tests/basic/mod2.out > mod2.diff
+###### SUCCESS
+
+###### Testing multiply1
+./sage.native tests/basic/multiply1.sage > multiply1.ll
+llc -relocation-model=pic multiply1.ll > multiply1.s
+gcc -o multiply1.exe multiply1.s ./libc/stdlibc.o
+./multiply1.exe
+diff -b multiply1.out tests/basic/multiply1.out > multiply1.diff
+###### SUCCESS
+
+###### Testing operator-prec
+./sage.native tests/basic/operator-prec.sage > operator-prec.ll
+llc -relocation-model=pic operator-prec.ll > operator-prec.s
+gcc -o operator-prec.exe operator-prec.s ./libc/stdlibc.o
+./operator-prec.exe
+diff -b operator-prec.out tests/basic/operator-prec.out > operator-prec.diff
+###### SUCCESS
+
+###### Testing print-bool
+./sage.native tests/basic/print-bool.sage > print-bool.ll
+llc -relocation-model=pic print-bool.ll > print-bool.s
+gcc -o print-bool.exe print-bool.s ./libc/stdlibc.o
+./print-bool.exe
+diff -b print-bool.out tests/basic/print-bool.out > print-bool.diff
+###### SUCCESS
+
+###### Testing sub1
+./sage.native tests/basic/sub1.sage > sub1.ll
+llc -relocation-model=pic sub1.ll > sub1.s
+gcc -o sub1.exe sub1.s ./libc/stdlibc.o
+./sub1.exe
+diff -b sub1.out tests/basic/sub1.out > sub1.diff
+###### SUCCESS
+
+###### Testing sum1
+./sage.native tests/basic/sum1.sage > sum1.ll
+llc -relocation-model=pic sum1.ll > sum1.s
+gcc -o sum1.exe sum1.s ./libc/stdlibc.o
+./sum1.exe
+diff -b sum1.out tests/basic/sum1.out > sum1.diff
+###### SUCCESS
+
+###### Testing varassign-int1
+./sage.native tests/basic/varassign-int1.sage > varassign-int1.ll
+llc -relocation-model=pic varassign-int1.ll > varassign-int1.s
+gcc -o varassign-int1.exe varassign-int1.s ./libc/stdlibc.o
+./varassign-int1.exe
+diff -b varassign-int1.out tests/basic/varassign-int1.out > varassign-int1.diff
+###### SUCCESS
+
+###### Testing varassign-int2
+./sage.native tests/basic/varassign-int2.sage > varassign-int2.ll
+llc -relocation-model=pic varassign-int2.ll > varassign-int2.s
+gcc -o varassign-int2.exe varassign-int2.s ./libc/stdlibc.o
+./varassign-int2.exe
+diff -b varassign-int2.out tests/basic/varassign-int2.out > varassign-int2.diff
+###### SUCCESS
+
+###### Testing varassign-str1
+./sage.native tests/basic/varassign-str1.sage > varassign-str1.ll
+llc -relocation-model=pic varassign-str1.ll > varassign-str1.s
+gcc -o varassign-str1.exe varassign-str1.s ./libc/stdlibc.o
+./varassign-str1.exe
+diff -b varassign-str1.out tests/basic/varassign-str1.out > varassign-str1.diff
+###### SUCCESS
+
+###### Testing concat
+./sage.native tests/tests/concat.sage > concat.ll
+llc -relocation-model=pic concat.ll > concat.s
+gcc -o concat.exe concat.s ./libc/stdlibc.o
+./concat.exe
+diff -b concat.out tests/tests/concat.out > concat.diff
+###### SUCCESS
+
+###### Testing if-else1
+./sage.native tests/tests/if-else1.sage > if-else1.ll
+llc -relocation-model=pic if-else1.ll > if-else1.s
+gcc -o if-else1.exe if-else1.s ./libc/stdlibc.o
+./if-else1.exe
+diff -b if-else1.out tests/tests/if-else1.out > if-else1.diff
+###### SUCCESS
+
+###### Testing if-else_func
+./sage.native tests/tests/if-else_func.sage > if-else_func.ll
+llc -relocation-model=pic if-else_func.ll > if-else_func.s
+gcc -o if-else_func.exe if-else_func.s ./libc/stdlibc.o
+./if-else_func.exe
+diff -b if-else_func.out tests/tests/if-else_func.out > if-else_func.diff
+###### SUCCESS
+
+###### Testing return-bool
+./sage.native tests/tests/return-bool.sage > return-bool.ll
+llc -relocation-model=pic return-bool.ll > return-bool.s
+gcc -o return-bool.exe return-bool.s ./libc/stdlibc.o
+./return-bool.exe
+diff -b return-bool.out tests/tests/return-bool.out > return-bool.diff
+###### SUCCESS
+
+###### Testing return-int
+./sage.native tests/tests/return-int.sage > return-int.ll
+llc -relocation-model=pic return-int.ll > return-int.s
+gcc -o return-int.exe return-int.s ./libc/stdlibc.o
+./return-int.exe
+diff -b return-int.out tests/tests/return-int.out > return-int.diff
+###### SUCCESS
+
+###### Testing return-str
+./sage.native tests/tests/return-str.sage > return-str.ll
+llc -relocation-model=pic return-str.ll > return-str.s
+gcc -o return-str.exe return-str.s ./libc/stdlibc.o
+./return-str.exe
+diff -b return-str.out tests/tests/return-str.out > return-str.diff
+FAILED return-str.out differs from tests/tests/return-str.out
+###### FAILED
+
+###### Testing stdlib-indexof
+./sage.native tests/tests/stdlib-indexof.sage > stdlib-indexof.ll
+llc -relocation-model=pic stdlib-indexof.ll > stdlib-indexof.s
+gcc -o stdlib-indexof.exe stdlib-indexof.s ./libc/stdlibc.o
+Undefined symbols for architecture x86_64:
+  "_indexOf", referenced from:
+      _main in stdlib-indexof-b4ae84.o
+ld: symbol(s) not found for architecture x86_64
+clang: error: linker command failed with exit code 1 (use -v to see invocation)
+###### FAILED
+
+###### Testing strlen
+./sage.native tests/tests/strlen.sage > strlen.ll
+llc -relocation-model=pic strlen.ll > strlen.s
+gcc -o strlen.exe strlen.s ./libc/stdlibc.o
+./strlen.exe
+diff -b strlen.out tests/tests/strlen.out > strlen.diff
+###### SUCCESS
+
+###### Testing test-expr-assignment
+./sage.native tests/tests/test-expr-assignment.sage > test-expr-assignment.ll
+llc -relocation-model=pic test-expr-assignment.ll > test-expr-assignment.s
+gcc -o test-expr-assignment.exe test-expr-assignment.s ./libc/stdlibc.o
+./test-expr-assignment.exe
+diff -b test-expr-assignment.out tests/tests/test-expr-assignment.out > test-expr-assignment.diff
+###### SUCCESS
+
+###### Testing typecast-bool
+./sage.native tests/tests/typecast-bool.sage > typecast-bool.ll
+llc -relocation-model=pic typecast-bool.ll > typecast-bool.s
+gcc -o typecast-bool.exe typecast-bool.s ./libc/stdlibc.o
+./typecast-bool.exe
+diff -b typecast-bool.out tests/tests/typecast-bool.out > typecast-bool.diff
+###### SUCCESS
+
+###### Testing typecast-int
+./sage.native tests/tests/typecast-int.sage > typecast-int.ll
+llc -relocation-model=pic typecast-int.ll > typecast-int.s
+gcc -o typecast-int.exe typecast-int.s ./libc/stdlibc.o
+./typecast-int.exe
+diff -b typecast-int.out tests/tests/typecast-int.out > typecast-int.diff
+###### SUCCESS
+
+###### Testing typecast-str
+./sage.native tests/tests/typecast-str.sage > typecast-str.ll
+llc -relocation-model=pic typecast-str.ll > typecast-str.s
+gcc -o typecast-str.exe typecast-str.s ./libc/stdlibc.o
+./typecast-str.exe
+diff -b typecast-str.out tests/tests/typecast-str.out > typecast-str.diff
+###### SUCCESS
+
+###### Testing divide_by_zero
+./sage.native < tests/checkfail/divide_by_zero.sage 2> divide_by_zero.err >> ./logs/testall.log
+; ModuleID = 'sage'
+source_filename = "sage"
+
+@fmt = private unnamed_addr constant [4 x i8] c"%d\0A\00", align 1
+@fmt.1 = private unnamed_addr constant [4 x i8] c"%s\0A\00", align 1
+
+declare i32 @printf(i8*, ...)
+
+declare i8* @concat(i8*, i8*)
+
+declare i32 @len(i8*)
+
+declare i32 @indexOf(i8*, i8*)
+
+define i32 @main() {
+entry:
+  %div = alloca i32, align 4
+  store i32 poison, i32* %div, align 4
+  ret i32 0
+}
+###### FAILED
+
+###### Testing fail-badbinop-string_string
+./sage.native < tests/checkfail/fail-badbinop-string_string.sage 2> fail-badbinop-string_string.err >> ./logs/testall.log
+diff -b fail-badbinop-string_string.err tests/checkfail/fail-badbinop-string_string.err > fail-badbinop-string_string.diff
+###### SUCCESS
