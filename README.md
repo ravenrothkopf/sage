@@ -151,6 +151,7 @@ Indicating that both s1 and s2 were successfully parsed by the compiler :)
 * Gabriela, Raven, Jenny, Lauren (12/13) - Code gen meeting
 * Gabriela (12/18) - Update branches with current changes & address merge conflicts, attempt to fix lli cannot find command to run and reference git repo Raven sent
 * Gabriela (12/18) - Uninstall and reinstall LLVM, implement return statements on ast, scanner, parser, sast, semantics, irgen
+* Gabriela (12/19) - Pull new changes, implement floats in ast, scanner, parser, sast
 ## References
 
 1. [Rusty Language Reference Manual](http://www.cs.columbia.edu/~sedwards/classes/2016/4115-fall/lrms/rusty.pdf"rusty, a rust-based PL")
