@@ -67,7 +67,9 @@ typ:
 
 stmt_list:
   //  /* nothing */  { [] }
+  | NEWLINE stmt_list            {$2}
   | NEWLINE                      { [] }
+  | NEWLINE TAB stmt_list        {$3}
   | NEWLINE TAB stmt stmt_list   { $3 :: $4 }
   // | NEWLINE TAB stmt_list        { $3 }
   // | NEWLINE TAB stmt NEWLINE     { [$3] }
