@@ -21,13 +21,16 @@ let translate (globals, functions) =
 in
 
   let string_t   = L.pointer_type i8_t in
+  let tuple_t (t1, t2) = L.struct_type context [|t1; t2|] in
 
   (* Return the LLVM type for a sage type *)
-  let ltype_of_typ = function
+  let rec ltype_of_typ = function
       A.Int -> i32_t
     | A.Bool  -> i1_t
     | A.String -> string_t
     | A.Void -> void_t
+    | A.TupleTyp (t1, t2) -> tuple_t (ltype_of_typ t1, ltype_of_typ t2)
+
   in
   (*print functions*)
   let printf_t : L.lltype =
@@ -64,6 +67,7 @@ in
           let global = L.define_global ".str" (L.const_stringz context s) the_module in
           (* const ints of the char array*)
           L.const_gep global [|L.const_int i64_t 0; L.const_int i64_t 0|]
+      (* | STuple (e1, e2)-> L.const_struct (ltype_of_typ t) [e1; e2] ;  *)
       | SNoexpr -> raise (Failure "empty global initializer")
       | SBinop (e1, op, e2) -> 
         let e1' = build_global_expr e1
