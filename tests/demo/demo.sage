@@ -35,8 +35,14 @@ def int gcd() {
       int rem = first_num % second_num
       first_num = second_num
       second_num = rem
-      output = str(first_num)
+      # output = str(first_num)
    }
-   prints("GCD of two numbers is " + output)
+   prints("GCD of two numbers is " + first_num)
    return 0
+}
+
+def float test_float() {
+    float PI = 3.14159
+    prints("This is pi!)
+    return PI
 }
