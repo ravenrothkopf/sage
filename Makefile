@@ -1,25 +1,23 @@
 # "make all" to compile sage and run hello world test file, sage.tb
-.PHONY: all clean native sageexec
+.PHONY: all clean native sageexec stdlibc zip
 
-VPATH = ./libc/
-DLIB = ./libc/
-DLOG = ./logs/
-DTESTS = ./tests/
-BASICTESTS = ./tests/basic/
-TESTFILES = ./tests/tests/
-FAILTESTS = ./tests/checkfail/
-SRC = ./src/
-BUILD = ./_build/
-DEMOPATH = ./demo/
+VPATH 	= ./libc/
+DLIB 	= ./libc/
+DLOG 	= ./logs/
+DTESTS 	= ./tests/
+SRC 	= ./src/
+BUILD 	= ./_build/
+DEMO	= ./demo/
+ROOTDIR	= ./sage/
 
-OCAMLBFLAGS 	= -use-ocamlfind -pkgs llvm
-OCAMLCFLAGS 	= -w -c
+OCAMLB_FLAGS 	= -use-ocamlfind -pkgs llvm
+OCAMLC_FLAGS 	= -w -c
 CFLAGS			= -std=c99 -Wall -W
 DBFLAGS			= -DBUILD_TEST
 
-OCAMLB 			= ocamlbuild $(OCAMLBFLAGS)
-OCAMLC 			= ocamlc $(OCAMLCFLAGS)
-CC				= gcc $(CFLAGS)
+OCAMLB 			= ocamlbuild $(OCAMLB_FLAGS)
+OCAMLC 			= ocamlc $(OCAMLC_FLAGS)
+CC 				= gcc $(C_FLAGS)
 
 all: clean native stdlibc sageexec
 
@@ -45,19 +43,35 @@ sageexec: native sage.tb
 clean:
 	$(OCAMLB) -clean
 	rm -rf \
-	_build ocamlllvm sage.native *.diff *.err $(DLOG)*.err \
-	*.ll *.log $(DLOG)*.log parser.ml parser.mli *.out *.o $(BUILD)*.o $(DLIB)*.o *.s *.exe
+	$(BUILD) ocamlllvm sage.native *.diff *.err $(DLOG)*.err \
+	*.ll *.log $(DLOG)*.log parser.ml *.mli *.out *.o $(BUILD)*.o $(DLIB)*.o *.s *.exe
 
 test: clean native testall
 
-testall:
-	./testall.sh
+tests:
+	./tests.sh
 
-basic: clean
+basic:
 	./testbasic.sh
 
 testfail:
 	./testerrors.sh
 
-tests: clean
-	./tests.sh
+testall: clean native
+	./testall.sh
+
+TARFILES = 	ast.ml irgen.ml parser.mly sage.ml sast.ml scanner.mll semant.ml \
+			Makefile README.md testall.sh testbasic.sh testerrors.sh tests.sh \
+			$(DLIB) $(DTESTS) $(DLOG) $(DEMO)
+
+REPORT 	  = ast.ml irgen.ml parser.mly sage.ml sast.ml scanner.mll semant.ml \
+			Makefile README.md testall.sh testbasic.sh testerrors.sh tests.sh \
+			$(DLIB) $(DTESTS) $(DLOG) $(DEMO) *.pdf
+
+# zips proj files together
+zip:
+	zip ../sage.tar.gz $(TARFILES)
+
+# zips proj + report files
+zipfr:
+	zip ../sage.tar.gz $(REPORT)
