@@ -30,7 +30,7 @@ in
     | A.String -> string_t
     | A.Float -> float_t 
     | A.Void -> void_t
-    | SArray(array_typ) -> L.pointer_type (ltype_of_typ array_typ) 
+    (*| SArray(array_typ) -> L.pointer_type (ltype_of_typ array_typ) *)
     | _ -> raise (Failure "not yet implemented")
   in
   (*print functions*)
@@ -177,7 +177,7 @@ in
       | SFloatLit l -> L.const_float float_t l
       | SStringLit s -> L.build_global_stringptr s "str" builder
       | SId s       -> L.build_load (lookup map s) s builder
-      | SNew(SNArray(array_type, int_expr)) ->
+      (*| SNew(SNArray(array_type, int_expr)) ->
         let array_size = expr builder m int_expr in
         let llarray_t = ltype_of_typ array_type in
         let ptr = L.build_array_malloc llarray_t
@@ -232,7 +232,7 @@ in
           L.build_load (L.build_gep arr_var 
                           [| idx |] "" builder) 
             "" builder 
-        in ptr
+        in ptr  *)
       | SAssign (s, e) -> let e' = build_expr builder map e in
         ignore(L.build_store e' (lookup map s) builder); e'
       | SNoexpr -> L.const_int i32_t 0
