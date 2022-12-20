@@ -87,7 +87,6 @@ stmt_list:
 stmt:
     expr                                     { Expr $1 }
   | COLON stmt_block                         { Block $2 }
- // | LBRACE stmt_list RBRACE                  { Block $2 }
   | global                                   { DecAssn $1 }  //variable initialization and assignment as its own statement separate from exprs
   | IF LPAREN expr RPAREN stmt %prec NOELSE  { If($3, $5, Block([])) }
   | IF LPAREN expr RPAREN stmt ELSE stmt     { If($3, $5, $7) }

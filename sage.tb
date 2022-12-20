@@ -1,23 +1,15 @@
 """
-sage.tb currently tests (only for semantic analysis):
-- single/multi-line comments
-- void function calls
-- boolean statments + declaration
-- string literal statements + declaration
-- global variable declaration and local use within functions
-- string concatenation
-- if else statements (currently only works with one line stmts)
-- multiple function declarations
+comments :)
 """
 
 # test single-line comment
 
-str hello = "hello"
+str hello = "hello from global"
 bool t = True
 
 def void voidTest() : 
     str test = "test" 
-    prints("test")
+    prints("void test")
 
 def int main (str greeting) :
     str location = "world" 
@@ -26,6 +18,8 @@ def int main (str greeting) :
     if (n == 3):
         prints("n is 3")
 
+    voidTest()
+    prints(hello)
     prints(greeting)
     prints(location)
 
