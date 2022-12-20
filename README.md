@@ -162,7 +162,7 @@ Many features are almost implemented in some branches. They are:
 * Gabriela & Jenny (12/19) - Meet to discuss strategy and implementation of arrays and codegen
 * Gabriela (12/19) - Continued iteration on codegen file for implementing arrays
 * All (12/19) - Meet to discuss presentation and final language implementation
-* Gabriela (12/20) - Debug for loop index increment
+* Gabriela (12/20) - Debug for loop index increment, commit first iteration of code for live demo
 
 ## References
 
