@@ -101,6 +101,9 @@ expr:
   | ID               { Id($1) }
   | ID ASSIGN expr   { Assign($1, $3) }
   | ID PLUS ASSIGN expr   { Assign($1, Binop (Id($1), Add, $4)) }
+  | ID MINUS ASSIGN expr   { Assign($1, Binop (Id($1), Sub, $4)) }
+  | ID TIMES ASSIGN expr   { Assign($1, Binop (Id($1), Mul, $4)) }
+  | ID DIVIDE ASSIGN expr   { Assign($1, Binop (Id($1), Div, $4)) }
   | ID LPAREN args_opt RPAREN { Call($1, $3) }
   | typ LPAREN expr RPAREN { Cast($1, $3) }
   | LPAREN expr RPAREN { $2 }
