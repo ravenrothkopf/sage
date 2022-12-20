@@ -98,12 +98,18 @@ Indicating that both s1 and s2 were successfully parsed by the compiler :)
 
 ## Features planned for the next (upcoming) release (v2.0.0)
 
+Many features are almost implemented in some branches. They are:
+* indents like the Python language in /jenny branch
+* arrays in /jenny-new branch
+* tuples in /jenny-tuples branch
+
 * A complete, full-fledged front-end compiler for the sage PL (i.e., a functionally complete scanner, parser, semantic checker, and IR code generator/LLVM IR)
 * Implement the remainder of sage's language features (types such as floating-point implementation, per IEEE 754 standards, functions, operators and binary operations [e.g., associativity, precedence, type equality checking], composite type [i.e., tuples, `struct`s], reference counting / automatic garbage collecting, and other memory safety features)
 
   * Full testing suite to highlight the aforementioned language features
   * `stdlib` written in sage or C for quality of life features (i.e., `println`)
-  * Robust error handling with detailed error messages to facilitate debugging
+  * Robust error handling with detailed error messages to facilitate 
+  ging
 * An AST or a semantically-checked AST generated from compiling our front-end
 * Docker image to enhance access to testing and trying the sage PL without having to download and install the language to your local machine
 * Additional special features (TBD)
@@ -120,42 +126,44 @@ Indicating that both s1 and s2 were successfully parsed by the compiler :)
 * Raven (11/13) - Wrote the foundation for the scanner, parser, and ast for Hello World (comments, string literals, str data types, concatenation, function definitions)
 * Raven (11/14) - Debugged scanner and parser building
 * Gabriela (11/15) - Review codebase and compile list of bugs to address in office hours for test.ml
-* Gabriela (11/16) - Attempt to debug, attended Gregory's OH for guidance, comitted first steps of implementation to address ^D parsing issues
+* Gabriela (11/16) - Debug codebase for scanner and parser, attended Gregory's OH for guidance, committed implementation to address ^D parsing issues
 * Jenny & Raven (11/16) - met and planned on what needs to be done, within what time frame, what the best steps to proceed are, and how to get full participation
 * Jenny (11/16) - Combed through the examples from class, debugged and tried to get Hello World to work, fixed the parsing of string literals, debugged .mly and ast files
-* Gabriela (11/16) - Combed through examples from class and quality assurance testing for test.ml, attempt to address locally bugs
-* Gabriela (11/17) - Combed through examples from class and quality assurance testing for test.ml, attempt to address locally bugs
+* Gabriela (11/16) - Performed quality assurance testing for test.ml, addressed bugs in scanner and parser code base
+* Gabriela (11/17) - Continued quality assurance testing for test.ml, addressing bugs in scanner and parser code base
 * Jenny (11/18) - Debugged for hours, figured out the main issues preventing parsing, like newlines and tabs
 * Lauren (11/18) - Began implementing functionality to parse additional type declarations (int, float, bool)
-* All (11/19) - Meeting to plan out the rest of this part
+* All (11/19) - Meeting to plan out the rest of hello world deliverable
 * Mely (11/19) - Created and worked on the sast.ml, semant.ml and test2.ml files
 * Lauren (11/19) - Finished implementing parsing of int, float, and bool types and began updating the LRM
 * Lauren (11/20) - Added test cases
 * Raven (11/20) - Wrote Makefile
 * Mely (11/20) - Worked on debugging semant.ml and sast.ml
-* Gabriela (11/20) - Collaborate with Mely to address semant.ml bugs and attempting to adjust ast.ml file accordingly for test2.ml
-* Gabriela (11/20) - Rebase codebase after commit to address binding criticially compromised exsisting code
-* Gabriela (11/21) - Quality assurance testing and compile a list of bugs to address in Hao's office hours, specifically addressing test cases file
-* Gabriela (11/21) - Attended Hao's OH and push some debugging suggestions for binding
+* Gabriela (11/20) - Collaborate with Mely to address semant.ml bugs and prepare ast.ml file for test2.ml initial testing phase
+* Gabriela (11/20) - Rebase codebase after commit to address binding critically compromised code
+* Gabriela (11/21) - Quality assurance testing and compile a list of bugs to address in Hao's office hours, specifically addressing testing suite
+* Gabriela (11/21) - Attended Hao's OH and push debugging suggestions for binding
 * Mely (11/21) - Attended Hao's OH to ask about printing functionality and worked on implementing the print feature in semant.ml
 * Lauren (11/21) - Attended Hao's OH and fixed string concatenation, updated the README and finished updating the LRM (e.g., added a complete list of indices of all current features, fixed + enhanced syntax highlighting specifically for sage, updated/edited each section of the LRM). Worked on the test shell script, although currently incomplete
 * Raven (11/21) - Worked on debugging parser ast, and semantic checking to integrate binding
 * Gabriela (11/28) - Created branches for feature management and proposed new merging protocol moving forward
-* Gabriela (11/28) - Begin initial code for code generation portion of project
-* Gabriela (11/29) - More code generation work
-* Gabriela (11/30) - Review LLVM documentation & open issues for future features
-* Gabriela (12/1) - Merge Lauren's fixes to 37 shift/reduce conflicts, initial commit for IR generation
-* Gabriela (12/1) - Fix merging issues, IR generation testing
-* Gabriela (12/5) - LLVM Installation issues
-* Gabriela (12/10) - Resolve CodeGen bugs across multiple files, attempt to add math operations, attempt to merge Raven's conditional block statements 
+* Gabriela (11/28) - Begin initial code for code generation component
+* Gabriela (11/29) - Continue adding code generation components for existing language features
+* Gabriela (11/30) - Review LLVM documentation, quality assurance testing: open issues for future features based on testing results
+* Gabriela (12/1) - Merge Lauren's fixes to 37 shift/reduce conflicts, initial commit for code generation component
+* Gabriela (12/1) - Fix merging conflicts, IR generation testing
+* Gabriela (12/5) - Address LLVM installation issues for lli path not creating symbolic link in terminal to test llvm
+* Gabriela (12/10) - Resolve CodeGen bugs across codebase, add math operations, merge Raven's conditional block statements and address merge conflicts
 * Gabriela, Raven, Jenny, Lauren (12/13) - Code gen meeting
-* Gabriela (12/18) - Update branches with current changes & address merge conflicts, attempt to fix lli cannot find command to run and reference git repo Raven sent
-* Gabriela (12/18) - Uninstall and reinstall LLVM, implement return statements on ast, scanner, parser, sast, semantics, irgen
-* Gabriela (12/19) - Pull new changes, implement floats in ast, scanner, parser, sast, semant, and codegen files
-* All (12/19) - Meet for gameplan for final deliverables
-* Gabriela & Jenny (12/19) - Meet to talk about arrays and codegen
-* Gabriela (12/19) - more iteration on codegen for implementing arrays
-* All (12/19) - Meet to discuss presentaion and final language implementations
+* Gabriela (12/18) - Update branches with current changes & address merge conflicts, read documentation to address lli cannot find command
+* Gabriela (12/18) - Implement return statements on ast, scanner, parser, sast, semantics, irgen
+* Gabriela (12/19) - Implement floats in ast, scanner, parser, sast, semant, and codegen files
+* All (12/19) - Meet for game plan for final deliverables
+* Gabriela & Jenny (12/19) - Meet to discuss strategy and implementation of arrays and codegen
+* Gabriela (12/19) - Continued iteration on codegen file for implementing arrays
+* All (12/19) - Meet to discuss presentation and final language implementation
+* Gabriela (12/20) - Debug for loop index increment, commit first iteration of code for live demo
+
 ## References
 
 1. [Rusty Language Reference Manual](http://www.cs.columbia.edu/~sedwards/classes/2016/4115-fall/lrms/rusty.pdf"rusty, a rust-based PL")
