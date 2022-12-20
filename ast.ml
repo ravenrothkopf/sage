@@ -38,13 +38,14 @@ type bind_formal = typ * string
 (*tuple, first element contains typ and ID, second is the expression*)
 type bind_init = bind_formal * expr
 
-type bind = Bind of string * typ
+(*type bind = Bind of typ * string *)
 
 type stmt =
     Expr of expr
   | Block of stmt list
   | DecAssn of bind_init
   | If of expr * stmt * stmt
+  | For of expr * expr * expr * stmt 
   (* | For of bind_formal * expr * stmt  *)
   | Range of expr * expr * stmt 
   | While of expr * stmt
@@ -118,6 +119,8 @@ let rec string_of_stmt = function
   | DecAssn(decl, expr) -> string_of_vdecl (decl, expr)
   | If(expr, s, Block([])) -> "if (" ^ string_of_expr expr ^ ")\n" ^ "    " ^ string_of_stmt s
   | If(expr, s1, s2) ->  "if (" ^ string_of_expr expr ^ ")\n" ^ string_of_stmt s1 ^ "else\n" ^ string_of_stmt s2
+  | For(e1,e2,e3, s) -> "for (" ^ string_of_expr e1 ^ " ; " ^ string_of_expr e2 ^ " ; " ^ 
+    string_of_expr e3 ^ ")" ^ string_of_stmt s  
   (* | For(tn, e, stmt) -> "for " ^ string_of_typ (fst tn) ^ " " ^ (snd tn) ^ " in " ^ string_of_expr e ^ "\n" ^ string_of_stmt stmt  *)
   | Range(e1,e2, s) -> "for " ^ string_of_expr e1 ^ " in range (" ^ string_of_expr e2 ^ ")\n" ^ string_of_stmt s
   | While(expr, s) ->  "while (" ^ string_of_expr expr ^ ")\n" ^ string_of_stmt s

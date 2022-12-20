@@ -81,12 +81,14 @@ stmt:
   | IF LPAREN expr RPAREN stmt ELSE stmt { If($3, $5, $7) }
   | WHILE LPAREN expr RPAREN stmt { While($3, $5) }
   | NEWLINE stmt { $2 }
+  | FOR LPAREN expr SEMC expr SEMC expr RPAREN stmt  { For($3, $5, $7, $9) } 
   // | FOR typ ID IN expr stmt  { For(($2, $3), $5, $6) } 
   /*| FOR typ ID IN RANGE LPAREN expr RPAREN stmt { Range($2, $6, $8) } */
 
 stmt_list:
     /* nothing */  { [] }
   | stmt stmt_list { $1 :: $2 }
+
 
 global:
     typ ID ASSIGN expr NEWLINE { (($1, $2), $4) } //int x = 3, only expression we want to use globally and locally

@@ -20,7 +20,7 @@ let translate (globals, functions) =
   and i64_t      = L.i64_type    context
   and float_t    = L.double_type context
 in
-
+ 
   let string_t   = L.pointer_type i8_t in
 
   (* Return the LLVM type for a sage type *)
@@ -30,6 +30,8 @@ in
     | A.String -> string_t
     | A.Float -> float_t 
     | A.Void -> void_t
+    | SArray(array_typ) -> L.pointer_type (ltype_of_typ array_typ) 
+    | _ -> raise (Failure "not yet implemented")
   in
   (*print functions*)
   let printf_t : L.lltype =
@@ -187,6 +189,62 @@ in
       | SFloatLit l -> L.const_float float_t l
       | SStringLit s -> L.build_global_stringptr s "str" builder
       | SId s       -> L.build_load (lookup map s) s builder
+      | SNew(SNArray(array_type, int_expr)) ->
+        let array_size = expr builder m int_expr in
+        let llarray_t = ltype_of_typ array_type in
+        let ptr = L.build_array_malloc llarray_t
+            array_size "" builder
+        in ptr
+      | SNew(SNStruct(SStruct(struct_t))) ->
+        let t_members = List.map (fun (_, (t, _)) -> t) 
+          (StringMap.bindings struct_t.smembers) in
+        let st = L.struct_type context (Array.of_list 
+          (List.map ltype_of_typ t_members)) in
+        let compare_by (n1, _) (n2, _) = compare n1 n2 in
+        let members = List.sort compare_by 
+          (StringMap.bindings struct_t.smembers) in
+        let llstruct_t = st in
+        let vals = List.map (fun (_, (_, opt_e)) -> 
+          match opt_e with Some(e) -> Some(expr builder m e) 
+                          | None -> None) 
+          (List.sort compare_by members) in
+        let idxs = List.rev (generate_seq ((List.length members) - 1)) in
+        let v = List.fold_left2 (fun agg i opt_v -> 
+          match opt_v with Some(v) -> insert_value builder agg i v 
+                          | None -> agg) 
+          (L.const_null llstruct_t) idxs vals in
+        let ptr = L.build_malloc llstruct_t "structlit" builder in
+        ignore(L.build_store v ptr builder);
+        ptr
+
+      | SArrayLit(sexpr_list) -> 
+        if List.length sexpr_list = 0
+        then raise (Failure "empty array init is not supported")
+        else
+          let all_elem = List.map (fun e ->
+              expr builder m e) sexpr_list in
+          let llarray_t = L.type_of (List.hd all_elem) in
+          let num_elems = List.length sexpr_list in
+          let ptr = L.build_array_malloc llarray_t
+              (L.const_int i32_t num_elems) "" builder 
+          in
+          ignore (List.fold_left (fun i elem ->
+              let idx = L.const_int i32_t i in
+              let eptr = L.build_gep ptr [|idx|] "" builder in
+              let cptr = L.build_pointercast eptr 
+                  (L.pointer_type (L.type_of elem)) "" builder in
+              let _ = (L.build_store elem cptr builder) 
+              in i+1)
+              0 all_elem); ptr
+
+      | SArrayAccess(arr, i) ->
+        let arr_var = expr builder m arr in
+        let idx = expr builder m i in 
+        let ptr = 
+          L.build_load (L.build_gep arr_var 
+                          [| idx |] "" builder) 
+            "" builder 
+        in ptr
       | SAssign (s, e) -> let e' = build_expr builder map e in
         ignore(L.build_store e' (lookup map s) builder); e'
       | SNoexpr -> L.const_int i32_t 0
@@ -305,28 +363,27 @@ in
         ignore (build_br_while builder);
         let while_builder = L.builder_at_end context while_bb in
         let bool_val = build_expr while_builder vars predicate in
-
         let body_bb = L.append_block context "while_body" the_function in
         add_terminal (fst (build_stmt ((L.builder_at_end context body_bb), vars) body)) build_br_while;
-
         let end_bb = L.append_block context "while_end" the_function in
 
         ignore(L.build_cond_br bool_val body_bb end_bb while_builder);
         (L.builder_at_end context end_bb, vars)
        
-      (* | SFor (tn, e, body) -> 
-        let local_var = L.build_alloca (ltype_of_typ (fst tn)) (snd tn) builder in 
-        StringMap.add (snd tn) local_var vars;
+      | SFor (expr1, expr2, expr3, body) -> 
         let for_bb = L.append_block context "for" the_function in
-        let pred_bb = L.build_br for_bb in
-        ignore(pred_bb builder);
+        let build_br_for = L.build_br for_bb in (* partial function *)
+        ignore (build_br_for builder);
         let for_builder = L.builder_at_end context for_bb in
-        let expr = build_expr for_builder vars e in 
+        let first_expr = build_expr for_builder vars expr1 in
+        let bool_val = build_expr for_builder vars expr2 in
+        let third_expr = build_expr for_builder vars expr3 in
         let body_bb = L.append_block context "for_body" the_function in
+        add_terminal (fst (build_stmt ((L.builder_at_end context body_bb), vars) body)) build_br_for;
         let end_bb = L.append_block context "for_end" the_function in
-        add_terminal (fst (build_stmt ((L.builder_at_end context body_bb), vars) body)) pred_bb;
-        ignore(L.build_cond_br expr body_bb end_bb for_builder); 
-        (L.builder_at_end context end_bb, vars) *)
+
+        ignore(L.build_cond_br bool_val body_bb end_bb for_builder);
+        (L.builder_at_end context end_bb, vars)      
      (* | SRange (expr, stmt) -> *)
       | SReturn e -> ignore(match fdecl.srtyp with
           (* Special "return nothing" instr *)

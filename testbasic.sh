@@ -70,6 +70,7 @@ Compare() {
     echo diff -b $1 $2 ">" $3 1>&2
     diff -b "$1" "$2" > "$3" 2>&1 || {
 	SignalError "$1 output differs"
+    cat diff -b $1 $2 ">" $3 >> $errorlog
 	echo "FAILED $1 differs from $2" 1>&2
     }
 }
@@ -102,9 +103,9 @@ CheckBasic() {
     reffile=`echo $1 | sed 's/.sage$//'`
     basedir="`echo $1 | sed 's/\/[^\/]*$//'`/."
 
-    echo "TEST $testnum $basename..."
+    # echo "TEST $testnum $basename..."
 
-    echo 1>&2
+    echo " " 1>&2
     echo "###### Testing $basename" 1>&2
 
     generatedfiles=""
@@ -176,9 +177,9 @@ do
     esac
 done
 
-if [[ $errcount -ge 0 ]]; then
-    echo "\n==================== PROGRAM TERMINATED ====================\n\t$errcount of $total tests failed"
+if [[ $errcount -ge 1 ]]; then
+    echo "\n======================= PROGRAM TERMINATED =======================\n\t$errcount of $total tests failed\n\n"
 else
-    echo "\n==================== SUCCESS! ALL BASIC TESTS PASSED ===================="
+    echo "\n============ ALL BASIC TESTS MATCH EXPECTED OUTPUT ===============\nSUCCESS! Passed ${#basictests[@]} of ${#basictests[@]} basic tests\n\n"
 fi
 exit 0
