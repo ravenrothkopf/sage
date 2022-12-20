@@ -12,7 +12,7 @@ def str hello_world() {
     prints(greeting + location)
     return location
 }
-
+ 
 def bool b_check() {
     if (num < 1) {
         return true
@@ -35,7 +35,8 @@ def int gcd() {
       int rem = first_num % second_num
       first_num = second_num
       second_num = rem
+      output = str(first_num)
    }
-   prints("GCD of two numbers is " + first_num)
+   prints("GCD of two numbers is " + output)
    return 0
 }
