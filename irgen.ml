@@ -20,7 +20,7 @@ let translate (globals, functions) =
   and i64_t      = L.i64_type    context
   and float_t    = L.double_type context
 in
-
+ 
   let string_t   = L.pointer_type i8_t in
 
   (* Return the LLVM type for a sage type *)
