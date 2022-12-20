@@ -26,4 +26,8 @@ def int main (str greeting) {
     print(1 + 2)
     prints("hello")
     prints(location)
+    int i = 0
+    for (i=0; i < 5; i = i + 1) {      
+        print(i) 
+    }
 }

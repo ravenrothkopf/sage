@@ -6,7 +6,7 @@ open Ast
 %token EQ NEQ GT GEQ LT LEQ AND OR NOT
 %token DEF LBRACE RBRACE NEWLINE RETURN IF ELIF ELSE WHILE FOR STRING INT FLOAT BOOL VOID 
 %token RANGE IN
-%token COLON COMMA 
+%token COLON COMMA SEMC
 %token <int> ILIT
 %token <float> FLIT
 %token <bool> BLIT
@@ -79,15 +79,11 @@ stmt:
   | WHILE LPAREN expr RPAREN stmt { While($3, $5) }
   | RETURN expr { Return($2) }
   | NEWLINE stmt { $2 }
-  | FOR bind_opt IN expr stmt  { For($2, $4, $5) } 
-  | FOR bind_opt IN RANGE LPAREN expr RPAREN stmt { Range($2, $6, $8) } 
+  | FOR LPAREN expr SEMC expr SEMC expr RPAREN stmt  { For($3, $5, $7, $9) } 
 
 stmt_list:
     /* nothing */  { [] }
   | stmt stmt_list { $1 :: $2 }
-
-bind_opt:
-  | typ ID {Bind($1, $2)}
 
 
 global:
