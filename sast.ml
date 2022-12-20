@@ -5,6 +5,7 @@ and sx =
   SId of string
 | SAssign of string * sexpr
 | SBinop of sexpr * bop * sexpr
+| SUnop of uop * sexpr
 | SStringLit of string
 | SIntLit of int
 (* | SFloatLit of float *)
@@ -46,6 +47,7 @@ let rec string_of_sexpr(t,e) =
   | SAssign(v, e) -> v ^ " = " ^ string_of_sexpr e
   | SBinop(e1, op, e2) ->
     string_of_sexpr e1 ^ " " ^ string_of_op op ^ " " ^ string_of_sexpr e2
+  | SUnop(op, e) -> string_of_uop op ^ " " ^ string_of_sexpr e
   | SStringLit(s) -> s
   | SIntLit(s) -> string_of_int s
   (* | SFloatLit(s) -> string_of_float s *)
@@ -70,14 +72,15 @@ let rec string_of_sstmt = function
   | SBlock(stmts) -> "{\n" ^
     "    " ^ String.concat "    " (List.map string_of_sstmt stmts) ^ "}\n"
   |SReturn(expr) -> "return " ^ string_of_sexpr expr ^ "\n"
-  | SDecAssn(decl, expr) -> string_of_svdecl (decl, expr)
+  |SDecAssn(decl, expr) -> string_of_svdecl (decl, expr)
   | SIf(expr, s, SBlock([])) ->
     "if (" ^ string_of_sexpr expr ^ ")\n" ^ string_of_sstmt s 
   | SIf(expr, s1, s2) ->  "if (" ^ string_of_sexpr expr ^ ")\n" ^
     string_of_sstmt s1 ^ "else\n" ^ string_of_sstmt s2  
   | SFor(e1,e2,e3, s) -> "for (" ^ string_of_sexpr e1 ^ " ; " ^ string_of_sexpr e2 ^ " ; " ^ 
     string_of_sexpr e3 ^ ")" ^ string_of_sstmt s   
-  | SRange(b,e, s) -> "for " ^ string_of_sexpr b ^ " in range (" ^ string_of_sexpr e ^ ")\n" ^ string_of_sstmt s 
+  (* | SFor(tn, e, stmt) -> "for " ^ string_of_typ (fst tn) ^ " " ^ (snd tn) ^ " in " ^ string_of_sexpr e ^ "\n" ^ string_of_sstmt stmt   *)
+  | SRange(e1,e2, s) -> "for " ^ string_of_sexpr e1 ^ " in range (" ^ string_of_sexpr e2 ^ ")\n" ^ string_of_sstmt s  
   | SWhile(expr, s) ->  "while (" ^ string_of_sexpr expr ^ ")\n" ^ string_of_sstmt s
  
 

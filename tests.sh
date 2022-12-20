@@ -8,8 +8,8 @@
 # ----------Paths------------
 LIBDIR="./libc/"
 LIBC="./libc/stdlibc.c"
-ERRPATH="./logs/testall-error.log"
-LOGPATH="./logs/testall.log"
+ERRPATH="./logs/tests-error.log"
+LOGPATH="./logs/tests.log"
 DBUILD="./_build/"
 # LLVM interpreter (LLI="/usr/local/opt/llvm/bin/lli")
 LLI="lli"
@@ -25,9 +25,7 @@ SAGECEXEC="./sagec"
 
 # ----------Setup------------
 shopt -s nullglob
-basictests=(*/basic/*.sage)
 testfiles=(*/tests/*.sage)
-failtests=(*/checkfail/*.sage)
 ulimit -t 30
 testnum=0
 tflag=0
@@ -200,7 +198,7 @@ if [ $# -ge 1 ]
 then
     files=$@
 else
-    files="tests/basic/*.sage tests/tests/*.sage tests/checkfail/*.sage"
+    files="tests/tests/*.sage"
 fi
 
 for file in $files
@@ -208,22 +206,12 @@ do
     testnum=$((testnum+1))
     total=$((total+1))
     case $file in
-    */basic/*)
-        if [[ $tflag -eq 0 ]]; then
-            let tflag++
-            echo "Running basic tests.. (${#basictests[@]} tests)"
-        fi
-        Check $file 2>> $globallog
-        ;;
 	*/tests/*)
-        if [[ $tflag -eq 1 ]]; then
+        if [[ $tflag -eq 0 ]]; then
             let tflag++
             echo "\nRunning tests.. (${#testfiles[@]} tests)"
         fi
 	    Check $file 2>> $globallog
-	    ;;
-	*/checkfail/*)
-	    CheckFailureExceptions $file 2>> $globallog
 	    ;;
 	*)
 	    echo "unknown file type $file"
@@ -234,9 +222,11 @@ done
 
 if [[ $errcount -ge 1 ]]; then
     echo "\n================ PROGRAM TERMINATED ===============\n$errcount of $total tests failed\n\n"
-    cat $errorlog 1>&2
+    if [[ -f $errorlog ]]; then
+        cat $errorlog 1>&2
+    fi
     echo "================== END OF RESULTS ================="
 else
-    echo "\n======== ALL TEST CASES MATCH EXPECTED OUTPUT ======\nSUCCESS! Passed $total of $total tests (full test suite)\n\n"
+    echo "\n========-- TEST CASES MATCH EXPECTED OUTPUT ========\nSUCCESS! Passed $total of $total tests\n\n"
 fi
 exit 0

@@ -73,6 +73,7 @@ in
          | A.Sub     -> L.const_sub
          | A.Mul     -> L.const_mul
          | A.Div     -> L.const_sdiv
+         | A.Mod     -> L.const_srem
          | A.And     -> L.const_and
          | A.Or      -> L.const_or
          | A.Equal   -> L.const_icmp L.Icmp.Eq
@@ -82,6 +83,12 @@ in
          | A.Greater -> L.const_icmp L.Icmp.Sgt
          | A.Geq     -> L.const_icmp L.Icmp.Sge
         ) e1' e2'
+      | SUnop (op, e) ->
+        let e' = build_global_expr e in
+        (match op with
+           A.Neg     -> L.const_neg
+         | A.Not     -> L.const_not
+          ) e'
       (*makes sure that only operations and initalization can happen to global constants*)
       | SId(_)
       | SAssign(_,_)
@@ -171,6 +178,11 @@ in
         (match op with
            A.Add -> L.build_call concat_func [| (build_expr builder map e1); (build_expr builder map e2)|] "concat" builder
          | _ -> raise (Failure ("Can't call" ^ (A.string_of_op op) ^ "on a string!")))
+      | SUnop(op, ((_, _) as e)) ->
+        let e' = build_expr builder map e in
+        (match op with
+         | Neg                  -> L.build_neg
+         | Not                  -> L.build_not) e' "tmp" builder
       | SBinop (e1, op, e2) ->
         let e1' = build_expr builder map e1
         and e2' = build_expr builder map e2 in
@@ -179,6 +191,7 @@ in
          | A.Sub     -> L.build_sub
          | A.Mul     -> L.build_mul
          | A.Div     -> L.build_sdiv
+         | A.Mod     -> L.build_srem
          | A.And     -> L.build_and
          | A.Or      -> L.build_or
          | A.Equal   -> L.build_icmp L.Icmp.Eq

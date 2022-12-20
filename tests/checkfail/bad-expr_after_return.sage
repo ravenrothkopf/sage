@@ -1,4 +1,5 @@
 def int main() {
     int x = 3
-    println(x)
+    return 0
+    print(x)
 }

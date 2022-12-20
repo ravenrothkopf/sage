@@ -3,6 +3,7 @@ type bop =
   | Sub
   | Mul
   | Div
+  | Mod
   | Equal
   | Neq
   | Greater
@@ -14,7 +15,7 @@ type bop =
 
 type typ = String | Int | Bool | Void
 
-type uop = Neg | Pos
+type uop = Neg | Not
 
 type expr =
     Id of string
@@ -45,6 +46,7 @@ type stmt =
   | DecAssn of bind_init
   | If of expr * stmt * stmt
   | For of expr * expr * expr * stmt 
+  (* | For of bind_formal * expr * stmt  *)
   | Range of expr * expr * stmt 
   | While of expr * stmt
   | Return of expr
@@ -69,6 +71,7 @@ let string_of_op = function
   | Sub -> "-"
   | Mul -> "*"
   | Div -> "/"
+  | Mod -> "%"
   | Equal -> "=="
   | Neq -> "!="
   | Greater -> ">"
@@ -87,7 +90,7 @@ let rec string_of_typ = function
 
 let string_of_uop = function 
     Neg -> "-"
-  | Pos -> ""
+  | Not -> "not"
 
 let rec string_of_expr = function
     Id(s) -> s
@@ -118,7 +121,8 @@ let rec string_of_stmt = function
   | If(expr, s1, s2) ->  "if (" ^ string_of_expr expr ^ ")\n" ^ string_of_stmt s1 ^ "else\n" ^ string_of_stmt s2
   | For(e1,e2,e3, s) -> "for (" ^ string_of_expr e1 ^ " ; " ^ string_of_expr e2 ^ " ; " ^ 
     string_of_expr e3 ^ ")" ^ string_of_stmt s  
-  | Range(b,e, s) -> "for " ^ string_of_expr b ^ " in range (" ^ string_of_expr e ^ ")\n" ^ string_of_stmt s 
+  (* | For(tn, e, stmt) -> "for " ^ string_of_typ (fst tn) ^ " " ^ (snd tn) ^ " in " ^ string_of_expr e ^ "\n" ^ string_of_stmt stmt  *)
+  | Range(e1,e2, s) -> "for " ^ string_of_expr e1 ^ " in range (" ^ string_of_expr e2 ^ ")\n" ^ string_of_stmt s
   | While(expr, s) ->  "while (" ^ string_of_expr expr ^ ")\n" ^ string_of_stmt s
   | Return(expr) -> "return" ^ string_of_expr expr ^ "\n"
 

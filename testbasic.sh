@@ -8,8 +8,8 @@
 # ----------Paths------------
 LIBDIR="./libc/"
 LIBC="./libc/stdlibc.c"
-ERRPATH="./logs/testall-error.log"
-LOGPATH="./logs/testall.log"
+ERRPATH="./logs/testbasic-error.log"
+LOGPATH="./logs/testbasic.log"
 DBUILD="./_build/"
 # LLVM interpreter (LLI="/usr/local/opt/llvm/bin/lli")
 LLI="lli"
@@ -28,6 +28,7 @@ shopt -s nullglob
 basictests=(*/basic/*.sage)
 testfiles=(*/tests/*.sage)
 failtests=(*/checkfail/*.sage)
+# Set time limit for all operations
 ulimit -t 30
 testnum=0
 tflag=0
@@ -37,6 +38,7 @@ total=0
 # TESTING BEGINS
 make
 gcc -c -o $LIBC
+
 errorlog=$ERRPATH
 globallog=$LOGPATH
 rm -f $globallog
@@ -44,7 +46,8 @@ error=0
 globalerror=0
 keep=0
 
-echo "\n\n=============== Running Tests... ================="
+echo "\n\n===================== Running Basic Tests... ====================="
+
 Usage() {
     echo "Usage: testall.sh [options] [.native files]"
     echo "-k    Keep intermediate files"
@@ -54,7 +57,7 @@ Usage() {
 
 SignalError() {
     if [ $error -eq 0 ] ; then
-	echo "FAILED" 1>&2
+	echo "FAILED"
 	error=1
     fi
     echo "  $1"
@@ -64,15 +67,9 @@ SignalError() {
 # Compares the outfile with reffile.  Differences, if any, written to difffile
 Compare() {
     generatedfiles="$generatedfiles $3"
-    basen=`echo $3 | sed 's/.*\\///
-                             s/.sage//'`
-    cat diff -b $1 $2 ">" $3 1>&2
+    echo diff -b $1 $2 ">" $3 1>&2
     diff -b "$1" "$2" > "$3" 2>&1 || {
-    filen=$(basename ${basen})
-	SignalError "$filen failed"
-    echo "($filen)" >> $errorlog
-    echo "Difference between test output and reference output" >> $errorlog
-    echo "---------------------------------------------------" >> $errorlog
+	SignalError "$1 output differs"
     cat diff -b $1 $2 ">" $3 >> $errorlog
 	echo "FAILED $1 differs from $2" 1>&2
     }
@@ -81,12 +78,9 @@ Compare() {
 # Run <args>
 # Report the command, run it, and report any errors
 Run() {
-    bn=`echo $3 | sed 's/.*\\///
-                             s/.sage//'`
     echo $* 1>&2
     eval $* || {
-    fnrun=$(basename ${bn})
-	SignalError "$fnrun failed on $*"
+	SignalError "$1 failed on $*"
 	return 1
     }
 }
@@ -94,19 +88,15 @@ Run() {
 # RunFail <args>
 # Report the command, run it, and expect an error
 RunFail() {
-    # generatedfiles="$generatedfiles $3"
-    bnfail=`echo $3 | sed 's/.*\\///
-                             s/.sage//'`
-    namefail=$(basename ${bnfail})
     echo $* 1>&2
     eval $* && {
-	SignalError "$namefail failed: did not report an error"
+	SignalError "failed: $* did not report an error"
 	return 1
     }
     return 0
 }
 
-Check() {
+CheckBasic() {
     error=0
     basename=`echo $1 | sed 's/.*\\///
                              s/.sage//'`
@@ -115,7 +105,7 @@ Check() {
 
     # echo "TEST $testnum $basename..."
 
-    echo 1>&2
+    echo " " 1>&2
     echo "###### Testing $basename" 1>&2
 
     generatedfiles=""
@@ -131,42 +121,7 @@ Check() {
 	if [ $keep -eq 0 ] ; then
 	    rm -f $generatedfiles
 	fi
-	# echo -n "PASSED"
-	echo "###### SUCCESS" 1>&2
-    else
-	echo "###### FAILED" 1>&2
-	globalerror=$error
-    errcount=$((errcount+1))
-    fi
-}
-
-CheckFailureExceptions() {
-    error=0
-    basename=`echo $1 | sed 's/.*\\///
-                             s/.sage//'`
-    reffile=`echo $1 | sed 's/.sage$//'`
-    basedir="`echo $1 | sed 's/\/[^\/]*$//'`/."
-
-    if [[ $tflag -eq 2 ]]; then
-        let tflag++
-        echo "\nChecking failure / exception handling.. (${#failtests[@]} tests)"
-    fi
-    # echo -n "TEST $testnum $basename..."
-
-    echo 1>&2
-    echo "###### Testing $basename" 1>&2
-
-    generatedfiles=""
-
-    generatedfiles="$generatedfiles ${basename}.err ${basename}.diff" &&
-    RunFail "$SAGE" "<" $1 "2>" "${basename}.err" ">>" $globallog &&
-    Compare ${basename}.err ${reffile}.err ${basename}.diff
-
-    if [ $error -eq 0 ] ; then
-	if [ $keep -eq 0 ] ; then
-	    rm -f $generatedfiles
-	fi
-	# echo -n "PASSED"
+	echo -n "PASSED"
 	echo "###### SUCCESS" 1>&2
     else
 	echo "###### FAILED" 1>&2
@@ -200,7 +155,7 @@ if [ $# -ge 1 ]
 then
     files=$@
 else
-    files="tests/basic/*.sage tests/tests/*.sage tests/checkfail/*.sage"
+    files="tests/basic/*.sage"
 fi
 
 for file in $files
@@ -211,20 +166,10 @@ do
     */basic/*)
         if [[ $tflag -eq 0 ]]; then
             let tflag++
-            echo "Running basic tests.. (${#basictests[@]} tests)"
+            echo "Running basic tests.. (${#basictests[@]} tests)\n"
         fi
         Check $file 2>> $globallog
         ;;
-	*/tests/*)
-        if [[ $tflag -eq 1 ]]; then
-            let tflag++
-            echo "\nRunning tests.. (${#testfiles[@]} tests)"
-        fi
-	    Check $file 2>> $globallog
-	    ;;
-	*/checkfail/*)
-	    CheckFailureExceptions $file 2>> $globallog
-	    ;;
 	*)
 	    echo "unknown file type $file"
 	    globalerror=1
@@ -233,10 +178,8 @@ do
 done
 
 if [[ $errcount -ge 1 ]]; then
-    echo "\n================ PROGRAM TERMINATED ===============\n$errcount of $total tests failed\n\n"
-    cat $errorlog 1>&2
-    echo "================== END OF RESULTS ================="
+    echo "\n======================= PROGRAM TERMINATED =======================\n\t$errcount of $total tests failed\n\n"
 else
-    echo "\n======== ALL TEST CASES MATCH EXPECTED OUTPUT ======\nSUCCESS! Passed $total of $total tests (full test suite)\n\n"
+    echo "\n============ ALL BASIC TESTS MATCH EXPECTED OUTPUT ===============\nSUCCESS! Passed ${#basictests[@]} of ${#basictests[@]} basic tests\n\n"
 fi
 exit 0

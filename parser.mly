@@ -2,7 +2,7 @@
 open Ast
 %}
 
-%token LPAREN RPAREN LBRACKET RBRACKET PLUS MINUS TIMES DIVIDE POS NEG ASSIGN
+%token LPAREN RPAREN LBRACKET RBRACKET PLUS MINUS TIMES DIVIDE NEG ASSIGN MODULO
 %token EQ NEQ GT GEQ LT LEQ AND OR NOT
 %token DEF LBRACE RBRACE NEWLINE RETURN IF ELIF ELSE WHILE FOR STRING INT FLOAT BOOL VOID RETURN
 %token RANGE IN
@@ -24,8 +24,8 @@ open Ast
 %left EQ NEQ
 %left LT GT LEQ GEQ
 %left PLUS MINUS
-%left TIMES DIVIDE
-%right NOT NEG POS
+%left TIMES DIVIDE MODULO
+%right NOT NEG 
 
 %start program
 %type <Ast.program> program
@@ -80,6 +80,8 @@ stmt:
   | WHILE LPAREN expr RPAREN stmt { While($3, $5) }
   | NEWLINE stmt { $2 }
   | FOR LPAREN expr SEMC expr SEMC expr RPAREN stmt  { For($3, $5, $7, $9) } 
+  // | FOR typ ID IN expr stmt  { For(($2, $3), $5, $6) } 
+  /*| FOR typ ID IN RANGE LPAREN expr RPAREN stmt { Range($2, $6, $8) } */
 
 stmt_list:
     /* nothing */  { [] }
@@ -112,7 +114,8 @@ expr:
   | expr AND expr { Binop ($1, And, $3) }
   | expr OR expr { Binop ($1, Or, $3) }
   | MINUS expr %prec NEG { Unop(Neg, $2) }
-  | PLUS expr %prec POS { Unop(Pos, $2) }
+  | NOT expr { Unop(Not, $2) }
+  | expr MODULO expr { Binop ($1, Mod, $3) }
   | arr { $1 }
 
 arr:
