@@ -12,9 +12,6 @@ sage.tb currently tests (only for semantic analysis):
 
 # test single-line comment
 
-str[] a = ["heyy", "hi"]
-int[] b = [3, 5, 139]
-bool[] c = [True, False, True]
 str hello = "hello"
 bool t = True
 
@@ -25,8 +22,8 @@ def void voidTest() {
 
 def int main (str greeting) {
     str location = "world"
-    greeting = hello
-    voidTest()
-    prints("hello" + location)
+    int num = 1
+    num += 3
+    print(num)
 }
 
