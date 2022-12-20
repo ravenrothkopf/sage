@@ -108,7 +108,8 @@ Many features are almost implemented in some branches. They are:
 
   * Full testing suite to highlight the aforementioned language features
   * `stdlib` written in sage or C for quality of life features (i.e., `println`)
-  * Robust error handling with detailed error messages to facilitate debugging
+  * Robust error handling with detailed error messages to facilitate 
+  ging
 * An AST or a semantically-checked AST generated from compiling our front-end
 * Docker image to enhance access to testing and trying the sage PL without having to download and install the language to your local machine
 * Additional special features (TBD)
@@ -159,8 +160,9 @@ Many features are almost implemented in some branches. They are:
 * Gabriela (12/19) - Implement floats in ast, scanner, parser, sast, semant, and codegen files
 * All (12/19) - Meet for game plan for final deliverables
 * Gabriela & Jenny (12/19) - Meet to discuss strategy and implementation of arrays and codegen
-* Gabriela (12/19) - Continued iteration on codegen for implementing arrays
+* Gabriela (12/19) - Continued iteration on codegen file for implementing arrays
 * All (12/19) - Meet to discuss presentation and final language implementation
+* Gabriela (12/20) - Debug for loop index increment
 
 ## References
 
