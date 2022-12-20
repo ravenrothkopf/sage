@@ -5,6 +5,9 @@ VPATH = ./libc/
 DLIB = ./libc/
 DLOG = ./logs/
 DTESTS = ./tests/
+BASICTESTS = ./tests/basic/
+TESTFILES = ./tests/tests/
+FAILTESTS = ./tests/checkfail/
 SRC = ./src/
 BUILD = ./_build/
 
@@ -39,36 +42,12 @@ clean:
 	$(OCAMLB) -clean
 	rm -rf \
 	_build ocamlllvm sage.native *.diff *.err $(DLOG)*.err \
-	*.ll *.log $(DLOG)*.log *.out *.o $(BUILD)*.o $(DLIB)*.o *.s *.exe
+	*.ll *.log $(DLOG)*.log parser.ml parser.mli *.out *.o $(BUILD)*.o $(DLIB)*.o *.s *.exe
 
 test: clean native testall
 
 testall:
 	./testall.sh
 
-# basicdir = ./tests/basic 
-# basic-tests := $(addsuffix .test, $(basename $(wildcard *.test-in)))
-
-BASIC = \
-	divide-by-neg divide-simple mod1 multiply1 sub1 sum1 helloworld \
-	if if-else if-sequential print-bool operator-prec varassign-int1 \
-	varassign-int2 varassign-str1
-
-TESTS = \
-	invoke-func-from-main if-else_func if-else1 return-bool return-int \
-	return-str typecast-bool typecast-int typecast-str concat strlen \
-	indexof
-# ./testall.sh $(DTESTS)
-
-# .PHONY : test all %.test
-
-# BC := /usr/bin/bc
-
-# test : $(all-tests)
-
-# %.test : %.test-in %.test-cmp $(BC)
-#     @$(BC) <$< 2>&1 | diff -q $(word 2, $?) - >/dev/null || \
-#     (echo "Test $@ failed" && exit 1)
-
-# all : test
-#     @echo "Success, all tests passed."
+basic: clean
+	./testbasic.sh
