@@ -32,23 +32,17 @@ ignore(check_binds "global" (global_symbols globals));
 
   (* Collect function declarations for built-in functions: no bodies *)
   let built_in_decls =
-    let add_bind map (name, ty) = StringMap.add name {
-      rtyp = Void;
+    let add_bind map (name, ty, rty) = StringMap.add name {
+      rtyp = rty;
       fname = name;
-      formals = [(ty, "x")];
+      (*initializes the list of formals*)
+      formals = List.fold_left (fun l t -> l @ [(t, "x")]) [] ty;
       body = []
     } map
-    in List.fold_left add_bind StringMap.empty [("print", Int); ("printi", Int);
-    ("prints", String)];
-  in
-
-  let built_in_decls = 
-    StringMap.add "concat" {
-      rtyp = String;
-      fname = "concat";
-      formals = [(String, "str1"); (String, "str2")];
-      body = []
-    } built_in_decls
+    in List.fold_left add_bind StringMap.empty 
+    (*put your function definitions here!*)
+    [("print", [Int], Void); ("printi", [Int], Void); ("prints", [String], Void); ("printb", [Bool], Void); 
+    ("concat", [String ; String], String); ("len", [String], Int); ("indexOf", [String; String], Int)]; 
   in
 
   (* Add function name to symbol table *)
@@ -88,7 +82,8 @@ ignore(check_binds "global" (global_symbols globals));
   (* Raise an exception if the given rvalue type cannot be assigned to
        the given lvalue type *)
   let check_assign lvaluet rvaluet err =
-    if lvaluet = rvaluet then lvaluet else raise (Failure err)
+    if lvaluet = rvaluet then lvaluet else 
+        raise (Failure err)
   in
 
   let rec check_expr e map = match e with
@@ -104,16 +99,7 @@ ignore(check_binds "global" (global_symbols globals));
         let err = "illegal assignment " ^ string_of_typ lt ^ " = " ^
                   string_of_typ rt ^ " in " ^ string_of_expr ex
         in
-        (check_assign lt rt err, SAssign(var, (rt, e'))) 
-      | Unop(op, e) as ex ->
-        let (t, e’) = expr e in 
-        let ty = match op with
-          Neg when t = Int || t = Float -> t
-        | Not when t = Bool -> Bool
-        | _ -> raise (Failure ("illegal unary operator " ^
-          string_of_uop op ^ string_of_typ t ^
-          " in " ^ string_of_expr ex)) in
-        (ty, SUnop(op, (t, e’)))
+        (check_assign lt rt err, SAssign(var, (rt, e')))
       | Binop(e1, op, e2) as e ->
         let (t1, e1') = check_expr e1 map
         and (t2, e2') = check_expr e2 map in
@@ -123,7 +109,7 @@ ignore(check_binds "global" (global_symbols globals));
         in
         if t1 = t2 then
           let t = match op with
-            Add | Sub | Mul | Div when t1 = Int -> Int
+            Add | Sub | Mul | Div | Mod when t1 = Int -> Int
           | Add when t1 = String -> String
           | Equal | Neq -> Bool
           | Less | Leq | Greater | Geq when t1 = Int -> Bool
@@ -131,7 +117,16 @@ ignore(check_binds "global" (global_symbols globals));
           | _ -> raise (Failure err)
         in 
         (t, SBinop ((t1,e1'), op, (t2, e2')))
-      else raise (Failure err)
+        else raise (Failure err)
+      | Unop(op, e) as x ->
+        let (t, e') = check_expr e map in
+          let ty = match op with
+            Neg when t = Int -> t
+          | Not when t = Bool -> Bool
+          | _ -> raise (Failure ("illegal unary operator " ^
+                                 string_of_uop op ^ string_of_typ t ^
+                                 " in " ^ string_of_expr x))
+          in (ty, SUnop(op, (t, e')))
       | Call(fname, args) as call ->
         let fd = find_func fname in
         let param_length = List.length fd.formals in
@@ -147,6 +142,10 @@ ignore(check_binds "global" (global_symbols globals));
           let args' = List.map2 check_call fd.formals args
           in (fd.rtyp, SCall(fname, args'))
       | Noexpr -> (Void, SNoexpr)
+      | Cast(t, e) -> match t with
+          Int -> (Int, (SCast(t, check_expr e map)))
+        | String -> (String, (SCast(t, check_expr e map)))
+        | Bool -> (Bool, (SCast(t, check_expr e map)))
     in
 
   let check_func func =
@@ -168,6 +167,11 @@ ignore(check_binds "global" (global_symbols globals));
     (* Return a semantically-checked statement i.e. containing sexprs *)
     let rec check_stmt stmt vars = match stmt with
         Expr e -> (SExpr (check_expr e vars), vars)
+      | Return e -> let (t,e') = check_expr e vars in
+        if t = func.rtyp then (SReturn (t, e'), vars)
+        else raise (
+          Failure ("return gives " ^ string_of_typ t ^ ", but expected "
+          ^ string_of_typ func.rtyp ^ " in " ^ string_of_expr e))
       | Block stmt_list -> 
         let bvars = StringMap.empty in
         let rec check_stmt_list stmt_list vars bvars = 
@@ -177,7 +181,9 @@ ignore(check_binds "global" (global_symbols globals));
             (fst checked :: fst checked_rest, snd checked_rest)
           in
           match stmt_list with
-          DecAssn ((ty, n), _) as s :: ss ->
+            [Return _ as s] -> ([fst (check_stmt s vars)], bvars)
+          | Return _ :: _ -> raise (Failure "nothing can follow a return statement")
+          | DecAssn ((ty, n), _) as s :: ss ->
             let check_decl ty n = match StringMap.find_opt n bvars with
             Some _ -> raise (Failure ("duplicate local variable " ^ n))
             | None -> ()
@@ -187,6 +193,9 @@ ignore(check_binds "global" (global_symbols globals));
         in (SBlock(fst (check_stmt_list stmt_list vars bvars)), vars)
       | DecAssn((ty, n), e) -> (SDecAssn((ty, n), check_expr e vars), StringMap.add n ty
          vars)
+      | While(e, st) -> (SWhile(check_bool_expr e vars, fst (check_stmt st vars)), vars)
+      (* | For((ty, n), e, stmt) -> (SFor((ty, n), check_expr e vars, fst(check_stmt stmt vars)), StringMap.add n ty vars) *)
+      (* | For(e1, e2, st) -> (SFor(check_expr e1 vars, check_expr e2 vars, fst(check_stmt st vars)), vars) *)
       | If(e, st1, st2) -> (SIf(check_bool_expr e vars, fst (check_stmt st1 vars), fst (check_stmt st2
          vars)), vars)
     in (* body of check_func *)
@@ -197,6 +206,7 @@ ignore(check_binds "global" (global_symbols globals));
       sbody = match fst (check_stmt (Block func.body) symbols) with
         SBlock(stmt_list) -> stmt_list
       | _ -> raise (Failure ("internal error"))
+
     }
   in
 

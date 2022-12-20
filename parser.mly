@@ -2,10 +2,12 @@
 open Ast
 %}
 
-%token LPAREN RPAREN LBRACKET RBRACKET PLUS MINUS TIMES DIVIDE ASSIGN MODULO
+%token LPAREN RPAREN LBRACKET RBRACKET PLUS MINUS TIMES DIVIDE NEG ASSIGN MODULO PLUSEQ MINUSEQ TIMESEQ DIVEQ
 %token EQ NEQ GT GEQ LT LEQ AND OR NOT
 %token DEF LBRACE RBRACE NEWLINE RETURN IF ELIF ELSE WHILE FOR STRING INT FLOAT BOOL VOID
-%token COLON COMMA
+%token RANGE IN
+%token DEF LBRACE RBRACE NEWLINE RETURN IF ELIF ELSE WHILE FOR STRING INT FLOAT BOOL VOID RETURN
+%token COLON COMMA SEMC
 %token <int> ILIT
 %token <float> FLIT
 %token <bool> BLIT
@@ -16,14 +18,14 @@ open Ast
 %token NoOp
 
 %nonassoc NOELSE
-%nonassoc ELSE 
-%right ASSIGN PLUSEQ MINEQ TIMEQ DIVEQ
+%nonassoc ELSE
+%right ASSIGN PLUSEQ MINUSEQ TIMESEQ DIVEQ
 %left OR
 %left AND
 %left EQ NEQ
 %left LT GT LEQ GEQ
 %left PLUS MINUS
-%left TIMES DIVIDE
+%left TIMES DIVIDE MODULO
 %right NOT NEG
 
 %start program
@@ -71,26 +73,20 @@ typ:
 
 stmt:
     expr NEWLINE { Expr $1 }
+  | RETURN expr NEWLINE { Return $2 }
   | LBRACE stmt_list RBRACE NEWLINE { Block $2 }
   | global { DecAssn $1 }  //variable initialization and assignment as its own statement separate from exprs
   | IF LPAREN expr RPAREN stmt %prec NOELSE { If($3, $5, Block([])) }
   | IF LPAREN expr RPAREN stmt ELSE stmt { If($3, $5, $7) }
   | WHILE LPAREN expr RPAREN stmt { While($3, $5) }
-  | RETURN expr { Return($2) }
   | NEWLINE stmt { $2 }
+ // | FOR LPAREN expr SEMC expr SEMC expr RPAREN stmt  { For($3, $5, $7, $9) } 
+  // | FOR typ ID IN expr stmt  { For(($2, $3), $5, $6) } 
+  /*| FOR typ ID IN RANGE LPAREN expr RPAREN stmt { Range($2, $6, $8) } */
 
 stmt_list:
     /* nothing */  { [] }
   | stmt stmt_list { $1 :: $2 }
- 
-//TODO: fix if stmts so that they work with more than just one line? def has to do with the NEWLINES
-// if_stmt:
-//     IF LPAREN expr RPAREN stmt %prec NOELSE { If($3, $5, Block([])) }
-//   | IF LPAREN expr RPAREN stmt ELSE stmt { If($3, $5, $7) }
-// TODO: add elif stmts
-// elif_stmt:
-//     ELIF expr LBRACE NEWLINE stmt_list RBRACE { [($2, $5)] }
-//   | elif ELIF expr LBRACE NEWLINE stmt_list RBRACE { ($3, $6) :: $1 }
 
 global:
     typ ID ASSIGN expr NEWLINE { (($1, $2), $4) } //int x = 3, only expression we want to use globally and locally
@@ -103,6 +99,7 @@ expr:
   | ID               { Id($1) }
   | ID ASSIGN expr   { Assign($1, $3) }
   | ID LPAREN args_opt RPAREN { Call($1, $3) }
+  | typ LPAREN expr RPAREN { Cast($1, $3) }
   | LPAREN expr RPAREN { $2 }
   | expr PLUS expr { Binop ($1, Add, $3) }
   | expr MINUS expr { Binop ($1, Sub, $3) }
@@ -116,9 +113,13 @@ expr:
   | expr LEQ expr { Binop ($1, Leq, $3) }
   | expr AND expr { Binop ($1, And, $3) }
   | expr OR expr { Binop ($1, Or, $3) }
-  | MINUS expr %prec NEG { Unop (Neg, $2) }
-  | arr { $1 }
+  | MINUS expr %prec NEG { Unop(Neg, $2) }
   | expr MODULO expr { Binop ($1, Mod, $3) }
+  | ID PLUSEQ expr { AssignOp ($1, Add, $3) } 
+  | ID MINUSEQ expr { AssignOp ($1, Sub, $3) }
+  | ID TIMESEQ expr { AssignOp ($1, Mul, $3) }
+  | ID DIVEQ expr { AssignOp ($1, Div, $3) }
+  | arr { $1 }
 
 arr:
   LBRACKET arr_elems RBRACKET { Array($2) }

@@ -19,6 +19,7 @@ rule token = parse
 | '['                                   { LBRACKET }
 | ']'                                   { RBRACKET }
 | ':'                                   { COLON }
+| ';'                                   { SEMC  }
 | ','                                   { COMMA }
 | '{'                                   { LBRACE }
 | '}'                                   { RBRACE }
@@ -51,6 +52,10 @@ rule token = parse
 | "<"                                   { LT }
 | "<="                                  { LEQ }
 | "return"                              { RETURN }
+| "+="                                  { PLUSEQ }
+| "-="                                  { MINUSEQ }
+| "*="                                  { TIMESEQ }
+| "/="                                  { DIVEQ }
 | int as lem                            { ILIT(int_of_string lem) }
 | float as lem                          { FLIT(float_of_string lem) }
 | letter (digit | letter | '_')* as lem { ID(lem) }

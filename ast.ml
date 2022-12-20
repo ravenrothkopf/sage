@@ -12,11 +12,14 @@ type bop =
   | And
   | Or
   | Mod
-  | Floordiv 
+  | Pluseq 
+  | Minuseq
+  | Timeseq
+  | Diveq
 
 type typ = String | Int | Bool | Void 
 
-type uop = Neg | Pos
+type uop = Neg
 
 type expr =
     Id of string
@@ -29,7 +32,9 @@ type expr =
   | BoolLit of bool
   | Call of string * expr list
   | Array of expr list
+  | AssignOp of string * bop * expr
   | Noexpr
+  | Cast of typ * expr
 
 (* int x: name binding *)
 type bind_formal = typ * string
@@ -75,7 +80,6 @@ let string_of_op = function
   | And -> "and"
   | Or -> "or"
   | Mod -> "%"
-  | Floordiv -> "//"
 
 let rec string_of_typ = function
     String -> "str"
@@ -86,7 +90,6 @@ let rec string_of_typ = function
 
 let string_of_uop = function 
     Neg -> "-"
-  | Pos -> ""
 
 let rec string_of_expr = function
     Id(s) -> s
@@ -102,6 +105,7 @@ let rec string_of_expr = function
   | Call(f, el) ->
     f ^ "(" ^ String.concat ", " (List.map string_of_expr el) ^ ")"
   | Array(l) -> "[" ^ String.concat ", " (List.map string_of_expr l) ^ "]"
+  | AssignOp(v, o, e) -> v ^ " " ^ string_of_op o ^ "= " ^ string_of_expr e
   | Noexpr -> ""
 
 let string_of_vdecl (decl, exp) = string_of_typ (fst decl) ^ " " ^ (snd decl) ^ " = " ^ string_of_expr exp
