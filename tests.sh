@@ -222,7 +222,9 @@ done
 
 if [[ $errcount -ge 1 ]]; then
     echo "\n================ PROGRAM TERMINATED ===============\n$errcount of $total tests failed\n\n"
-    cat $errorlog 1>&2
+    if [[ -f $errorlog ]]; then
+        cat $errorlog 1>&2
+    fi
     echo "================== END OF RESULTS ================="
 else
     echo "\n========-- TEST CASES MATCH EXPECTED OUTPUT ========\nSUCCESS! Passed $total of $total tests\n\n"
