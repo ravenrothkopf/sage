@@ -47,3 +47,9 @@ def float test_float() {
     prints("This is pi!)
     return PI
 }
+
+def float casting_check() {
+    printfl(float("2.72"))
+    printfl(float(42))
+    return 0.0
+}
