@@ -135,7 +135,7 @@ in
         StringMap.add n formal m
       in List.fold_left2 add_formal StringMap.empty fdecl.sformals
       (Array.to_list (L.params the_function)) in
-
+ 
     (* Return the value for a variable or formal argument.
        Check local names first, then global names *)
     let lookup map n = try StringMap.find n map
