@@ -261,7 +261,6 @@ in
         (L.builder_at_end context end_bb, vars)
        
       | SFor (expr1, expr2, expr3, body) -> 
-        
         let for_bb = L.append_block context "for" the_function in
         let build_br_for = L.build_br for_bb in (* partial function *)
         ignore (build_br_for builder);
@@ -274,13 +273,8 @@ in
         let end_bb = L.append_block context "for_end" the_function in
 
         ignore(L.build_cond_br bool_val body_bb end_bb for_builder);
-        (L.builder_at_end context end_bb, vars)   
-
-        
-
+        (L.builder_at_end context end_bb, vars)      
      (* | SRange (expr, stmt) -> *)
-     
-
       | SReturn e -> ignore(match fdecl.srtyp with
           (* Special "return nothing" instr *)
             A.Void -> L.build_ret_void builder
