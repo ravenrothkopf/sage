@@ -8,9 +8,10 @@ and sx =
 | SUnop of uop * sexpr
 | SStringLit of string
 | SIntLit of int
-(* | SFloatLit of float *)
+| SFloatLit of float
 | SBoolLit of bool
 | SCall of string * sexpr list
+| SArray of expr list
 | SNoexpr
 | SCast of typ * sexpr
 
@@ -50,7 +51,7 @@ let rec string_of_sexpr(t,e) =
   | SUnop(op, e) -> string_of_uop op ^ " " ^ string_of_sexpr e
   | SStringLit(s) -> s
   | SIntLit(s) -> string_of_int s
-  (* | SFloatLit(s) -> string_of_float s *)
+  | SFloatLit(s) -> string_of_float s
   | SBoolLit(true) -> "True"
   | SBoolLit(false) -> "False"
   | SCall(f, el) ->

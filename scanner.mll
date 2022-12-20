@@ -16,18 +16,19 @@ rule token = parse
 | ')'                                   { RPAREN }
 | '{'                                   { LBRACE }
 | '}'                                   { RBRACE }
-| '['                                   { LBRACKET }
-| ']'                                   { RBRACKET }
+| '['                                   { print_endline "[";LBRACKET }
+| ']'                                   { print_endline "]";RBRACKET }
 | ':'                                   { COLON }
 | ','                                   { COMMA }
 | ';'                                   { SEMC  }
 | '{'                                   { LBRACE }
 | '}'                                   { RBRACE }
-| '='                                   { ASSIGN }
-| "str"                                 { STRING }
+| '='                                   { print_endline "=";ASSIGN }
+| "str"                                 { print_endline "str"; STRING }
 | "int"                                 { INT }
 | "float"                               { FLOAT }
 | "bool"                                { BOOL }
+| "[]"                                  { print_endline "[]";ARRAY }
 | "True"                                { BLIT(true) }
 | "False"                               { BLIT(false) }
 | "+"                                   { PLUS }

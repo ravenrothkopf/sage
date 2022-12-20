@@ -41,8 +41,15 @@ ignore(check_binds "global" (global_symbols globals));
     } map
     in List.fold_left add_bind StringMap.empty 
     (*put your function definitions here!*)
-    [("print", [Int], Void); ("printi", [Int], Void); ("prints", [String], Void); ("printb", [Bool], Void); 
-    ("concat", [String ; String], String); ("len", [String], Int); ("indexOf", [String; String], Int)]; 
+    [("print", [Int], Void);
+     ("printi", [Int], Void); 
+     ("printfl", [Float], Void);
+     ("prints", [String], Void); 
+     ("printb", [Bool], Void); 
+     ("concat", [String ; String], String); 
+     ("len", [String], Int); 
+     ("indexOf", [String; String], Int)];
+
   in
 
   (* Add function name to symbol table *)
@@ -91,7 +98,7 @@ ignore(check_binds "global" (global_symbols globals));
       | BoolLit l -> (Bool, SBoolLit l) 
       | StringLit l -> (String, SStringLit l)
       | IntLit l -> (Int, SIntLit l)
-      (* | FloatLit l -> (Float, SFloatLit l) *)
+      | FloatLit l -> (Float, SFloatLit l)
       | Noexpr -> (Void, SNoexpr)
       | Assign(var, e) as ex ->
         let lt = type_of_identifier var map
@@ -110,6 +117,9 @@ ignore(check_binds "global" (global_symbols globals));
         if t1 = t2 then
           let t = match op with
             Add | Sub | Mul | Div | Mod when t1 = Int -> Int
+          | Add | Sub | Mul | Div when t1 = Float -> Float
+          | Add | Sub | Mul | Div when t1 = Float && t2 = Int -> Float
+          | Add | Sub | Mul | Div when t1 = Int && t2 = Float -> Float
           | Add when t1 = String -> String
           | Equal | Neq -> Bool
           | Less | Leq | Greater | Geq when t1 = Int -> Bool
@@ -141,6 +151,15 @@ ignore(check_binds "global" (global_symbols globals));
           in
           let args' = List.map2 check_call fd.formals args
           in (fd.rtyp, SCall(fname, args'))
+      | Array (elements) ->
+        let (first_type, _ ) = check_expr (List.hd elements) map in
+        let check_elements e =
+          let (et, e') = check_expr e map in 
+          let err = "illegal argument found " ^ string_of_typ et ^
+                         " expected " ^ string_of_typ first_type ^ " in " ^ string_of_expr e
+          in (check_assign first_type et err, e')
+        in let elements' = List.map check_elements elements 
+        in (ArrayTyp (first_type), SStringLit "aoijfaoiji")
       | Noexpr -> (Void, SNoexpr)
       | Cast(t, e) -> match t with
           Int -> (Int, (SCast(t, check_expr e map)))

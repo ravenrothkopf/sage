@@ -13,7 +13,7 @@ type bop =
   | And
   | Or
 
-type typ = String | Int | Bool | Void
+type typ = String | Int | Float | Bool | Void | ArrayTyp of typ
 
 type uop = Neg | Not
 
@@ -24,7 +24,7 @@ type expr =
   | Unop of uop * expr
   | StringLit of string
   | IntLit of int
-  (* | FloatLit of float *)
+  | FloatLit of float
   | BoolLit of bool
   | Call of string * expr list
   | Array of expr list
@@ -84,7 +84,7 @@ let string_of_op = function
 let rec string_of_typ = function
     String -> "str"
   | Int -> "int"
-  (* | Float -> "float" *)
+  | Float -> "float"
   | Bool -> "bool"
   | Void -> "void"
 
@@ -100,7 +100,7 @@ let rec string_of_expr = function
   | StringLit(s) -> s
   | Unop(o, e) -> string_of_uop o ^ string_of_expr e
   | IntLit(s) -> string_of_int s
-  (* | FloatLit(s) -> string_of_float s *)
+  | FloatLit(s) -> string_of_float s
   | BoolLit(true) -> "True"
   | BoolLit(false) -> "False"
   | Call(f, el) ->

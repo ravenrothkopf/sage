@@ -18,8 +18,9 @@ let translate (globals, functions) =
   and i1_t       = L.i1_type     context 
   and void_t     = L.void_type   context 
   and i64_t      = L.i64_type    context
+  and float_t    = L.double_type context
 in
-
+ 
   let string_t   = L.pointer_type i8_t in
 
   (* Return the LLVM type for a sage type *)
@@ -27,7 +28,10 @@ in
       A.Int -> i32_t
     | A.Bool  -> i1_t
     | A.String -> string_t
+    | A.Float -> float_t 
     | A.Void -> void_t
+    | SArray(array_typ) -> L.pointer_type (ltype_of_typ array_typ) 
+    | _ -> raise (Failure "not yet implemented")
   in
   (*print functions*)
   let printf_t : L.lltype =
@@ -58,7 +62,8 @@ in
       let rec build_global_expr ((_, e) : sexpr) = match e with
         SIntLit i -> L.const_int (ltype_of_typ t) i
       | SBoolLit b  -> L.const_int (ltype_of_typ t) (if b then 1 else 0)
-      | SStringLit s -> 
+      | SFloatLit l -> L.const_float float_t l
+      | SStringLit s ->  
         (*define_global + const_stringz returns a global constant char array (with null term) in the module 
            in the default address space*)
           let global = L.define_global ".str" (L.const_stringz context s) the_module in
@@ -88,7 +93,7 @@ in
         (match op with
            A.Neg     -> L.const_neg
          | A.Not     -> L.const_not
-          ) e'
+          ) e' 
       (*makes sure that only operations and initalization can happen to global constants*)
       | SId(_)
       | SAssign(_,_)
@@ -116,6 +121,7 @@ in
 
     (*for printing*)
     let int_format_str = L.build_global_stringptr "%d\n" "fmt" builder in
+    let float_format_str = L.build_global_stringptr "%d\n" "fmt" builder in
     let string_format_str = L.build_global_stringptr "%s\n" "fmt" builder in
 
     (* Construct the function's "locals": formal arguments and locally
@@ -168,8 +174,65 @@ in
     let rec build_expr builder map ((_, e) : sexpr) = match e with
         SIntLit i  -> L.const_int i32_t i
       | SBoolLit b  -> L.const_int i1_t (if b then 1 else 0)
+      | SFloatLit l -> L.const_float float_t l
       | SStringLit s -> L.build_global_stringptr s "str" builder
       | SId s       -> L.build_load (lookup map s) s builder
+      | SNew(SNArray(array_type, int_expr)) ->
+        let array_size = expr builder m int_expr in
+        let llarray_t = ltype_of_typ array_type in
+        let ptr = L.build_array_malloc llarray_t
+            array_size "" builder
+        in ptr
+      | SNew(SNStruct(SStruct(struct_t))) ->
+        let t_members = List.map (fun (_, (t, _)) -> t) 
+          (StringMap.bindings struct_t.smembers) in
+        let st = L.struct_type context (Array.of_list 
+          (List.map ltype_of_typ t_members)) in
+        let compare_by (n1, _) (n2, _) = compare n1 n2 in
+        let members = List.sort compare_by 
+          (StringMap.bindings struct_t.smembers) in
+        let llstruct_t = st in
+        let vals = List.map (fun (_, (_, opt_e)) -> 
+          match opt_e with Some(e) -> Some(expr builder m e) 
+                          | None -> None) 
+          (List.sort compare_by members) in
+        let idxs = List.rev (generate_seq ((List.length members) - 1)) in
+        let v = List.fold_left2 (fun agg i opt_v -> 
+          match opt_v with Some(v) -> insert_value builder agg i v 
+                          | None -> agg) 
+          (L.const_null llstruct_t) idxs vals in
+        let ptr = L.build_malloc llstruct_t "structlit" builder in
+        ignore(L.build_store v ptr builder);
+        ptr
+
+      | SArrayLit(sexpr_list) -> 
+        if List.length sexpr_list = 0
+        then raise (Failure "empty array init is not supported")
+        else
+          let all_elem = List.map (fun e ->
+              expr builder m e) sexpr_list in
+          let llarray_t = L.type_of (List.hd all_elem) in
+          let num_elems = List.length sexpr_list in
+          let ptr = L.build_array_malloc llarray_t
+              (L.const_int i32_t num_elems) "" builder 
+          in
+          ignore (List.fold_left (fun i elem ->
+              let idx = L.const_int i32_t i in
+              let eptr = L.build_gep ptr [|idx|] "" builder in
+              let cptr = L.build_pointercast eptr 
+                  (L.pointer_type (L.type_of elem)) "" builder in
+              let _ = (L.build_store elem cptr builder) 
+              in i+1)
+              0 all_elem); ptr
+
+      | SArrayAccess(arr, i) ->
+        let arr_var = expr builder m arr in
+        let idx = expr builder m i in 
+        let ptr = 
+          L.build_load (L.build_gep arr_var 
+                          [| idx |] "" builder) 
+            "" builder 
+        in ptr
       | SAssign (s, e) -> let e' = build_expr builder map e in
         ignore(L.build_store e' (lookup map s) builder); e'
       | SNoexpr -> L.const_int i32_t 0
@@ -205,6 +268,9 @@ in
       | SCall ("print", [e])
       | SCall ("printi", [e]) ->
         L.build_call printf_func [| int_format_str ; (build_expr builder map e) |]
+          "printf" builder
+      | SCall ("printfl", [e]) ->
+        L.build_call printf_func [| float_format_str ; (build_expr builder map e) |]
           "printf" builder
       | SCall ("prints", [e]) ->
         L.build_call printf_func [| string_format_str ; (build_expr builder map e) |]
