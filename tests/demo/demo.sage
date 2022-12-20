@@ -1,4 +1,5 @@
 int num = 10000
+str greeting = "SAGE IS AWESOME!"
 
 def int main() {
     int pos = 105
