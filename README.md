@@ -164,7 +164,8 @@ Many features are almost implemented in some branches. They are:
 * All (12/19) - Meet to discuss presentation and final language implementation
 * Gabriela (12/20) - Debug for loop index increment, commit first iteration of code for live demo & finalize demo by addressing casting bugs
 * Gabriela (12/20) - Create and finalize final presentation
-* All (12/20) - Make adjustments to demo and presentation; debug for loops
+* All (12/20) - Make adjustments to demo and presentation; debug for loops; first recording of presentation
+* Gabriela (12/20) - Cut video recording & upload to YouTube
 
 ## References
 
