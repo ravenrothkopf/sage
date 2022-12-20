@@ -18,6 +18,7 @@ let translate (globals, functions) =
   and i1_t       = L.i1_type     context 
   and void_t     = L.void_type   context 
   and i64_t      = L.i64_type    context
+  and float_t    = L.double_type context
 in
 
   let string_t   = L.pointer_type i8_t in
@@ -27,8 +28,8 @@ in
       A.Int -> i32_t
     | A.Bool  -> i1_t
     | A.String -> string_t
+    | A.Float -> float_t 
     | A.Void -> void_t
-    | A.Array -> 
   in
   (*print functions*)
   let printf_t : L.lltype =
@@ -59,6 +60,7 @@ in
       let rec build_global_expr ((_, e) : sexpr) = match e with
         SIntLit i -> L.const_int (ltype_of_typ t) i
       | SBoolLit b  -> L.const_int (ltype_of_typ t) (if b then 1 else 0)
+      | SFloatLit l -> L.const_float float_t l
       | SStringLit s ->  
         (*define_global + const_stringz returns a global constant char array (with null term) in the module 
            in the default address space*)
@@ -117,6 +119,7 @@ in
 
     (*for printing*)
     let int_format_str = L.build_global_stringptr "%d\n" "fmt" builder in
+    let float_format_str = L.build_global_stringptr "%d\n" "fmt" builder in
     let string_format_str = L.build_global_stringptr "%s\n" "fmt" builder in
 
     (* Construct the function's "locals": formal arguments and locally
@@ -169,6 +172,7 @@ in
     let rec build_expr builder map ((_, e) : sexpr) = match e with
         SIntLit i  -> L.const_int i32_t i
       | SBoolLit b  -> L.const_int i1_t (if b then 1 else 0)
+      | SFloatLit l -> L.const_float float_t l
       | SStringLit s -> L.build_global_stringptr s "str" builder
       | SId s       -> L.build_load (lookup map s) s builder
       | SAssign (s, e) -> let e' = build_expr builder map e in
@@ -206,6 +210,9 @@ in
       | SCall ("print", [e])
       | SCall ("printi", [e]) ->
         L.build_call printf_func [| int_format_str ; (build_expr builder map e) |]
+          "printf" builder
+      | SCall ("printfl", [e]) ->
+        L.build_call printf_func [| float_format_str ; (build_expr builder map e) |]
           "printf" builder
       | SCall ("prints", [e]) ->
         L.build_call printf_func [| string_format_str ; (build_expr builder map e) |]
