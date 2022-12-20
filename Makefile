@@ -54,3 +54,6 @@ basic: clean
 
 testfail:
 	./testerrors.sh
+
+tests: clean
+	./tests.sh
