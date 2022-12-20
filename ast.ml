@@ -120,7 +120,7 @@ let rec string_of_stmt = function
     string_of_expr e3 ^ ")" ^ string_of_stmt s  
   | Range(b,e, s) -> "for " ^ string_of_expr b ^ " in range (" ^ string_of_expr e ^ ")\n" ^ string_of_stmt s 
   | While(expr, s) ->  "while (" ^ string_of_expr expr ^ ")\n" ^ string_of_stmt s
-  | Return(expr) -> "return" ^ string_of_expr expr
+  | Return(expr) -> "return" ^ string_of_expr expr ^ "\n"
 
 let string_of_fdecl fdecl =
   "def " ^ string_of_typ fdecl.rtyp ^ " " ^

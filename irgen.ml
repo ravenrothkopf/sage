@@ -40,6 +40,16 @@ in
       L.function_type string_t [| string_t ; string_t |] in
   let concat_func : L.llvalue =
       L.declare_function "concat" concat_t the_module in
+    
+  let len_t : L.lltype =
+      L.function_type i32_t [| string_t |] in
+  let len_func : L.llvalue =
+      L.declare_function "len" len_t the_module in
+
+  let indexOf_t : L.lltype =
+      L.function_type i32_t [| string_t ; string_t |] in
+  let indexOf_func : L.llvalue =
+      L.declare_function "indexOf" indexOf_t the_module in
 
   (* Create a map of global variables after creating each, and evaluating the assigned expr *)
   (*constant expressions*)
@@ -119,7 +129,8 @@ in
       with Not_found -> StringMap.find n global_vars
     in
 
-    (*anything to string type casting*)
+    (*type casting between strings, bools, and ints*)
+    (*TODO: add type casting for variables*)
     let rec to_string e = 
       match e with
         (_, SIntLit i) -> (A.String, SStringLit (string_of_int i))
@@ -136,6 +147,14 @@ in
         try (A.Int, SIntLit (int_of_string s)) 
         with Failure _ -> raise (Failure ("string cant be cast to an int"))
       (* | (typ, SId s) -> to_string map (typ, (snd (lookup map s))) *)
+      | _ -> raise (Failure ("Failure:" ^ string_of_sexpr e ^ "type cant be cast to an int")) in
+    
+    let to_bool e =
+      match e with
+        (_, SIntLit(i)) when i = 0 -> (A.Bool, SBoolLit(false))
+      | (_, SStringLit(s)) when s = "0" -> (A.Bool, SBoolLit(false))
+      | (_, SIntLit(_))    -> (A.Bool, SBoolLit(true))
+      | (_, SStringLit(_)) -> (A.Bool, SBoolLit(true)) 
       | _ -> raise (Failure ("Failure:" ^ string_of_sexpr e ^ "type cant be cast to an int")) in
 
     (* Construct code for an expression using a map of variables; return its value *)
@@ -180,6 +199,10 @@ in
       | SCall ("printb", [e]) ->
         L.build_call printf_func [| int_format_str ; (build_expr builder map e) |]
           "printf" builder
+      | SCall ("len", [e]) ->
+        L.build_call len_func [| (build_expr builder map e) |] "len" builder
+      | SCall ("indexOf", [e1; e2]) ->
+        L.build_call indexOf_func [|(build_expr builder map e1); (build_expr builder map e2)|] "indexOf" builder
       (*type casting hack using OCaml oooh*)
       (* | SCall ("int2str",  [e]) -> build_expr builder map (to_string map e)
       | SCall ("bool2str", [e]) -> build_expr builder map (to_string map e)
@@ -197,6 +220,7 @@ in
         match c_type with
           A.String -> build_expr builder map (to_string e)
         | A.Int    -> build_expr builder map (to_int e)
+        | A.Bool   -> build_expr builder map (to_bool e)
     in
 
     (* LLVM insists each basic block end with exactly one "terminator"
@@ -216,7 +240,6 @@ in
         SBlock sl -> 
           (fst (List.fold_left build_stmt (builder, vars) sl), vars)
       | SExpr e -> ignore(build_expr builder vars e); (builder, vars)
-      (* | SReturn e -> ignore(L.build_ret (build_expr builder e) builder); builder *)
       | SDecAssn ((t, n), expr) -> (builder, 
         let e' = build_expr builder vars expr
         in L.set_value_name n e';
@@ -257,6 +280,12 @@ in
 
      (* | SRange (expr, stmt) -> *)
      
+
+      | SReturn e -> ignore(match fdecl.srtyp with
+          (* Special "return nothing" instr *)
+            A.Void -> L.build_ret_void builder
+          (* Build return statement *)
+          | _ -> L.build_ret (build_expr builder vars e) builder ); (builder, vars)
       | SIf (predicate, then_stmt, else_stmt) ->
         let bool_val = build_expr builder vars predicate in
 

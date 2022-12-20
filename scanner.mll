@@ -6,7 +6,7 @@ let frac = '.' digit*
 let exp = ['e' 'E'] ['-' '+']? digit+
 let float = digit* frac? exp?
 let int = '-'? digit digit*
-
+ 
 rule token = parse
   [' ' '\r' '\t']                       { token lexbuf }          (* Whitespace *)
 | "#"                                   { comment lexbuf }           (* Comments *)
@@ -70,4 +70,4 @@ and comment2 = parse
 
 and slit s = parse
  "\""                         { SLIT (s)}
-| (letter | digit | ' ') as x { slit (s ^ (String.make 1 x)) lexbuf}
+| (letter | digit | ' ' | '!' | '?') as x { slit (s ^ (String.make 1 x)) lexbuf}
