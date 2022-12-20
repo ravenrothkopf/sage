@@ -2,11 +2,11 @@
 open Ast
 %}
 
-%token LPAREN RPAREN LBRACKET RBRACKET PLUS MINUS TIMES DIVIDE NEG ASSIGN MODULO
+%token DEF NEWLINE LPAREN RPAREN LBRACE RBRACE LBRACKET RBRACKET 
+%token PLUS MINUS TIMES DIVIDE NEG ASSIGN MODULO
 %token EQ NEQ GT GEQ LT LEQ AND OR NOT
-%token DEF LBRACE RBRACE NEWLINE RETURN IF ELIF ELSE WHILE FOR STRING INT FLOAT BOOL VOID 
+%token IF ELIF ELSE WHILE FOR STRING INT FLOAT BOOL VOID RETURN ARRAY
 %token RANGE IN
-%token DEF LBRACE RBRACE NEWLINE RETURN IF ELIF ELSE WHILE FOR STRING INT FLOAT BOOL VOID RETURN
 %token COLON COMMA
 %token <int> ILIT
 %token <float> FLIT
@@ -66,9 +66,10 @@ formal_list:
 typ:
     INT { Int }
   | BOOL { Bool }
-  // | FLOAT { Float }
+  | FLOAT { Float }
   | STRING { String }
   | VOID { Void }
+  | typ ARRAY { ArrayTyp $1 }
   //TODO: add array type + implementation
 
 stmt:
@@ -80,6 +81,7 @@ stmt:
   | IF LPAREN expr RPAREN stmt ELSE stmt { If($3, $5, $7) }
   | WHILE LPAREN expr RPAREN stmt { While($3, $5) }
   | NEWLINE stmt { $2 }
+  | FOR LPAREN expr SEMC expr SEMC expr RPAREN stmt  { For($3, $5, $7, $9) } 
   // | FOR typ ID IN expr stmt  { For(($2, $3), $5, $6) } 
   /*| FOR typ ID IN RANGE LPAREN expr RPAREN stmt { Range($2, $6, $8) } */
 
@@ -87,12 +89,13 @@ stmt_list:
     /* nothing */  { [] }
   | stmt stmt_list { $1 :: $2 }
 
+
 global:
     typ ID ASSIGN expr NEWLINE { (($1, $2), $4) } //int x = 3, only expression we want to use globally and locally
 
 expr:
     ILIT             { IntLit($1) }
-  // | FLIT             { FloatLit($1) }
+  | FLIT             { FloatLit($1) }
   | SLIT             { StringLit($1) }
   | BLIT             { BoolLit($1) }
   | ID               { Id($1) }

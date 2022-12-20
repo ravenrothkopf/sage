@@ -20,6 +20,7 @@ rule token = parse
 | ']'                                   { RBRACKET }
 | ':'                                   { COLON }
 | ','                                   { COMMA }
+| ';'                                   { SEMC  }
 | '{'                                   { LBRACE }
 | '}'                                   { RBRACE }
 | '='                                   { ASSIGN }
@@ -44,8 +45,6 @@ rule token = parse
 | "else"                                { ELSE }
 | "while"                               { WHILE }
 | "for"                                 { FOR }
-| "in"                                  { IN }
-| "range"                               { RANGE }
 | "=="                                  { EQ }
 | "!="                                  { NEQ }
 | ">"                                   { GT }
@@ -70,4 +69,4 @@ and comment2 = parse
 
 and slit s = parse
  "\""                         { SLIT (s)}
-| (letter | digit | ' ' | '!' | '?') as x { slit (s ^ (String.make 1 x)) lexbuf}
+| (letter | digit | ' ' | '!' | '?' | '.') as x { slit (s ^ (String.make 1 x)) lexbuf}
