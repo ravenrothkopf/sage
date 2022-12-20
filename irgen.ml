@@ -4,6 +4,12 @@ open Sast
 
 module StringMap = Map.Make(String)
 
+module ArrayTypHash = Hashtbl.Make(struct
+  type t = A.typ (* type of keys *)
+  let equal x y = x = y (* use structural comparison *)
+  let hash = Hashtbl.hash (* generic hash function *)
+end)
+
 (* translate : Sast.program -> Llvm.module *)
 let translate (globals, functions) =
   let context    = L.global_context () in
@@ -21,6 +27,34 @@ let translate (globals, functions) =
 in
 
   let string_t   = L.pointer_type i8_t in
+  let arrtyp_table = ArrayTypHash.create 10 in
+  let len_func_table = ArrayTypHash.create 10 in
+  let arrp_from_arrstruct s builder =
+    L.build_struct_gep s 0 "arrp_from_arrstruct" builder in
+  let size_from_arrstruct s builder =
+    L.build_struct_gep s 1 "" builder in
+
+  let remove_option stro = match stro with
+    None -> raise (Failure ("attemted to evaluate None option"))
+  | Some x -> x in
+
+  let create_len_func (typ : A.typ) =
+    if (not (ArrayTypHash.mem len_func_table typ)) then (
+      let t = if ArrayTypHash.mem arrtyp_table typ then 
+                ArrayTypHash.find arrtyp_table typ 
+              else raise (Failure ("arrtyp is not in table")) in
+      let func = L.define_function "len" (L.var_arg_function_type i32_t [| L.pointer_type t |]) the_module in
+      let _ = ArrayTypHash.add len_func_table typ func in
+      let func_builder = L.builder_at_end context (L.entry_block func) in
+      let alloc = L.build_alloca (L.pointer_type t) "" func_builder in          (* make space on the stack *)
+      let formal = List.hd (Array.to_list (L.params func)) in  (* get the llvalue of the only formal argument *)
+      let _ = L.build_store formal alloc func_builder in
+      let loaded_formal = L.build_load alloc "" func_builder in
+      let sizep = size_from_arrstruct loaded_formal func_builder in
+      let size = L.build_load sizep "size" func_builder in
+      let _ = L.build_ret size func_builder in () 
+      )
+    else  ()  in  
 
   (* Return the LLVM type for a sage type *)
   let ltype_of_typ = function
@@ -28,6 +62,33 @@ in
     | A.Bool  -> i1_t
     | A.String -> string_t
     | A.Void -> void_t
+    | A.ArrayTyp (typ)          -> 
+      let rec helper typ suffix = (* returns the typ of the array *)
+        if ArrayTypHash.mem arrtyp_table typ then
+          ArrayTypHash.find arrtyp_table typ 
+        else (
+          match typ with 
+            A.ArrayTyp(A.ArrayTyp(ityp))  -> (* is an array of arrays *)
+            let lityp = helper (A.ArrayTyp(ityp)) "[]" in
+            let arr_t = L.named_struct_type context ((remove_option (L.struct_name lityp)) ^ suffix) in
+            L.struct_set_body arr_t [| (L.pointer_type (L.pointer_type lityp)) ; i32_t |] false;
+            ArrayTypHash.add arrtyp_table typ arr_t;
+            create_len_func typ;
+            arr_t
+          | A.ArrayTyp(ityp) -> (* is an array of primitives *)
+            let arr_t = L.named_struct_type context ((str_of_typ ityp) ^ suffix) in
+            L.struct_set_body arr_t [| (L.pointer_type (ltype_of_typ ityp)) ; i32_t |] false;
+            ArrayTypHash.add arrtyp_table typ arr_t;
+            create_len_func typ;
+            arr_t
+        | _ -> raise (Failure ("ltyp_of_typ failure"))
+        ) 
+      in 
+      if ArrayTypHash.mem arrtyp_table (A.ArrayTyp(typ)) then   (* check if array struct is already in hashtable *)
+        L.pointer_type (ArrayTypHash.find arrtyp_table (A.ArrayTyp(typ))) 
+      else 
+        L.pointer_type (helper (A.ArrayTyp(typ)) "[]")
+
   in
   (*print functions*)
   let printf_t : L.lltype =

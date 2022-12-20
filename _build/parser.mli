@@ -7,7 +7,6 @@ type token =
   | MINUS
   | TIMES
   | DIVIDE
-  | POS
   | NEG
   | ASSIGN
   | MODULO

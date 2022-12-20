@@ -159,7 +159,7 @@ ignore(check_binds "global" (global_symbols globals));
                          " expected " ^ string_of_typ first_type ^ " in " ^ string_of_expr e
           in (check_assign first_type et err, e')
         in let elements' = List.map check_elements elements 
-        in (ArrayTyp (first_type), SStringLit "aoijfaoiji")
+        in (ArrayTyp (first_type), SArray elements)
       | Noexpr -> (Void, SNoexpr)
       | Cast(t, e) -> match t with
           Int -> (Int, (SCast(t, check_expr e map)))
