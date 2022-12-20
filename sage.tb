@@ -25,5 +25,9 @@ def int main (str greeting) {
     int num = 1
     num += 3
     print(num)
+
+    int num2 = 1
+    num2 -= 3
+    print(num2)
 }
 

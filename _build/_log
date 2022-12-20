@@ -40,7 +40,7 @@ SArray _
 # Target: parser.mly, tags: { package(llvm), extension:mly, file:parser.mly, infer, ocaml, ocamlyacc, parser, quiet }
 /Users/jennyliu/.opam/4.14.0/bin/ocamlyacc parser.mly
 + /Users/jennyliu/.opam/4.14.0/bin/ocamlyacc parser.mly
-1 shift/reduce conflict.
+5 shift/reduce conflicts.
 # Target: parser.mli.depends, tags: { package(llvm), extension:mli, file:parser.mli, ocaml, ocamldep, quiet }
 ocamlfind ocamldep -package llvm -modules parser.mli > parser.mli.depends
 # Target: scanner.mll, tags: { package(llvm), extension:mll, file:scanner.mll, lexer, ocaml, ocamllex, quiet }
