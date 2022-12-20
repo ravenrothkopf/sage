@@ -3,4 +3,5 @@
 def int main() {
     prints("I have " + str(2) + " cats")
     prints("it is " + str(True))
+    prints("sage " + str(2.0))
 }

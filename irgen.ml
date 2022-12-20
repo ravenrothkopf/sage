@@ -62,7 +62,7 @@ in
       let rec build_global_expr ((_, e) : sexpr) = match e with
         SIntLit i -> L.const_int (ltype_of_typ t) i
       | SBoolLit b  -> L.const_int (ltype_of_typ t) (if b then 1 else 0)
-      | SFloatLit l -> L.const_float float_t l
+      | SFloatLit l -> L.const_float (ltype_of_typ t) l
       | SStringLit s ->  
         (*define_global + const_stringz returns a global constant char array (with null term) in the module 
            in the default address space*)
@@ -121,7 +121,7 @@ in
 
     (*for printing*)
     let int_format_str = L.build_global_stringptr "%d\n" "fmt" builder in
-    let float_format_str = L.build_global_stringptr "%d\n" "fmt" builder in
+    let float_format_str = L.build_global_stringptr "%g\n" "fmt" builder in
     let string_format_str = L.build_global_stringptr "%s\n" "fmt" builder in
 
     (* Construct the function's "locals": formal arguments and locally
@@ -149,6 +149,7 @@ in
         (_, SIntLit i) -> (A.String, SStringLit (string_of_int i))
       | (_, SBoolLit true) -> (A.String, SStringLit "true")
       | (_, SBoolLit false) -> (A.String, SStringLit "false")
+      | (_, SFloatLit f) -> (A.String, SStringLit (string_of_float f))
       (* | (typ, SId s) -> to_string map (typ, (snd (lookup map s))) *)
       | _ -> raise (Failure ("Failure:" ^ string_of_sexpr e ^ "type cant be cast to a string")) in
     
@@ -156,6 +157,7 @@ in
       match e with
         (_, SBoolLit true) -> (A.Int, SIntLit 1)
       | (_, SBoolLit false) -> (A.Int, SIntLit 0)
+      | (_, SFloatLit f) -> (A.Int, SIntLit(int_of_float f))
       | (_, SStringLit s) -> 
         try (A.Int, SIntLit (int_of_string s)) 
         with Failure _ -> raise (Failure ("string cant be cast to an int"))
@@ -166,9 +168,19 @@ in
       match e with
         (_, SIntLit(i)) when i = 0 -> (A.Bool, SBoolLit(false))
       | (_, SStringLit(s)) when s = "0" -> (A.Bool, SBoolLit(false))
+      | (_, SFloatLit(f)) when f = 0.0 -> (A.Bool, SBoolLit(false))
       | (_, SIntLit(_))    -> (A.Bool, SBoolLit(true))
       | (_, SStringLit(_)) -> (A.Bool, SBoolLit(true)) 
-      | _ -> raise (Failure ("Failure:" ^ string_of_sexpr e ^ "type cant be cast to an int")) in
+      | (_, SFloatLit(_))  -> (A.Bool, SBoolLit(true))
+      |  _ -> raise (Failure ("Failure:" ^ string_of_sexpr e ^ "type cant be cast to an bool")) in
+
+    let to_float e =
+      match e with
+        (_, SIntLit(i)) -> (A.Float, SFloatLit(float_of_int i))
+      | (_, SStringLit s) -> 
+        try (A.Float, SFloatLit (float_of_string s)) 
+        with Failure _ -> raise (Failure ("string cant be cast to an int"))
+      | _ -> raise (Failure ("Failure:" ^ string_of_sexpr e ^ "type cant be cast to an float")) in
 
     (* Construct code for an expression using a map of variables; return its value *)
     let rec build_expr builder map ((_, e) : sexpr) = match e with
@@ -244,7 +256,7 @@ in
       | SUnop(op, ((_, _) as e)) ->
         let e' = build_expr builder map e in
         (match op with
-         | Neg                  -> L.build_neg
+           Neg                  -> L.build_neg
          | Not                  -> L.build_not) e' "tmp" builder
       | SBinop (e1, op, e2) ->
         let e1' = build_expr builder map e1
@@ -263,6 +275,24 @@ in
          | A.Leq     -> L.build_icmp L.Icmp.Sle
          | A.Greater -> L.build_icmp L.Icmp.Sgt
          | A.Geq     -> L.build_icmp L.Icmp.Sge
+        ) e1' e2' "tmp" builder
+      | SBinop ((A.Float,_ ) as e1, op, e2) ->
+        let e1' = build_expr builder map e1
+        and e2' = build_expr builder map e2 in
+        (match op with 
+           A.Add     -> L.build_fadd
+         | A.Sub     -> L.build_fsub
+         | A.Mul     -> L.build_fmul
+         | A.Div     -> L.build_fdiv 
+         | A.Mod     -> L.build_frem
+         | A.Equal   -> L.build_fcmp L.Fcmp.Oeq
+         | A.Neq     -> L.build_fcmp L.Fcmp.One
+         | A.Less    -> L.build_fcmp L.Fcmp.Olt
+         | A.Leq     -> L.build_fcmp L.Fcmp.Ole
+         | A.Greater -> L.build_fcmp L.Fcmp.Ogt
+         | A.Geq     -> L.build_fcmp L.Fcmp.Oge
+         | A.And | A.Or ->
+           raise (Failure ("Error: Can't call this binary expression on a float!"))
         ) e1' e2' "tmp" builder
       (*calling print and concat functions*)
       | SCall ("print", [e])
@@ -300,6 +330,7 @@ in
           A.String -> build_expr builder map (to_string e)
         | A.Int    -> build_expr builder map (to_int e)
         | A.Bool   -> build_expr builder map (to_bool e)
+        | A.Float  -> build_expr builder map (to_float e)
     in
 
     (* LLVM insists each basic block end with exactly one "terminator"
