@@ -51,3 +51,6 @@ testall:
 
 basic: clean
 	./testbasic.sh
+
+testfail:
+	./testerrors.sh
