@@ -2,7 +2,7 @@
 open Ast
 %}
 
-%token LPAREN RPAREN LBRACKET RBRACKET PLUS MINUS TIMES DIVIDE NEG ASSIGN MODULO
+%token LPAREN RPAREN LBRACKET RBRACKET PLUS MINUS TIMES DIVIDE POS NEG ASSIGN MODULO
 %token EQ NEQ GT GEQ LT LEQ AND OR NOT
 %token DEF LBRACE RBRACE NEWLINE RETURN IF ELIF ELSE WHILE FOR STRING INT FLOAT BOOL VOID RETURN ARRAY
 %token COLON COMMA
@@ -24,7 +24,7 @@ open Ast
 %left LT GT LEQ GEQ
 %left PLUS MINUS
 %left TIMES DIVIDE MODULO
-%right NOT NEG 
+%right NOT NEG POS
 
 %start program
 %type <Ast.program> program
@@ -65,7 +65,7 @@ formal_list:
 typ:
     INT { Int }
   | BOOL { Bool }
-  | FLOAT { Float }
+  // | FLOAT { Float }
   | STRING { print_endline "typ string" ;String }
   | VOID { Void }
   | typ ARRAY { print_endline "typ array" ; ArrayTyp $1 }
@@ -80,6 +80,7 @@ stmt:
   | IF LPAREN expr RPAREN stmt ELSE stmt { If($3, $5, $7) }
   | WHILE LPAREN expr RPAREN stmt { While($3, $5) }
   | NEWLINE stmt { $2 }
+  // | typ LPAREN expr RPAREN NEWLINE { Cast($1, $3) }
 
 stmt_list:
     /* nothing */  { [] }
@@ -90,7 +91,7 @@ global:
 
 expr:
     ILIT             { print_endline ("int "^(string_of_int $1));IntLit($1) }
-  | FLIT             { FloatLit($1) }
+  // | FLIT             { FloatLit($1) }
   | SLIT             { print_endline ("string "^$1);StringLit($1) }
   | BLIT             { print_endline ("bool "^(string_of_bool $1));BoolLit($1) }
   | ID               { Id($1) }
@@ -111,7 +112,7 @@ expr:
   | expr AND expr { Binop ($1, And, $3) }
   | expr OR expr { Binop ($1, Or, $3) }
   | MINUS expr %prec NEG { Unop(Neg, $2) }
-  | NOT expr { Unop(Not, $2) }
+  | PLUS expr %prec POS { Unop(Pos, $2) }
   | expr MODULO expr { Binop ($1, Mod, $3) }
   | arr { print_endline "array"; $1 }
 

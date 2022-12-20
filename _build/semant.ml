@@ -41,15 +41,8 @@ ignore(check_binds "global" (global_symbols globals));
     } map
     in List.fold_left add_bind StringMap.empty 
     (*put your function definitions here!*)
-    [("print", [Int], Void);
-     ("printi", [Int], Void); 
-     ("printfl", [Float], Void);
-     ("prints", [String], Void); 
-     ("printb", [Bool], Void); 
-     ("concat", [String ; String], String); 
-     ("len", [String], Int); 
-     ("indexOf", [String; String], Int)];
-
+    [("print", [Int], Void); ("printi", [Int], Void); ("prints", [String], Void); ("printb", [Bool], Void); 
+    ("concat", [String ; String], String); ("len", [String], Int); ("indexOf", [String; String], Int)]; 
   in
 
   (* Add function name to symbol table *)
@@ -98,7 +91,7 @@ ignore(check_binds "global" (global_symbols globals));
       | BoolLit l -> (Bool, SBoolLit l) 
       | StringLit l -> (String, SStringLit l)
       | IntLit l -> (Int, SIntLit l)
-      | FloatLit l -> (Float, SFloatLit l)
+      (* | FloatLit l -> (Float, SFloatLit l) *)
       | Noexpr -> (Void, SNoexpr)
       | Assign(var, e) as ex ->
         let lt = type_of_identifier var map
@@ -117,9 +110,6 @@ ignore(check_binds "global" (global_symbols globals));
         if t1 = t2 then
           let t = match op with
             Add | Sub | Mul | Div | Mod when t1 = Int -> Int
-          | Add | Sub | Mul | Div when t1 = Float -> Float
-          | Add | Sub | Mul | Div when t1 = Float && t2 = Int -> Float
-          | Add | Sub | Mul | Div when t1 = Int && t2 = Float -> Float
           | Add when t1 = String -> String
           | Equal | Neq -> Bool
           | Less | Leq | Greater | Geq when t1 = Int -> Bool
@@ -127,16 +117,7 @@ ignore(check_binds "global" (global_symbols globals));
           | _ -> raise (Failure err)
         in 
         (t, SBinop ((t1,e1'), op, (t2, e2')))
-        else raise (Failure err)
-      | Unop(op, e) as x ->
-        let (t, e') = check_expr e map in
-          let ty = match op with
-            Neg when t = Int -> t
-          | Not when t = Bool -> Bool
-          | _ -> raise (Failure ("illegal unary operator " ^
-                                 string_of_uop op ^ string_of_typ t ^
-                                 " in " ^ string_of_expr x))
-          in (ty, SUnop(op, (t, e')))
+      else raise (Failure err)
       | Call(fname, args) as call ->
         let fd = find_func fname in
         let param_length = List.length fd.formals in
