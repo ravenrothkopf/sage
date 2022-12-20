@@ -6,7 +6,7 @@ open Ast
 %token EQ NEQ GT GEQ LT LEQ AND OR NOT
 %token DEF LBRACE RBRACE NEWLINE RETURN IF ELIF ELSE WHILE FOR STRING INT FLOAT BOOL VOID
 %token RANGE IN
-%token DEF LBRACE RBRACE NEWLINE RETURN IF ELIF ELSE WHILE FOR STRING INT FLOAT BOOL VOID RETURN
+%token DEF LBRACE RBRACE NEWLINE RETURN IF ELIF ELSE WHILE FOR STRING INT FLOAT BOOL VOID RETURN //TUPLE
 %token COLON COMMA SEMC
 %token <int> ILIT
 %token <float> FLIT
@@ -20,13 +20,13 @@ open Ast
 %nonassoc NOELSE
 %nonassoc ELSE
 %right ASSIGN PLUSEQ MINUSEQ TIMESEQ DIVEQ
+%right NOT NEG
 %left OR
 %left AND
 %left EQ NEQ
 %left LT GT LEQ GEQ
 %left PLUS MINUS
 %left TIMES DIVIDE MODULO
-%right NOT NEG
 
 %start program
 %type <Ast.program> program
@@ -93,7 +93,7 @@ global:
 
 expr:
     ILIT             { IntLit($1) }
-  // | FLIT             { FloatLit($1) }
+  | FLIT             { FloatLit($1) }
   | SLIT             { StringLit($1) }
   | BLIT             { BoolLit($1) }
   | ID               { Id($1) }
@@ -113,13 +113,15 @@ expr:
   | expr LEQ expr { Binop ($1, Leq, $3) }
   | expr AND expr { Binop ($1, And, $3) }
   | expr OR expr { Binop ($1, Or, $3) }
-  | MINUS expr %prec NEG { Unop(Neg, $2) }
+  | MINUS expr %prec NEG { Unop (Neg, $2) }
+  | NOT expr { Unop (Neg, $2) }
   | expr MODULO expr { Binop ($1, Mod, $3) }
   | ID PLUSEQ expr { AssignOp ($1, Add, $3) } 
   | ID MINUSEQ expr { AssignOp ($1, Sub, $3) }
   | ID TIMESEQ expr { AssignOp ($1, Mul, $3) }
   | ID DIVEQ expr { AssignOp ($1, Div, $3) }
   | arr { $1 }
+//  | LPAREN expr COMMA expr RPAREN { Tuple($2, $4) }
 
 arr:
   LBRACKET arr_elems RBRACKET { Array($2) }
