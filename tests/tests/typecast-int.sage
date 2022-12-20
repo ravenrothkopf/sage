@@ -3,4 +3,5 @@
 def int main() {
     print(1 + int("2"))
     print(1 + int(True))
+    print(1 + int(2.5))
 }

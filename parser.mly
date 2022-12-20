@@ -2,13 +2,11 @@
 open Ast
 %}
 
-%token LPAREN RPAREN LBRACKET RBRACKET PLUS MINUS TIMES DIVIDE NEG ASSIGN MODULO
+%token DEF NEWLINE LPAREN RPAREN LBRACE RBRACE LBRACKET RBRACKET 
+%token PLUS MINUS TIMES DIVIDE NEG ASSIGN MODULO
 %token EQ NEQ GT GEQ LT LEQ AND OR NOT
-
-%token DEF LBRACE RBRACE NEWLINE RETURN IF ELIF ELSE WHILE FOR STRING INT FLOAT BOOL VOID RETURN ARRAY
-%token DEF LBRACE RBRACE NEWLINE RETURN IF ELIF ELSE WHILE FOR STRING INT FLOAT BOOL VOID 
+%token IF ELIF ELSE WHILE FOR STRING INT FLOAT BOOL VOID RETURN ARRAY
 %token RANGE IN
-%token DEF LBRACE RBRACE NEWLINE RETURN IF ELIF ELSE WHILE FOR STRING INT FLOAT BOOL VOID RETURN ARRAY
 %token COLON COMMA
 %token <int> ILIT
 %token <float> FLIT
@@ -49,7 +47,6 @@ decls:
 fdecl:
   DEF typ ID LPAREN formals_opt RPAREN LBRACE NEWLINE stmt_list RBRACE
   {
-      print_endline "function";
     {
       rtyp = $2;
       fname = $3;
@@ -70,9 +67,9 @@ typ:
     INT { Int }
   | BOOL { Bool }
   | FLOAT { Float }
-  | STRING { print_endline "typ string" ;String }
+  | STRING { String }
   | VOID { Void }
-  | typ ARRAY { print_endline "typ array" ; ArrayTyp $1 }
+  | typ ARRAY { ArrayTyp $1 }
   //TODO: add array type + implementation
 
 stmt:
@@ -92,13 +89,13 @@ stmt_list:
   | stmt stmt_list { $1 :: $2 }
 
 global:
-    typ ID ASSIGN expr NEWLINE { print_endline "global assign";(($1, $2), $4) } //int x = 3, only expression we want to use globally and locally
+    typ ID ASSIGN expr NEWLINE { (($1, $2), $4) } //int x = 3, only expression we want to use globally and locally
 
 expr:
-    ILIT             { print_endline ("int "^(string_of_int $1));IntLit($1) }
+    ILIT             { IntLit($1) }
   | FLIT             { FloatLit($1) }
-  | SLIT             { print_endline ("string "^$1);StringLit($1) }
-  | BLIT             { print_endline ("bool "^(string_of_bool $1));BoolLit($1) }
+  | SLIT             { StringLit($1) }
+  | BLIT             { BoolLit($1) }
   | ID               { Id($1) }
   | ID ASSIGN expr   { Assign($1, $3) }
   | ID LPAREN args_opt RPAREN { Call($1, $3) }
@@ -119,7 +116,7 @@ expr:
   | MINUS expr %prec NEG { Unop(Neg, $2) }
   | NOT expr { Unop(Not, $2) }
   | expr MODULO expr { Binop ($1, Mod, $3) }
-  | arr { print_endline "array"; $1 }
+  | arr { $1 }
 
 arr:
   LBRACKET arr_elems RBRACKET { Array($2) }

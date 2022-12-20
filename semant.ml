@@ -165,6 +165,7 @@ ignore(check_binds "global" (global_symbols globals));
           Int -> (Int, (SCast(t, check_expr e map)))
         | String -> (String, (SCast(t, check_expr e map)))
         | Bool -> (Bool, (SCast(t, check_expr e map)))
+        | Float -> (Float, (SCast(t, check_expr e map)))
     in
 
   let check_func func =

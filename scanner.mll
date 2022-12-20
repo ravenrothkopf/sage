@@ -16,18 +16,17 @@ rule token = parse
 | ')'                                   { RPAREN }
 | '{'                                   { LBRACE }
 | '}'                                   { RBRACE }
-| '['                                   { print_endline "[";LBRACKET }
-| ']'                                   { print_endline "]";RBRACKET }
+| '['                                   { LBRACKET }
+| ']'                                   { RBRACKET }
 | ':'                                   { COLON }
 | ','                                   { COMMA }
 | '{'                                   { LBRACE }
 | '}'                                   { RBRACE }
-| '='                                   { print_endline "=";ASSIGN }
-| "str"                                 { print_endline "str"; STRING }
+| '='                                   { ASSIGN }
+| "str"                                 { STRING }
 | "int"                                 { INT }
 | "float"                               { FLOAT }
 | "bool"                                { BOOL }
-| "[]"                                  { print_endline "[]";ARRAY }
 | "True"                                { BLIT(true) }
 | "False"                               { BLIT(false) }
 | "+"                                   { PLUS }
@@ -45,8 +44,6 @@ rule token = parse
 | "else"                                { ELSE }
 | "while"                               { WHILE }
 | "for"                                 { FOR }
-| "in"                                  { IN }
-| "range"                               { RANGE }
 | "=="                                  { EQ }
 | "!="                                  { NEQ }
 | ">"                                   { GT }
@@ -71,4 +68,4 @@ and comment2 = parse
 
 and slit s = parse
  "\""                         { SLIT (s)}
-| (letter | digit | ' ' | '!' | '?') as x { slit (s ^ (String.make 1 x)) lexbuf}
+| (letter | digit | ' ' | '!' | '?' | '.') as x { slit (s ^ (String.make 1 x)) lexbuf}
