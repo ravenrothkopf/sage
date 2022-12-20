@@ -157,12 +157,15 @@ Many features are almost implemented in some branches. They are:
 * Gabriela, Raven, Jenny, Lauren (12/13) - Code gen meeting
 * Gabriela (12/18) - Update branches with current changes & address merge conflicts, read documentation to address lli cannot find command
 * Gabriela (12/18) - Implement return statements on ast, scanner, parser, sast, semantics, irgen
-* Gabriela (12/19) - Implement floats in ast, scanner, parser, sast, semant, and codegen files
+* Gabriela (12/19) - Implement floats in ast, scanner, parser, sast, semant, and codegen files & printfl function for printing floats
 * All (12/19) - Meet for game plan for final deliverables
 * Gabriela & Jenny (12/19) - Meet to discuss strategy and implementation of arrays and codegen
 * Gabriela (12/19) - Continued iteration on codegen file for implementing arrays
 * All (12/19) - Meet to discuss presentation and final language implementation
-* Gabriela (12/20) - Debug for loop index increment, commit first iteration of code for live demo
+* Gabriela (12/20) - Debug for loop index increment, commit first iteration of code for live demo & finalize demo by addressing casting bugs
+* Gabriela (12/20) - Create and finalize final presentation
+* All (12/20) - Make adjustments to demo and presentation; debug for loops; first recording of presentation
+* Gabriela (12/20) - Cut video recording & upload to YouTube
 
 ## References
 

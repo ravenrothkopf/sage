@@ -2,7 +2,7 @@
 open Ast
 %}
 
-%token DEF NEWLINE LPAREN RPAREN LBRACE RBRACE LBRACKET RBRACKET 
+%token SEMC DEF NEWLINE LPAREN RPAREN LBRACE RBRACE LBRACKET RBRACKET 
 %token PLUS MINUS TIMES DIVIDE NEG ASSIGN MODULO
 %token EQ NEQ GT GEQ LT LEQ AND OR NOT
 %token IF ELIF ELSE WHILE FOR STRING INT FLOAT BOOL VOID RETURN ARRAY
@@ -81,7 +81,7 @@ stmt:
   | IF LPAREN expr RPAREN stmt ELSE stmt { If($3, $5, $7) }
   | WHILE LPAREN expr RPAREN stmt { While($3, $5) }
   | NEWLINE stmt { $2 }
-  | FOR LPAREN expr SEMC expr SEMC expr RPAREN stmt  { For($3, $5, $7, $9) } 
+  | FOR LPAREN expr SEMC expr SEMC expr RPAREN stmt { For($3, $5, $7, $9) } 
   // | FOR typ ID IN expr stmt  { For(($2, $3), $5, $6) } 
   /*| FOR typ ID IN RANGE LPAREN expr RPAREN stmt { Range($2, $6, $8) } */
 
