@@ -67,7 +67,7 @@ typ:
   // | FLOAT { Float }
   | STRING { String }
   | VOID { Void }
-  | TUPLE { TupleTyp }
+  | TUPLE LT typ COMMA typ GT { TupleTyp ($3, $5) }
   //TODO: add array type + implementation
 
 stmt:

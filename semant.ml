@@ -141,7 +141,10 @@ ignore(check_binds "global" (global_symbols globals));
           in
           let args' = List.map2 check_call fd.formals args
           in (fd.rtyp, SCall(fname, args'))
-      | Tuple (e1, e2) -> (TupleTyp, SStringLit "aoijfaoiji")
+      | Tuple (e1, e2) -> 
+        let (t1, _ ) = check_expr e1 map in
+        let (t2, _ ) = check_expr e1 map in
+        (TupleTyp (t1, t2), STuple (e1, e2))
       (* (TupleTyp, STuple (e1, e2)) *)
       | Noexpr -> (Void, SNoexpr)
       | Cast(t, e) -> match t with

@@ -11,7 +11,7 @@ and sx =
 (* | SFloatLit of float *)
 | SBoolLit of bool
 | SCall of string * sexpr list
-| STupleTyp of expr * expr
+| STuple of expr * expr
 | SNoexpr
 | SCast of typ * sexpr
 

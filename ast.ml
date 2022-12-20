@@ -13,7 +13,7 @@ type bop =
   | And
   | Or
 
-type typ = String | Int | Bool | Void | TupleTyp
+type typ = String | Int | Bool | Void | TupleTyp of typ * typ
 
 type uop = Neg | Not
 
