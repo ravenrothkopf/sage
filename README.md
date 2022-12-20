@@ -154,6 +154,8 @@ Indicating that both s1 and s2 were successfully parsed by the compiler :)
 * Gabriela (12/19) - Pull new changes, implement floats in ast, scanner, parser, sast, semant, and codegen files
 * All (12/19) - Meet for gameplan for final deliverables
 * Gabriela & Jenny (12/19) - Meet to talk about arrays and codegen
+* Gabriela (12/19) - more iteration on codegen for implementing arrays
+* All (12/19) - Meet to discuss presentaion and final language implementations
 ## References
 
 1. [Rusty Language Reference Manual](http://www.cs.columbia.edu/~sedwards/classes/2016/4115-fall/lrms/rusty.pdf"rusty, a rust-based PL")

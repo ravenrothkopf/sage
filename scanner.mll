@@ -20,6 +20,7 @@ rule token = parse
 | ']'                                   { print_endline "]";RBRACKET }
 | ':'                                   { COLON }
 | ','                                   { COMMA }
+| ';'                                   { SEMC  }
 | '{'                                   { LBRACE }
 | '}'                                   { RBRACE }
 | '='                                   { print_endline "=";ASSIGN }

@@ -332,28 +332,27 @@ in
         ignore (build_br_while builder);
         let while_builder = L.builder_at_end context while_bb in
         let bool_val = build_expr while_builder vars predicate in
-
         let body_bb = L.append_block context "while_body" the_function in
         add_terminal (fst (build_stmt ((L.builder_at_end context body_bb), vars) body)) build_br_while;
-
         let end_bb = L.append_block context "while_end" the_function in
 
         ignore(L.build_cond_br bool_val body_bb end_bb while_builder);
         (L.builder_at_end context end_bb, vars)
        
-      (* | SFor (tn, e, body) -> 
-        let local_var = L.build_alloca (ltype_of_typ (fst tn)) (snd tn) builder in 
-        StringMap.add (snd tn) local_var vars;
+      | SFor (expr1, expr2, expr3, body) -> 
         let for_bb = L.append_block context "for" the_function in
-        let pred_bb = L.build_br for_bb in
-        ignore(pred_bb builder);
+        let build_br_for = L.build_br for_bb in (* partial function *)
+        ignore (build_br_for builder);
         let for_builder = L.builder_at_end context for_bb in
-        let expr = build_expr for_builder vars e in 
+        let first_expr = build_expr for_builder vars expr1 in
+        let bool_val = build_expr for_builder vars expr2 in
+        let third_expr = build_expr for_builder vars expr3 in
         let body_bb = L.append_block context "for_body" the_function in
+        add_terminal (fst (build_stmt ((L.builder_at_end context body_bb), vars) body)) build_br_for;
         let end_bb = L.append_block context "for_end" the_function in
-        add_terminal (fst (build_stmt ((L.builder_at_end context body_bb), vars) body)) pred_bb;
-        ignore(L.build_cond_br expr body_bb end_bb for_builder); 
-        (L.builder_at_end context end_bb, vars) *)
+
+        ignore(L.build_cond_br bool_val body_bb end_bb for_builder);
+        (L.builder_at_end context end_bb, vars)      
      (* | SRange (expr, stmt) -> *)
       | SReturn e -> ignore(match fdecl.srtyp with
           (* Special "return nothing" instr *)
