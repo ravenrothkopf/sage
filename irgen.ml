@@ -28,6 +28,7 @@ in
     | A.Bool  -> i1_t
     | A.String -> string_t
     | A.Void -> void_t
+    | A.Array -> 
   in
   (*print functions*)
   let printf_t : L.lltype =
