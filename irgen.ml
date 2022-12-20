@@ -58,7 +58,7 @@ in
       let rec build_global_expr ((_, e) : sexpr) = match e with
         SIntLit i -> L.const_int (ltype_of_typ t) i
       | SBoolLit b  -> L.const_int (ltype_of_typ t) (if b then 1 else 0)
-      | SStringLit s -> 
+      | SStringLit s ->  
         (*define_global + const_stringz returns a global constant char array (with null term) in the module 
            in the default address space*)
           let global = L.define_global ".str" (L.const_stringz context s) the_module in
@@ -83,6 +83,12 @@ in
          | A.Greater -> L.const_icmp L.Icmp.Sgt
          | A.Geq     -> L.const_icmp L.Icmp.Sge
         ) e1' e2'
+      | SUnop (op, e) ->
+        let e' = build_global_expr e in
+        (match op with
+           A.Neg     -> L.const_neg
+         | A.Not     -> L.const_not
+          ) e' 
       (*makes sure that only operations and initalization can happen to global constants*)
       | SId(_)
       | SAssign(_,_)
@@ -172,6 +178,11 @@ in
         (match op with
            A.Add -> L.build_call concat_func [| (build_expr builder map e1); (build_expr builder map e2)|] "concat" builder
          | _ -> raise (Failure ("Can't call" ^ (A.string_of_op op) ^ "on a string!")))
+      | SUnop(op, ((_, _) as e)) ->
+        let e' = build_expr builder map e in
+        (match op with
+         | Neg                  -> L.build_neg
+         | Not                  -> L.build_not) e' "tmp" builder
       | SBinop (e1, op, e2) ->
         let e1' = build_expr builder map e1
         and e2' = build_expr builder map e2 in

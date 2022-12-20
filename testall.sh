@@ -9,6 +9,7 @@
 LIBDIR="./libc/"
 LIBC="./libc/stdlibc.c"
 LOGDIR="./logs/"
+LOGPATH="./logs/testall.log"
 DBUILD="./_build/"
 # LLVM interpreter (LLI="/usr/local/opt/llvm/bin/lli")
 LLI="lli"
@@ -23,20 +24,22 @@ SAGECEXEC="./sagec"
 #SAGE="_build/SAGE.native"
 
 # ----------Setup------------
-numbasic=13
+numbasic=14
 numtest=13
-numfail=1
+numfail=2
 # Set time limit for all operations
 ulimit -t 30
 testnum=0
 tflag=0
+errcount=0
+total=0
 
 # TESTING BEGINS
 make
 gcc -c -o $LIBC
 echo "\n\n======================= Running Tests... ======================="
 
-globallog=testall.log
+globallog=$LOGPATH
 rm -f $globallog
 error=0
 globalerror=0
@@ -120,6 +123,7 @@ Check() {
     else
 	echo "###### FAILED" 1>&2
 	globalerror=$error
+    errcount=$((errcount+1))
     fi
 }
 
@@ -131,6 +135,7 @@ CheckFailureExceptions() {
     basedir="`echo $1 | sed 's/\/[^\/]*$//'`/."
 
     if [[ $tflag -eq 2 ]]; then
+        let tflag++
         echo "\nChecking failure / exception handling.. ($numfail tests)\n"
     fi
     echo -n "TEST $testnum $basename..."
@@ -153,6 +158,7 @@ CheckFailureExceptions() {
     else
 	echo "###### FAILED" 1>&2
 	globalerror=$error
+    errcount=$((errcount+1))
     fi
 }
 
@@ -181,28 +187,29 @@ if [ $# -ge 1 ]
 then
     files=$@
 else
-    files="tests/basic-*/basic-*/basic-*.sage tests/basic-*/*/*.sage tests/basic-*/*.sage tests/test-*/*/*.sage tests/test-*/test-*.sage tests/fail-*/*.sage"
+    files="tests/basic/*.sage tests/tests/*.sage tests/checkfail/*.sage"
 fi
 
 for file in $files
 do
     testnum=$((testnum+1))
+    total=$((total+1))
     case $file in
-    *basic-*)
+    */basic/*)
         if [[ $tflag -eq 0 ]]; then
             let tflag++
             echo "Running basic tests.. ($numbasic tests)\n"
         fi
         Check $file 2>> $globallog
         ;;
-	*test-*)
+	*/tests/*)
         if [[ $tflag -eq 1 ]]; then
             let tflag++
             echo "\nRunning tests.. ($numtest tests)\n"
         fi
 	    Check $file 2>> $globallog
 	    ;;
-	*fail-*)
+	*/checkfail/*)
 	    CheckFailureExceptions $file 2>> $globallog
 	    ;;
 	*)
@@ -212,5 +219,9 @@ do
     esac
 done
 
+if [[ $errcount -ge 0 ]]; then
+    echo "\n==================== PROGRAM TERMINATED ====================\n\t$errcount of $total tests failed"
+else
+    echo "\n==================== SUCCESS! ALL TEST CASES MATCH ===================="
+fi
 exit 0
-#  $globalerror
