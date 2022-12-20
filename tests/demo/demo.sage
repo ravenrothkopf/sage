@@ -1,55 +1,58 @@
 int num = 10000
-str greeting = "SAGE IS AWESOME!"
+str greeting = "Welcome to sage"
 
 def int main() {
     int pos = 105
     int neg = -5
+    
     print(pos / neg)
-    return 1
+    hello_world()
+    printb(b_check())
+    math_functs()
+    print(gcd(24, 48))
+    printfl(test_float())
+    casting_check()
 }
 
-def str hello_world() {
-    str location = "world!"
+def void hello_world() {
+    str location = " world!"
     prints(greeting + location)
-    return location
 }
- 
+
 def bool b_check() {
     if (num < 1) {
-        return true
+        return True
+    }
+    else if (num == 100) {
+        return True
     }
     else {
-        return false
+        return False
     }
 }
 
 def void math_functs() {
     int x = 50 % 5
     int y = 5 - 1
-    # cast
+
+    print(x + y)
 }
 
-def int gcd() {
-    int first_num = 24
-    int second_num = 48
-    while(second_num!=0) {
-      int rem = first_num % second_num
-      first_num = second_num
-      second_num = rem
-      # output = str(first_num)
-   }
-   prints("GCD of two numbers is " + first_num)
-   return 0
+def int gcd(int a, int b) {
+  while (a != b) {
+    if (b < a) a = a - b
+    else b = b - a
+  }
+  return a
 }
 
 def float test_float() {
     float PI = 3.14159
-    prints("This is pi!)
+    prints("This is pi!")
     return PI
 }
 
-def float casting_check() {
+def void casting_check() {
     printfl(float("2.72"))
     printfl(float(42))
-    return 0.0
 }
