@@ -23,50 +23,66 @@ sage preserves the “stripped” feeling of Python while adding some strict imp
 
 ```
 
-sage
-
-├── Makefile
-├── README.md
+**sage**
 ├── ast.ml
-├── helloWorld.ml
+├── codegen.ml
+├── demo
+    └── demo.sage
+├── libc
+    ├── stdlibc.c
+    └── stdlibc.h
+├── logs
+├── Makefile
 ├── parser.mly
-├── sage.out
-├── sage.tb
+├── README.md
+├── rundemo.sh
 ├── sast.ml
 ├── scanner.mll
 ├── semant.ml
-├── test.ml
-├── test2.ml
-└── test_cases
-    ├── test-assign1.ml
-    └── test-function1.ml
+├── testall.sh
+├── testbasic.sh
+├── testerrors.sh
+└── tests
+    ├── basic
+    ├── checkfail
+    └── tests
 
 ```
 
 ## Compiling sage programs
 
-From your terminal, navigate to the `sage` directory:
+From your terminal, navigate to the root directory (referred to as `home` from this point onwards):
 
 `cd ../sage`
 
-Run the Makefile via the `make` command to compile the contents of test2.ml in sage:
+Run the Makefile via the `make` command to build the `sage` compiler:
 
 `make`
 
-#### WIP: Test suite
+#### Test suite
 
-Test using test cases (`sage/test_cases`) by running `make alltests` from within the `sage` directory:
+The complete `sage` test suite is comprised of three test types: `basic` (unit tests), `tests` (standard tests), and `checkfail` (error handling). 
+**All commands in this section assume you are in the `home` directory.**
 
-``# functionality incomplete``
+_Note: you may need to change permissions of each of the shell scripts in order to properly run the commands outlined in this section (Test suite)_
+> `cd ../sage`
+> `chmod u+x [*.sh]`
 
-> `make alltests`
+You can run the entire test suite by running:
+> `make testall`
 
-## Features provided in this current release (v1.0.0)
+To run every test case of a particular test category, run:
+> `make basic` # basic tests
+> `make tests` # standard tests
+> `make testfail` # error handling
 
-* Basic scanner, parser, AST, and semantic checker implementations
-  * Able to parse basic assignment statements (i.e., binding of primitive types) as well as binding of identifiers to types, binary operations, and miscellaneous `string` operations (i.e., concatenation, tokenizing, and binding)
-* Basic error checking
-* "hello world"
+To test an individual `*.sage` file, run the following from the `home` directory:
+> `make native`
+> ./sage.native < [FILENAME.sage] > [FILENAME.out]
+
+## Features provided in this current release (v2.0.0)
+
+**tbd**
 
 ##### Basic `string` assignment statements
 
@@ -167,9 +183,18 @@ Many features are almost implemented in some branches. They are:
 * All (12/20) - Make adjustments to demo and presentation; debug for loops; first recording of presentation
 * Gabriela (12/20) - Cut video recording & upload to YouTube
 
+## Release history notes
+
+### Version 1.0.0
+
+* Basic scanner, parser, AST, and semantic checker implementations
+  * Able to parse basic assignment statements (i.e., binding of primitive types) as well as binding of identifiers to types, binary operations, and miscellaneous `string` operations (i.e., concatenation, tokenizing, and binding)
+* Basic error checking
+* "hello world"
+
 ## References
 
-1. [Rusty Language Reference Manual](http://www.cs.columbia.edu/~sedwards/classes/2016/4115-fall/lrms/rusty.pdf"rusty, a rust-based PL")
+1. [Rusty Language Reference Manual](http://www.cs.columbia.edu/~sedwards/classes/2016/4115-fall/lrms/rusty.pdf)
 2. [Python Reference Manual](https://docs.python.org/3/reference/)
 3. [Java Reference Manual](https://docs.oracle.com/javase/specs/jls/se7/html/index.html)
 4. [C Language Reference Manual](https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=&cad=rja&uact=8&ved=2ahUKEwjSmfW_0cD7AhWQEFkFHYUjD10QFnoECBMQAQ&url=http%3A%2F%2Fwww.cs.columbia.edu%2F~sedwards%2Fpapers%2Fsgi1999c.pdf&usg=AOvVaw2CW2iJl-QTyHQS8sWDWGTZ)
