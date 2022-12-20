@@ -98,6 +98,11 @@ Indicating that both s1 and s2 were successfully parsed by the compiler :)
 
 ## Features planned for the next (upcoming) release (v2.0.0)
 
+Many features are almost implemented in some branches. They are:
+* indents like the Python language in /jenny branch
+* arrays in /jenny-new branch
+* tuples in /jenny-tuples branch
+
 * A complete, full-fledged front-end compiler for the sage PL (i.e., a functionally complete scanner, parser, semantic checker, and IR code generator/LLVM IR)
 * Implement the remainder of sage's language features (types such as floating-point implementation, per IEEE 754 standards, functions, operators and binary operations [e.g., associativity, precedence, type equality checking], composite type [i.e., tuples, `struct`s], reference counting / automatic garbage collecting, and other memory safety features)
 
