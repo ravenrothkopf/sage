@@ -12,6 +12,7 @@ sage.tb currently tests (only for semantic analysis):
 
 # test single-line comment
 
+tuple x = (2, "hi") 
 str hello = "hello"
 bool t = True
 

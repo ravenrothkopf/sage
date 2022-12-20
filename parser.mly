@@ -4,7 +4,7 @@ open Ast
 
 %token LPAREN RPAREN LBRACKET RBRACKET PLUS MINUS TIMES DIVIDE NEG ASSIGN MODULO
 %token EQ NEQ GT GEQ LT LEQ AND OR NOT
-%token DEF LBRACE RBRACE NEWLINE RETURN IF ELIF ELSE WHILE FOR STRING INT FLOAT BOOL VOID RETURN
+%token DEF LBRACE RBRACE NEWLINE RETURN IF ELIF ELSE WHILE FOR STRING INT FLOAT BOOL VOID RETURN TUPLE
 %token COLON COMMA
 %token <int> ILIT
 %token <float> FLIT
@@ -67,6 +67,7 @@ typ:
   // | FLOAT { Float }
   | STRING { String }
   | VOID { Void }
+  | TUPLE { TupleTyp }
   //TODO: add array type + implementation
 
 stmt:
@@ -84,7 +85,7 @@ stmt_list:
   | stmt stmt_list { $1 :: $2 }
 
 global:
-    typ ID ASSIGN expr NEWLINE { (($1, $2), $4) } //int x = 3, only expression we want to use globally and locally
+    typ ID ASSIGN expr NEWLINE { print_endline "global";(($1, $2), $4) } //int x = 3, only expression we want to use globally and locally
 
 expr:
     ILIT             { IntLit($1) }
@@ -95,6 +96,7 @@ expr:
   | ID ASSIGN expr   { Assign($1, $3) }
   | ID LPAREN args_opt RPAREN { Call($1, $3) }
   | typ LPAREN expr RPAREN { Cast($1, $3) }
+  | LPAREN expr COMMA expr RPAREN { Tuple($2, $4) }
   | LPAREN expr RPAREN { $2 }
   | expr PLUS expr { Binop ($1, Add, $3) }
   | expr MINUS expr { Binop ($1, Sub, $3) }

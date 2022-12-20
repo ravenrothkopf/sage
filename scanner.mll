@@ -12,8 +12,8 @@ rule token = parse
 | "#"                                   { comment lexbuf }           (* Comments *)
 | "\"\"\""                              { comment2 lexbuf }
 | '\n'                                  { NEWLINE }
-| '('                                   { LPAREN }
-| ')'                                   { RPAREN }
+| '('                                   { print_endline "(";LPAREN }
+| ')'                                   { print_endline ")";RPAREN }
 | '{'                                   { LBRACE }
 | '}'                                   { RBRACE }
 | '['                                   { LBRACKET }
@@ -22,10 +22,11 @@ rule token = parse
 | ','                                   { COMMA }
 | '{'                                   { LBRACE }
 | '}'                                   { RBRACE }
-| '='                                   { ASSIGN }
+| '='                                   { print_endline "=";ASSIGN }
 | "str"                                 { STRING }
 | "int"                                 { INT }
 | "float"                               { FLOAT }
+| "tuple"                               { print_endline "tuple";TUPLE }
 | "bool"                                { BOOL }
 | "True"                                { BLIT(true) }
 | "False"                               { BLIT(false) }
@@ -67,5 +68,5 @@ and comment2 = parse
 | _        { comment2 lexbuf }
 
 and slit s = parse
- "\""                         { SLIT (s)}
+ "\""                         { print_endline s; SLIT (s)}
 | (letter | digit | ' ' | '!' | '?') as x { slit (s ^ (String.make 1 x)) lexbuf}

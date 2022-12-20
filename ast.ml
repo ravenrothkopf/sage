@@ -13,7 +13,7 @@ type bop =
   | And
   | Or
 
-type typ = String | Int | Bool | Void
+type typ = String | Int | Bool | Void | TupleTyp
 
 type uop = Neg | Not
 
@@ -28,6 +28,7 @@ type expr =
   | Unop of uop * expr
   | Call of string * expr list
   | Array of expr list
+  | Tuple of expr * expr
   | Noexpr
   | Cast of typ * expr
 
