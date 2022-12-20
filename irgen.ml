@@ -370,17 +370,16 @@ in
         ignore(L.build_cond_br bool_val body_bb end_bb while_builder);
         (L.builder_at_end context end_bb, vars)
        
-      | SFor (expr1, expr2, expr3, body) ->  (* build_stmt (builder, vars) 
-          ( SBlock [SExpr expr1 ; SWhile (expr2, SBlock [body ; SExpr expr3]) ] ) *)
+      | SFor (expr1, expr2, expr3, body) -> 
         let for_bb = L.append_block context "for" the_function in
         let build_br_for = L.build_br for_bb in (* partial function *)
         ignore (build_br_for builder);
         let for_builder = L.builder_at_end context for_bb in
         let first_expr = build_expr for_builder vars expr1 in
         let bool_val = build_expr for_builder vars expr2 in
-        let third_expr = build_expr for_builder vars expr3 in
+        let merge = SBlock[body; SExpr expr3] in
         let body_bb = L.append_block context "for_body" the_function in
-        add_terminal (fst (build_stmt ((L.builder_at_end context body_bb), vars) body)) build_br_for;
+        add_terminal (fst (build_stmt ((L.builder_at_end context body_bb), vars) merge)) build_br_for;
         let end_bb = L.append_block context "for_end" the_function in
 
         ignore(L.build_cond_br bool_val body_bb end_bb for_builder);
