@@ -80,7 +80,7 @@ stmt:
   | IF LPAREN expr RPAREN stmt ELSE stmt { If($3, $5, $7) }
   | WHILE LPAREN expr RPAREN stmt { While($3, $5) }
   | NEWLINE stmt { $2 }
-  | FOR expr IN expr stmt  { For($2, $4, $5) } 
+  // | FOR typ ID IN expr stmt  { For(($2, $3), $5, $6) } 
   /*| FOR typ ID IN RANGE LPAREN expr RPAREN stmt { Range($2, $6, $8) } */
 
 stmt_list:
@@ -96,7 +96,6 @@ expr:
   | SLIT             { StringLit($1) }
   | BLIT             { BoolLit($1) }
   | ID               { Id($1) }
-  | typ ID           { Type($1, $2)}
   | ID ASSIGN expr   { Assign($1, $3) }
   | ID LPAREN args_opt RPAREN { Call($1, $3) }
   | typ LPAREN expr RPAREN { Cast($1, $3) }

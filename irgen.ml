@@ -275,18 +275,19 @@ in
         ignore(L.build_cond_br bool_val body_bb end_bb while_builder);
         (L.builder_at_end context end_bb, vars)
        
-      | SFor (expr1, expr2, body) -> 
+      (* | SFor (tn, e, body) -> 
+        let local_var = L.build_alloca (ltype_of_typ (fst tn)) (snd tn) builder in 
+        StringMap.add (snd tn) local_var vars;
         let for_bb = L.append_block context "for" the_function in
         let pred_bb = L.build_br for_bb in
         ignore(pred_bb builder);
         let for_builder = L.builder_at_end context for_bb in
-        let first_expr = build_expr for_builder vars expr1 in
-        let bool_val = build_expr for_builder vars expr2 in 
+        let expr = build_expr for_builder vars e in 
         let body_bb = L.append_block context "for_body" the_function in
         let end_bb = L.append_block context "for_end" the_function in
         add_terminal (fst (build_stmt ((L.builder_at_end context body_bb), vars) body)) pred_bb;
-        ignore(L.build_cond_br bool_val body_bb end_bb for_builder); 
-        (L.builder_at_end context end_bb, vars)
+        ignore(L.build_cond_br expr body_bb end_bb for_builder); 
+        (L.builder_at_end context end_bb, vars) *)
      (* | SRange (expr, stmt) -> *)
       | SReturn e -> ignore(match fdecl.srtyp with
           (* Special "return nothing" instr *)

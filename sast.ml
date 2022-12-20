@@ -25,7 +25,7 @@ type sstmt =
   | SReturn of sexpr
   | SDecAssn of sbind_init
   | SIf of sexpr * sstmt * sstmt
-  | SFor of sexpr * sexpr * sstmt
+  (* | SFor of bind_formal * sexpr * sstmt *)
   | SRange of sexpr * sexpr * sstmt 
   | SWhile of sexpr * sstmt
 
@@ -72,12 +72,12 @@ let rec string_of_sstmt = function
   | SBlock(stmts) -> "{\n" ^
     "    " ^ String.concat "    " (List.map string_of_sstmt stmts) ^ "}\n"
   |SReturn(expr) -> "return " ^ string_of_sexpr expr ^ "\n"
-  | SDecAssn(decl, expr) -> string_of_svdecl (decl, expr)
+  |SDecAssn(decl, expr) -> string_of_svdecl (decl, expr)
   | SIf(expr, s, SBlock([])) ->
     "if (" ^ string_of_sexpr expr ^ ")\n" ^ string_of_sstmt s
   | SIf(expr, s1, s2) ->  "if (" ^ string_of_sexpr expr ^ ")\n" ^
     string_of_sstmt s1 ^ "else\n" ^ string_of_sstmt s2
-  | SFor(e1,e2, s) -> "for " ^ string_of_sexpr e1 ^ " in " ^ string_of_sexpr e2 ^ "\n" ^ string_of_sstmt s  
+  (* | SFor(tn, e, stmt) -> "for " ^ string_of_typ (fst tn) ^ " " ^ (snd tn) ^ " in " ^ string_of_sexpr e ^ "\n" ^ string_of_sstmt stmt   *)
   | SRange(e1,e2, s) -> "for " ^ string_of_sexpr e1 ^ " in range (" ^ string_of_sexpr e2 ^ ")\n" ^ string_of_sstmt s  
   | SWhile(expr, s) ->  "while (" ^ string_of_sexpr expr ^ ")\n" ^ string_of_sstmt s
  
