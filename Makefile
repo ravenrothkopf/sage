@@ -10,6 +10,7 @@ TESTFILES = ./tests/tests/
 FAILTESTS = ./tests/checkfail/
 SRC = ./src/
 BUILD = ./_build/
+DEMOPATH = ./demo/
 
 OCAMLBFLAGS 	= -use-ocamlfind -pkgs llvm
 OCAMLCFLAGS 	= -w -c
@@ -21,6 +22,9 @@ OCAMLC 			= ocamlc $(OCAMLCFLAGS)
 CC				= gcc $(CFLAGS)
 
 all: clean native stdlibc sageexec
+
+demo: native
+	./rundemo.sh
 
 native:
 	opam exec -- \
