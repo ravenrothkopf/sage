@@ -23,9 +23,8 @@ def void voidTest() {
 def int main (str greeting) {
     str location = "world"
     int num = 1
-    num += 3
+    int a = 4 * 3
     int num2 = 1
-    num %= 3
     print(num2)
 }
 
