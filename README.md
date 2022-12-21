@@ -170,7 +170,7 @@ Many features are almost implemented in some branches. They are:
 * Gabriela (12/1) - Fix merging conflicts, IR generation testing
 * Gabriela (12/5) - Address LLVM installation issues for lli path not creating symbolic link in terminal to test llvm
 * Gabriela (12/10) - Resolve CodeGen bugs across codebase, add math operations, merge Raven's conditional block statements and address merge conflicts
-* Gabriela, Raven, Jenny, Lauren (12/13) - Code gen meeting
+* Gabriela, Raven, Jenny, Lauren (12/13) - Code gen meeting to discuss merge conflicts
 * Gabriela (12/18) - Update branches with current changes & address merge conflicts, read documentation to address lli cannot find command
 * Gabriela (12/18) - Implement return statements on ast, scanner, parser, sast, semantics, irgen
 * Gabriela (12/19) - Implement floats in ast, scanner, parser, sast, semant, and codegen files & printfl function for printing floats
