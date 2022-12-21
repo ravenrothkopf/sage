@@ -7,8 +7,9 @@ DLOG 	= ./logs/
 DTESTS 	= ./tests/
 SRC 	= ./src/
 BUILD 	= ./_build/
-DEMO	= /demo/
+DEMO	= ./demo/
 ROOTDIR	= ./sage/
+DOCS	= ./docs/
 
 OCAMLB_FLAGS 	= -use-ocamlfind -pkgs llvm
 OCAMLC_FLAGS 	= -w -c
@@ -62,7 +63,7 @@ testall: clean native
 
 TARFILES = 	ast.ml irgen.ml parser.mly sage.ml sast.ml scanner.mll semant.ml \
 			Makefile README.md testall.sh testbasic.sh testerrors.sh tests.sh \
-			$(DLIB) $(DTESTS) $(DLOG) $(DEMO)
+			$(DLIB) $(DTESTS) $(DLOG) $(DEMO) $(DOCS)
 
 REPORT 	  = ast.ml irgen.ml parser.mly sage.ml sast.ml scanner.mll semant.ml \
 			Makefile README.md testall.sh testbasic.sh testerrors.sh tests.sh \
