@@ -7,7 +7,7 @@ def int main() {
     print(pos / neg)
     return 1
 }
-
+ 
 def str hello_world() {
     str location = "world!"
     prints(greeting + location)
