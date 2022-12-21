@@ -82,6 +82,7 @@ stmt:
   | WHILE LPAREN expr RPAREN stmt { While($3, $5) }
   | NEWLINE stmt { $2 }
   | FOR LPAREN expr SEMC expr SEMC expr RPAREN stmt { For($3, $5, $7, $9) } 
+  // | FOR LPAREN typ ID ASSIGN expr SEMC expr SEMC expr RPAREN stmt { For($3, 4), $5, $7, $9) } 
   // | FOR typ ID IN expr stmt  { For(($2, $3), $5, $6) } 
   /*| FOR typ ID IN RANGE LPAREN expr RPAREN stmt { Range($2, $6, $8) } */
 

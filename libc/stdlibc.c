@@ -3,10 +3,10 @@
 #include <string.h>
 #include <ctype.h>
 
-void println(char *s)
-{
-    printf("%s\n", s);
-}
+// void println(char *s)
+// {
+//     printf("%s\n", s);
+// }
 
 char *concat(const char *s1, const char *s2)
 {
@@ -16,10 +16,10 @@ char *concat(const char *s1, const char *s2)
     return result;
 }
 
-int compare_string(const char *s1, const char *s2)
-{
-    return (strcmp(s1, s2) == 0);
-}
+// int compare_string(const char *s1, const char *s2)
+// {
+//     return (strcmp(s1, s2) == 0);
+// }
 
 int len(const char *str)
 {

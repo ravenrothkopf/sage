@@ -48,8 +48,7 @@ ignore(check_binds "global" (global_symbols globals));
      ("printb", [Bool], Void); 
      ("concat", [String ; String], String); 
      ("len", [String], Int); 
-     ("indexOf", [String; String], Int)];
-
+     (* ("indexOf", [String; String], Int)*)];
   in
 
   (* Add function name to symbol table *)
@@ -192,6 +191,8 @@ ignore(check_binds "global" (global_symbols globals));
         else raise (
           Failure ("return gives " ^ string_of_typ t ^ ", but expected "
           ^ string_of_typ func.rtyp ^ " in " ^ string_of_expr e))
+      (*referenced YAMML http://www.cs.columbia.edu/~sedwards/classes/2021/4115-spring/reports/YAMML.pdf
+         compiler for checking locally instantiated vars against globally instantiated vars*)
       | Block stmt_list -> 
         let bvars = StringMap.empty in
         let rec check_stmt_list stmt_list vars bvars = 
