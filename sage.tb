@@ -24,10 +24,8 @@ def int main (str greeting) {
     str location = "world"
     int num = 1
     num += 3
-    print(num)
-
     int num2 = 1
-    num2 -= 3
+    num %= 3
     print(num2)
 }
 
