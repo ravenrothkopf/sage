@@ -137,7 +137,7 @@ Many features are almost implemented in some branches. They are:
 * How do we make sure everyone has the same codebase? We all `git pull`, but stashing some changes has made it to where pulling does not modify current code state
 * Should we be throwing specific errors when variable names are not valid?
 
-## Team member contributions
+## Team member contributions (Agreed Protocol to Track Progress)
 
 * Raven (11/13) - Wrote the foundation for the scanner, parser, and ast for Hello World (comments, string literals, str data types, concatenation, function definitions)
 * Raven (11/14) - Debugged scanner and parser building
@@ -181,7 +181,9 @@ Many features are almost implemented in some branches. They are:
 * Gabriela (12/20) - Debug for loop index increment, commit first iteration of code for live demo & finalize demo by addressing casting bugs
 * Gabriela (12/20) - Create and finalize final presentation
 * All (12/20) - Make adjustments to demo and presentation; debug for loops; first recording of presentation
-* Gabriela (12/20) - Cut video recording & upload to YouTube
+* Gabriela (12/20) - Cut video recording & upload to YouTube x2 for two runthroughs
+* Gabriela (12/20) - Debug LaTeX file, update changes onto master, write and finalize holiday demo for proof of concept functionality with more cohesiveness
+* Gabriela (12/20) - Language Tutorial and Architectural Design for Final Report, Introduction rewording, add print statement functions to LRM
 
 ## Release history notes
 
