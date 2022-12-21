@@ -7,7 +7,7 @@ DLOG 	= ./logs/
 DTESTS 	= ./tests/
 SRC 	= ./src/
 BUILD 	= ./_build/
-DEMO	= ./demo/
+DEMO	= /demo/
 ROOTDIR	= ./sage/
 
 OCAMLB_FLAGS 	= -use-ocamlfind -pkgs llvm
